@@ -9,8 +9,8 @@
 
 	<artifactId>kenyacore-api</artifactId>
 	<packaging>jar</packaging>
-	<name>KenyaCORE API</name>
-	<description>API project for KenyaCORE</description>
+	<name>KenyaCore API</name>
+	<description>API project for KenyaCore</description>
 
 	<build>
 		<resources>

@@ -29,41 +29,41 @@ public class CoreActivator implements ModuleActivator {
 	 * @see ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
-		log.info("Refreshing KenyaCORE...");
+		log.info("Refreshing KenyaCore...");
 	}
 	
 	/**
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
-		log.info("KenyaCORE refreshed");
+		log.info("KenyaCore refreshed");
 	}
 	
 	/**
 	 * @see ModuleActivator#willStart()
 	 */
 	public void willStart() {
-		log.info("Starting KenyaCORE...");
+		log.info("Starting KenyaCore...");
 	}
 	
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("KenyaCORE started");
+		log.info("KenyaCore started");
 	}
 	
 	/**
 	 * @see ModuleActivator#willStop()
 	 */
 	public void willStop() {
-		log.info("Stopping KenyaCORE...");
+		log.info("Stopping KenyaCore...");
 	}
 	
 	/**
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {
-		log.info("KenyaCORE stopped");
+		log.info("KenyaCore stopped");
 	}
 }

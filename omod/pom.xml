@@ -9,8 +9,8 @@
 
 	<artifactId>kenyacore-omod</artifactId>
 	<packaging>jar</packaging>
-	<name>KenyaCORE OMOD</name>
-	<description>OMOD project for KenyaCORE</description>
+	<name>KenyaCore OMOD</name>
+	<description>OMOD project for KenyaCore</description>
 
 	<dependencies>
 		<dependency>
