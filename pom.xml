@@ -36,8 +36,13 @@
 		<openMRSVersion>1.9.3</openMRSVersion>
 
 		<!-- Module dependencies -->
+		<appframeworkVersion>1.5</appframeworkVersion>
+		<calculationVersion>1.0</calculationVersion>
+		<htmlformentryVersion>2.1</htmlformentryVersion>
+		<idgenVersion>2.5</idgenVersion>
 		<kenyautilVersion>0.2.1</kenyautilVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
+		<uiframeworkVersion>2.6</uiframeworkVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -45,6 +50,34 @@
 	<dependencies>
 
 		<!-- Begin OpenMRS modules -->
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>appframework-api</artifactId>
+			<version>${appframeworkVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>calculation-api</artifactId>
+			<version>${calculationVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>htmlformentry-api</artifactId>
+			<version>${htmlformentryVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>idgen-api</artifactId>
+			<version>${idgenVersion}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
@@ -64,6 +97,13 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>metadatasharing-api</artifactId>
 			<version>${metadatasharingVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uiframework-api</artifactId>
+			<version>${uiframeworkVersion}</version>
 			<scope>provided</scope>
 		</dependency>
 
