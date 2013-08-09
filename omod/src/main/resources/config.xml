@@ -11,7 +11,7 @@
 
 	<require_modules>
 		<require_module version="${appframeworkVersion}">org.openmrs.module.appframework</require_module>
-		<require_module version="${calculationVersion}">org.openmrs.module.calculation</require_module>
+		<require_module version="${calculationVersion}">org.openmrs.calculation</require_module>
 		<require_module version="${htmlformentryVersion}">org.openmrs.module.htmlformentry</require_module>
 		<require_module version="${idgenVersion}">org.openmrs.module.idgen</require_module>
 		<require_module version="${kenyautilVersion}">org.openmrs.module.kenyautil</require_module>
