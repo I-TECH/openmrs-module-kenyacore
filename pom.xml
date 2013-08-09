@@ -36,7 +36,7 @@
 		<openMRSVersion>1.9.3</openMRSVersion>
 
 		<!-- Module dependencies -->
-		<metadatamappingVersion>1.0.1</metadatamappingVersion>
+		<kenyautilVersion>0.2</kenyautilVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,8 +48,8 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>metadatamapping-api</artifactId>
-			<version>${metadatamappingVersion}</version>
+			<artifactId>kenyautil-api</artifactId>
+			<version>${kenyautilVersion}</version>
 			<scope>provided</scope>
 		</dependency>
 
