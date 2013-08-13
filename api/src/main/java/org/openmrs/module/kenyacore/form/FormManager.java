@@ -99,18 +99,35 @@ public class FormManager implements ContentManager {
 
 		// Process form configuration beans
 		for (FormConfiguration configuration : Context.getRegisteredComponents(FormConfiguration.class)) {
+			// Register general per-patient forms
 			if (configuration.getGeneralPatientForms() != null) {
 				generalPatientForms.addAll(configuration.getGeneralPatientForms());
 			}
+
+			// Register general per-visit forms
 			if (configuration.getGeneralVisitForms() != null) {
 				generalVisitForms.addAll(configuration.getGeneralVisitForms());
 			}
+
+			// Register additional program specific per-patient forms
+			if (configuration.getProgramPatientForms() != null) {
+				Map<ProgramDescriptor, Set<FormDescriptor>> programPatientForms = configuration.getProgramPatientForms();
+
+				for (ProgramDescriptor programDescriptor : programPatientForms.keySet()) {
+					for (FormDescriptor form : programPatientForms.get(programDescriptor)) {
+						programDescriptor.addPatientForm(form);
+					}
+				}
+			}
+
+			// Register additional program specific per-visit forms
 			if (configuration.getProgramVisitForms() != null) {
 				Map<ProgramDescriptor, Set<FormDescriptor>> programVisitForms = configuration.getProgramVisitForms();
 
 				for (ProgramDescriptor programDescriptor : programVisitForms.keySet()) {
-					Set<FormDescriptor> additionalForms = programVisitForms.get(programDescriptor);
-					programDescriptor.getVisitForms().addAll(additionalForms);
+					for (FormDescriptor form : programVisitForms.get(programDescriptor)) {
+						programDescriptor.addVisitForm(form);
+					}
 				}
 			}
 		}

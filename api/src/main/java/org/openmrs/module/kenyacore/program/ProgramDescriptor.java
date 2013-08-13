@@ -21,6 +21,7 @@ import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyautil.MetadataUtils;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +36,8 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	private FormDescriptor defaultEnrollmentForm;
 
 	private FormDescriptor defaultCompletionForm;
+
+	private Set<FormDescriptor> patientForms;
 
 	private Set<FormDescriptor> visitForms;
 
@@ -97,7 +100,35 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	}
 
 	/**
-	 * Gets the visit forms
+	 * Gets the per-patient forms
+	 * @return the patient forms
+	 */
+	public Set<FormDescriptor> getPatientForms() {
+		return patientForms;
+	}
+
+	/**
+	 * Sets the per-patient forms
+	 * @param patientForms the patient forms
+	 */
+	public void setPatientForms(Set<FormDescriptor> patientForms) {
+		this.patientForms = patientForms;
+	}
+
+	/**
+	 * Adds an additional per-patient form
+	 * @param patientForm the patient form
+	 */
+	public void addPatientForm(FormDescriptor patientForm) {
+		if (patientForms == null) {
+			patientForms = new HashSet<FormDescriptor>();
+		}
+
+		patientForms.add(patientForm);
+	}
+
+	/**
+	 * Gets the per-visit forms
 	 * @return the visit forms
 	 */
 	public Set<FormDescriptor> getVisitForms() {
@@ -105,11 +136,23 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	}
 
 	/**
-	 * Sets the visit forms
+	 * Sets the per-visit forms
 	 * @param visitForms the visit forms
 	 */
 	public void setVisitForms(Set<FormDescriptor> visitForms) {
 		this.visitForms = visitForms;
+	}
+
+	/**
+	 * Adds an additional per-visit form
+	 * @param visitForm the visit form
+	 */
+	public void addVisitForm(FormDescriptor visitForm) {
+		if (visitForms == null) {
+			visitForms = new HashSet<FormDescriptor>();
+		}
+
+		visitForms.add(visitForm);
 	}
 
 	/**

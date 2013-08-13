@@ -29,6 +29,8 @@ public class FormConfiguration extends AbstractContentConfiguration {
 
 	private Set<FormDescriptor> generalVisitForms;
 
+	private Map<ProgramDescriptor, Set<FormDescriptor>> programPatientForms;
+
 	private Map<ProgramDescriptor, Set<FormDescriptor>> programVisitForms;
 
 	/**
@@ -61,6 +63,22 @@ public class FormConfiguration extends AbstractContentConfiguration {
 	 */
 	public void setGeneralVisitForms(Set<FormDescriptor> generalVisitForms) {
 		this.generalVisitForms = generalVisitForms;
+	}
+
+	/**
+	 * Gets the program specific per-patient forms
+	 * @return the map of program and form descriptors
+	 */
+	public Map<ProgramDescriptor, Set<FormDescriptor>> getProgramPatientForms() {
+		return programPatientForms;
+	}
+
+	/**
+	 * Sets the program specific per-patient forms
+	 * @param programPatientForms the map of program and form descriptors
+	 */
+	public void setProgramPatientForms(Map<ProgramDescriptor, Set<FormDescriptor>> programPatientForms) {
+		this.programPatientForms = programPatientForms;
 	}
 
 	/**
