@@ -70,7 +70,11 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implemen
 	 */
 	@Override
 	public int compareTo(AbstractEntityDescriptor descriptor) {
-		return OpenmrsUtil.compareWithNullAsGreatest(order, descriptor.order);
+		int byOrder = OpenmrsUtil.compareWithNullAsGreatest(order, descriptor.order);
+
+		// Return by target uuid if order is equal. Important to not return zero from this method unless the objects
+		// are actually equal. Otherwise TreeSet sees them as equal.
+		return byOrder != 0 ? byOrder : targetUuid.compareTo(descriptor.targetUuid);
 	}
 
 	/**
