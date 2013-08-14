@@ -74,6 +74,29 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implemen
 	}
 
 	/**
+	 * @see Object#equals(Object)
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AbstractEntityDescriptor)) return false;
+
+		AbstractEntityDescriptor that = (AbstractEntityDescriptor) o;
+
+		if (!targetUuid.equals(that.targetUuid)) return false;
+
+		return true;
+	}
+
+	/**
+	 * @see Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return targetUuid.hashCode();
+	}
+
+	/**
 	 * @see Object#toString()
 	 */
 	@Override
