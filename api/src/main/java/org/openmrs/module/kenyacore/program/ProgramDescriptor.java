@@ -18,6 +18,7 @@ import org.openmrs.Program;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.UIResource;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
+import org.openmrs.module.kenyacore.lab.LabTestCatalog;
 import org.openmrs.module.kenyautil.MetadataUtils;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 
@@ -40,6 +41,8 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	private Set<FormDescriptor> patientForms;
 
 	private Set<FormDescriptor> visitForms;
+
+	private LabTestCatalog labCatalog;
 
 	private Map<String, UIResource> fragments;
 
@@ -153,6 +156,22 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 		}
 
 		visitForms.add(visitForm);
+	}
+
+	/**
+	 * Gets the lab test catalog
+	 * @return the lab test catalog
+	 */
+	public LabTestCatalog getLabCatalog() {
+		return labCatalog;
+	}
+
+	/**
+	 * Sets the lab test catalog
+	 * @param labCatalog the lab test catalog
+	 */
+	public void setLabCatalog(LabTestCatalog labCatalog) {
+		this.labCatalog = labCatalog;
 	}
 
 	/**
