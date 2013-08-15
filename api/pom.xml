@@ -42,13 +42,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>kenyautil-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>kenyautil-test</artifactId>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>${project.parent.artifactId}-test</artifactId>
+			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 

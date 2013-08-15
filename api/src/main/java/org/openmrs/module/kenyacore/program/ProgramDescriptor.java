@@ -19,7 +19,7 @@ import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.UIResource;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyacore.lab.LabTestCatalog;
-import org.openmrs.module.kenyautil.MetadataUtils;
+import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 
 import java.util.HashSet;

@@ -16,7 +16,6 @@ package org.openmrs.module.kenyacore.metadata;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openmrs.module.kenyautil.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

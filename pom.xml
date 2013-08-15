@@ -30,6 +30,7 @@
 	<modules>
 		<module>api</module>
 		<module>omod</module>
+		<module>test</module>
 	</modules>
 	
 	<properties>
@@ -41,7 +42,6 @@
 		<htmlformentryVersion>2.1</htmlformentryVersion>
 		<htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
 		<idgenVersion>2.5</idgenVersion>
-		<kenyautilVersion>0.2.3</kenyautilVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
 		<reportingVersion>0.7.6</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
@@ -88,20 +88,6 @@
 				<artifactId>idgen-api</artifactId>
 				<version>${idgenVersion}</version>
 				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>kenyautil-api</artifactId>
-				<version>${kenyautilVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>kenyautil-test</artifactId>
-				<version>${kenyautilVersion}</version>
-				<scope>test</scope>
 			</dependency>
 
 			<dependency>
