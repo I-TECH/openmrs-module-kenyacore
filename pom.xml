@@ -39,9 +39,12 @@
 		<appframeworkVersion>1.5</appframeworkVersion>
 		<calculationVersion>1.0</calculationVersion>
 		<htmlformentryVersion>2.1</htmlformentryVersion>
+		<htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
 		<idgenVersion>2.5</idgenVersion>
 		<kenyautilVersion>0.2.3</kenyautilVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
+		<reportingVersion>0.7.6</reportingVersion>
+		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
 		<uiframeworkVersion>2.6</uiframeworkVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,6 +78,13 @@
 
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
+				<artifactId>htmlwidgets-api</artifactId>
+				<version>${htmlwidgetsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
 				<artifactId>idgen-api</artifactId>
 				<version>${idgenVersion}</version>
 				<scope>provided</scope>
@@ -98,6 +108,20 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>metadatasharing-api</artifactId>
 				<version>${metadatasharingVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>reporting-api</artifactId>
+				<version>${reportingVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>serialization.xstream-api</artifactId>
+				<version>${serializationxstreamVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 
