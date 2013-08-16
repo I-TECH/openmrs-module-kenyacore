@@ -14,8 +14,8 @@
 
 package org.openmrs.module.kenyacore.converter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.module.kenyacore.ConceptReference;
-import org.openmrs.module.kenyacore.UIResource;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +30,6 @@ public class StringToConceptReferenceConverter implements Converter<String, Conc
 	 */
 	@Override
 	public ConceptReference convert(String s) {
-		return new ConceptReference(s);
+		return StringUtils.isEmpty(s) ? null : new ConceptReference(s);
 	}
 }

@@ -14,21 +14,22 @@
 
 package org.openmrs.module.kenyacore.converter;
 
-import org.openmrs.module.kenyacore.UIResource;
+import org.apache.commons.lang3.StringUtils;
+import org.openmrs.module.kenyacore.UiResource;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts a String to a UIResource
+ * Converts a String to a UiResource
  */
 @Component
-public class StringToUIResourceConverter implements Converter<String, UIResource> {
+public class StringToUiResourceConverter implements Converter<String, UiResource> {
 
 	/**
 	 * @see Converter#convert(Object)
 	 */
 	@Override
-	public UIResource convert(String s) {
-		return new UIResource(s);
+	public UiResource convert(String s) {
+		return StringUtils.isEmpty(s) ? null : new UiResource(s);
 	}
 }

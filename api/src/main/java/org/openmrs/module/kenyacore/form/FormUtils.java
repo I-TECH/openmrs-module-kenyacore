@@ -20,7 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
-import org.openmrs.module.kenyacore.UIResource;
+import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.openmrs.util.OpenmrsUtil;
 
@@ -41,9 +41,9 @@ public class FormUtils {
 	 * @param form the form
 	 * @return the XML resource
 	 */
-	public static UIResource getFormXmlResource(Form form) {
+	public static UiResource getFormXmlResource(Form form) {
 		FormResource resource = Context.getFormService().getFormResource(form, RESOURCE_HFE_XML_PATH);
-		return resource != null ? new UIResource((String) resource.getValue()) : null;
+		return resource != null ? new UiResource((String) resource.getValue()) : null;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class FormUtils {
 	 * @param form the form
 	 * @param xmlResource the UI resource
 	 */
-	public static void setFormXmlResource(Form form, UIResource xmlResource) {
+	public static void setFormXmlResource(Form form, UiResource xmlResource) {
 		FormResource resXmlPath = Context.getFormService().getFormResource(form, RESOURCE_HFE_XML_PATH);
 
 		if (resXmlPath == null) {
@@ -74,7 +74,7 @@ public class FormUtils {
 	 * @throws RuntimeException if form has no xml path or path is invalid
 	 */
 	public static HtmlForm getHtmlForm(Form form, ResourceFactory resourceFactory) throws IOException {
-		UIResource xmlResource = getFormXmlResource(form);
+		UiResource xmlResource = getFormXmlResource(form);
 
 		if (xmlResource == null) {
 			// Look in the database

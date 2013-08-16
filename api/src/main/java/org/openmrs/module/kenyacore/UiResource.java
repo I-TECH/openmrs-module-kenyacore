@@ -17,17 +17,17 @@ package org.openmrs.module.kenyacore;
 /**
  * Wrapper for UI Framework managed resource locations
  */
-public class UIResource {
+public class UiResource {
 
 	private String provider;
 
 	private String path;
 
 	/**
-	 * Constructs a UIResource from a string in the format <provider>:<path>
+	 * Constructs a UiResource from a string in the format <provider>:<path>
 	 * @param providerAndPath the string value
 	 */
-	public UIResource(String providerAndPath) {
+	public UiResource(String providerAndPath) {
 		String[] components = providerAndPath.split(":");
 
 		if (components.length != 2) {
@@ -39,11 +39,11 @@ public class UIResource {
 	}
 
 	/**
-	 * Constructs a UIResource from the given provider and path values
+	 * Constructs a UiResource from the given provider and path values
 	 * @param provider the provider
 	 * @param path the path
 	 */
-	public UIResource(String provider, String path) {
+	public UiResource(String provider, String path) {
 		this.provider = provider;
 		this.path = path;
 	}
@@ -80,7 +80,7 @@ public class UIResource {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		UIResource that = (UIResource) o;
+		UiResource that = (UiResource) o;
 
 		return path.equals(that.path) && provider.equals(that.provider);
 	}

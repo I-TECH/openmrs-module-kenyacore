@@ -22,7 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
-import org.openmrs.module.kenyacore.UIResource;
+import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 
@@ -51,13 +51,13 @@ public class FormUtilsTest extends BaseModuleContextSensitiveTest {
 		resource.setValue("kenyacore:test1.xml");
 		Context.getFormService().saveFormResource(resource);
 
-		Assert.assertEquals(new UIResource("kenyacore", "test1.xml"), FormUtils.getFormXmlResource(form));
+		Assert.assertEquals(new UiResource("kenyacore", "test1.xml"), FormUtils.getFormXmlResource(form));
 	}
 
 	@Test
 	public void setFormXmlPath_shouldSetPathAsFormResource() {
 		Form form = Context.getFormService().getForm(1);
-		FormUtils.setFormXmlResource(form, new UIResource("kenyacore", "test2.xml"));
+		FormUtils.setFormXmlResource(form, new UiResource("kenyacore", "test2.xml"));
 
 		FormResource resource = Context.getFormService().getFormResource(form, FormUtils.RESOURCE_HFE_XML_PATH);
 		Assert.assertEquals("kenyacore:test2.xml", resource.getValue());
@@ -66,7 +66,7 @@ public class FormUtilsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getHtmlForm_shouldCreateDynamicHtmlFormFormXmlPathResource() throws Exception {
 		Form form = Context.getFormService().getForm(1);
-		FormUtils.setFormXmlResource(form, new UIResource("kenyacore", "test3.xml"));
+		FormUtils.setFormXmlResource(form, new UiResource("kenyacore", "test3.xml"));
 
 		// Mock the resource factory so it will provide this xml content at kenyacore:test3.xml
 		String xmlContent = "<htmlform>Test</htmlform>";

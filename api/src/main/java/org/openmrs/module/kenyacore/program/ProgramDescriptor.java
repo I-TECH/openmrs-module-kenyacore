@@ -16,7 +16,7 @@ package org.openmrs.module.kenyacore.program;
 
 import org.openmrs.Program;
 import org.openmrs.calculation.patient.PatientCalculation;
-import org.openmrs.module.kenyacore.UIResource;
+import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyacore.lab.LabTestCatalog;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
@@ -44,7 +44,7 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 
 	private LabTestCatalog labCatalog;
 
-	private Map<String, UIResource> fragments;
+	private Map<String, UiResource> fragments;
 
 	/**
 	 * @see org.openmrs.module.kenyacore.AbstractEntityDescriptor#getTarget()
@@ -178,7 +178,7 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	 * Gets the fragments
 	 * @return the fragment resources
 	 */
-	public Map<String, UIResource> getFragments() {
+	public Map<String, UiResource> getFragments() {
 		return fragments;
 	}
 
@@ -186,7 +186,7 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	 * Sets the fragments
 	 * @param fragments the fragment resources
 	 */
-	public void setFragments(Map<String, UIResource> fragments) {
+	public void setFragments(Map<String, UiResource> fragments) {
 		this.fragments = fragments;
 	}
 }

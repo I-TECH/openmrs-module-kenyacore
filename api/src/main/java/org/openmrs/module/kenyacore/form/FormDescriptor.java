@@ -17,7 +17,7 @@ package org.openmrs.module.kenyacore.form;
 import org.openmrs.Form;
 import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
-import org.openmrs.module.kenyacore.UIResource;
+import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 
 import java.util.Set;
@@ -41,9 +41,9 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 
 	private String autoCreateVisitTypeUuid;
 
-	private UIResource icon;
+	private UiResource icon;
 
-	private UIResource htmlform;
+	private UiResource htmlform;
 
 	/**
 	 * @see org.openmrs.module.kenyacore.AbstractEntityDescriptor#getTarget()
@@ -105,7 +105,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 	 * Gets the icon resource
 	 * @return the icon
 	 */
-	public UIResource getIcon() {
+	public UiResource getIcon() {
 		return icon;
 	}
 
@@ -113,7 +113,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 	 * Sets the icon resource
 	 * @param icon the icon
 	 */
-	public void setIcon(UIResource icon) {
+	public void setIcon(UiResource icon) {
 		this.icon = icon;
 	}
 
@@ -121,7 +121,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 	 * Gets the htmlform resource
 	 * @return the htmlform
 	 */
-	public UIResource getHtmlform() {
+	public UiResource getHtmlform() {
 		return htmlform;
 	}
 
@@ -129,7 +129,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 	 * Sets the htmlform resource
 	 * @param htmlform the htmlform
 	 */
-	public void setHtmlform(UIResource htmlform) {
+	public void setHtmlform(UiResource htmlform) {
 		this.htmlform = htmlform;
 	}
 }
