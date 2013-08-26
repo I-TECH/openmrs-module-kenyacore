@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Tests for {@link org.openmrs.module.kenyacore.program.ProgramManager}
+ * Tests for {@link ProgramManager}
  */
 public class ProgramManagerTest extends BaseModuleContextSensitiveTest {
 
@@ -35,8 +35,6 @@ public class ProgramManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Before
 	public void setup() throws Exception {
-		executeDataSet("test-data.xml");
-
 		programManager.refresh();
 	}
 
