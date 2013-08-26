@@ -4,7 +4,59 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<!-- ==================== Lab test catalogs ======================== -->
+	<!-- ==================== Apps ======================== -->
+
+	<bean id="test.app.app1" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+		<property name="id" value="test.test"/>
+		<property name="label" value="Test"/>
+	</bean>
+
+	<!-- ==================== Programs ======================== -->
+
+	<bean id="test.program.hiv" class="org.openmrs.module.kenyacore.program.ProgramDescriptor">
+		<property name="targetUuid" value="da4a0391-ba62-4fad-ad66-1e3722d16380" />
+		<property name="visitForms">
+			<set>
+				<ref bean="test.form.basic" />
+			</set>
+		</property>
+		<property name="order" value="100" />
+	</bean>
+
+	<!-- ==================== Forms ======================== -->
+
+	<bean id="test.config.form" class="org.openmrs.module.kenyacore.form.FormConfiguration">
+		<property name="generalPatientForms">
+			<set>
+				<ref bean="test.form.basic" />
+			</set>
+		</property>
+	</bean>
+
+	<bean id="test.form.basic" class="org.openmrs.module.kenyacore.form.FormDescriptor">
+		<property name="targetUuid" value="d9218f76-6c39-45f4-8efa-4c5c6c199f50" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="order" value="100" />
+	</bean>
+
+	<!-- ==================== Identifiers ======================== -->
+
+	<!-- OpenMRS Identification Number -->
+	<bean id="test.identifier.openmrs" class="org.openmrs.module.kenyacore.identifier.IdentifierDescriptor">
+		<property name="targetUuid" value="1a339fe9-38bc-4ab3-b180-320988c0b968" />
+		<property name="order" value="1001" />
+	</bean>
+
+	<!-- Old Identification Number -->
+	<bean id="test.identifier.old" class="org.openmrs.module.kenyacore.identifier.IdentifierDescriptor">
+		<property name="targetUuid" value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c" />
+	</bean>
+
+	<!-- ==================== Lab ======================== -->
 
 	<bean id="test.config.lab" class="org.openmrs.module.kenyacore.lab.LabConfiguration">
 		<property name="generalCatalogs">
@@ -28,26 +80,6 @@
 				</entry>
 			</map>
 		</property>
-	</bean>
-
-	<!-- ==================== Programs ======================== -->
-
-	<bean id="test.program.hiv" class="org.openmrs.module.kenyacore.program.ProgramDescriptor">
-		<property name="targetUuid" value="da4a0391-ba62-4fad-ad66-1e3722d16380" />
-		<property name="order" value="100" />
-	</bean>
-
-	<!-- ==================== Identifiers ======================== -->
-
-	<!-- OpenMRS Identification Number -->
-	<bean id="test.identifier.openmrs" class="org.openmrs.module.kenyacore.identifier.IdentifierDescriptor">
-		<property name="targetUuid" value="1a339fe9-38bc-4ab3-b180-320988c0b968" />
-		<property name="order" value="1001" />
-	</bean>
-
-	<!-- Old Identification Number -->
-	<bean id="test.identifier.old" class="org.openmrs.module.kenyacore.identifier.IdentifierDescriptor">
-		<property name="targetUuid" value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c" />
 	</bean>
 
 	<!--

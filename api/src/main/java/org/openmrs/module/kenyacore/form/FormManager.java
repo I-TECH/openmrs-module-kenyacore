@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -221,7 +222,10 @@ public class FormManager implements ContentManager {
 
 		forms.addAll(generalVisitForms);
 
-		for (ProgramDescriptor activeProgram : programManager.getPatientActivePrograms(visit.getPatient(), visit.getStartDatetime())) {
+		// Consider all programs active on the visit stop date, or if visit is still open, active now
+		Date activeOnDate = (visit.getStopDatetime() != null) ? visit.getStopDatetime() : new Date();
+
+		for (ProgramDescriptor activeProgram : programManager.getPatientActivePrograms(visit.getPatient(), activeOnDate)) {
 			forms.addAll(activeProgram.getVisitForms());
 		}
 
