@@ -87,9 +87,7 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implemen
 
 		AbstractEntityDescriptor that = (AbstractEntityDescriptor) o;
 
-		if (!targetUuid.equals(that.targetUuid)) return false;
-
-		return true;
+		return targetUuid.equals(that.targetUuid);
 	}
 
 	/**

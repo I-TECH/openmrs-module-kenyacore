@@ -35,7 +35,6 @@ import static org.hamcrest.Matchers.*;
  *
  * Re-enable once moved into new kenyacore module where kenyaemr content won't conflict
  */
-@Ignore
 public class IdentifierManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
