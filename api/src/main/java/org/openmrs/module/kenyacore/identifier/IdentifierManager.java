@@ -14,6 +14,8 @@
 
 package org.openmrs.module.kenyacore.identifier;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
@@ -36,10 +38,20 @@ import java.util.Map;
 @Component
 public class IdentifierManager implements ContentManager {
 
+	protected static final Log log = LogFactory.getLog(IdentifierManager.class);
+
 	protected Map<String, IdentifierDescriptor> identifiers = new LinkedHashMap<String, IdentifierDescriptor>();
 
 	/**
-	 * Updates this manager after context refresh
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 40;
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {
@@ -56,6 +68,8 @@ public class IdentifierManager implements ContentManager {
 			}
 
 			identifiers.put(descriptor.getTargetUuid(), descriptor);
+
+			log.debug("Registered identifier type '" + descriptor.getTarget().getName() + "' (" + descriptor.getTargetUuid() + ")");
 		}
 	}
 

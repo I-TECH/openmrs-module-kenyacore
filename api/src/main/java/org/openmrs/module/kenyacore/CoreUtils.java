@@ -56,14 +56,14 @@ public class CoreUtils {
 		try {
 			PatientCalculation calc = clazz.newInstance();
 
-			if (configuration != null && clazz.isAssignableFrom(ConfigurableCalculation.class)) {
+			if (configuration != null && ConfigurableCalculation.class.isAssignableFrom(clazz)) {
 				((ConfigurableCalculation) calc).setConfiguration(configuration);
 			}
 
 			return calc;
 		}
 		catch (Exception ex) {
-			return null;
+			throw new RuntimeException(ex);
 		}
 	}
 }

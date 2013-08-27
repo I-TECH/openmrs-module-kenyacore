@@ -24,11 +24,8 @@ import org.openmrs.calculation.CalculationProvider;
 import org.openmrs.calculation.InvalidCalculationException;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.ContentManager;
-import org.openmrs.module.kenyacore.CoreConstants;
 import org.openmrs.module.kenyacore.CoreUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
@@ -46,7 +43,15 @@ public class CalculationManager implements ContentManager, CalculationProvider {
 	private List<Class<? extends PatientFlagCalculation>> flagCalculationClasses = new ArrayList<Class<? extends PatientFlagCalculation>>();
 
 	/**
-	 * Refreshes registered calculation classes
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 50;
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {
@@ -69,7 +74,7 @@ public class CalculationManager implements ContentManager, CalculationProvider {
 				e.printStackTrace();
 			}
 
-			log.info("Found calculation class :" + bd.getBeanClassName());
+			log.debug("Registered calculation class " + bd.getBeanClassName());
 		}
 	}
 

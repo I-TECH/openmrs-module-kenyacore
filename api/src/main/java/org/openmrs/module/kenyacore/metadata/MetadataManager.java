@@ -42,7 +42,15 @@ public class MetadataManager implements ContentManager {
 	protected static final Log log = LogFactory.getLog(MetadataManager.class);
 
 	/**
-	 * Refreshes all metadata
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 10; // First because others will use metadata loaded by it
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {
@@ -120,6 +128,9 @@ public class MetadataManager implements ContentManager {
 			metadataImporter.setImportConfig(ImportConfig.valueOf(ImportMode.MIRROR));
 			metadataImporter.loadSerializedPackageStream(loader.getResourceAsStream(filename));
 			metadataImporter.importPackage();
+
+			log.debug("Loaded metadata package '" + filename + "'");
+
 			return true;
 
 		} catch (Exception ex) {

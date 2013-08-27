@@ -33,7 +33,15 @@ public class ReportManager implements ContentManager {
 	private Map<String, ReportBuilder> reportBuilders = new LinkedHashMap<String, ReportBuilder>();
 
 	/**
-	 * Refreshes the list of report builders from application context
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 80;
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {

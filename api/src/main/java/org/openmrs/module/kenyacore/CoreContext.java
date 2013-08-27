@@ -1,0 +1,131 @@
+/**
+ * The contents of this file are subject to the OpenMRS Public License
+ * Version 1.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://license.openmrs.org
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ */
+
+package org.openmrs.module.kenyacore;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Master content manager, used as a registered singleton
+ */
+@Component
+public class CoreContext {
+
+	protected static final Log log = LogFactory.getLog(CoreContext.class);
+
+	private Map<Class<? extends ContentManager>, ContentManager> managers = new HashMap<Class<? extends ContentManager>, ContentManager>();
+
+	boolean refreshed = false;
+
+	/**
+	 * Sets the content managers
+	 * @param managers the managers
+	 */
+	@Autowired
+	public void setManagers(Collection<ContentManager> managers) {
+		this.managers = new HashMap<Class<? extends ContentManager>, ContentManager>();
+
+		// Re-organize into map of classes to components
+		for (ContentManager manager : managers) {
+			this.managers.put(manager.getClass(), manager);
+		}
+	}
+
+	/**
+	 * Gets the specified manager
+	 * @return the manager
+	 */
+	public <T extends ContentManager> T getManager(Class<? extends ContentManager> managerClass) {
+		if (!managers.containsKey(managerClass)) {
+			throw new IllegalArgumentException("No manager component found for " + managerClass.getName());
+		}
+
+		return (T) managers.get(managerClass);
+	}
+
+	/**
+	 * Utility method to get the singleton instance from the application context in situations where you
+	 * can't use @Autowired or @SpringBean. Use as a last resort.
+	 * @return the singleton instance
+	 */
+	public static CoreContext getInstance() {
+		return getSingletonComponent(CoreContext.class);
+	}
+
+	/**
+	 * Refresh all content
+	 */
+	public synchronized void refresh() {
+		refreshed = false;
+
+		// Sort content managers by priority
+		List<ContentManager> sorted = new ArrayList<ContentManager>(managers.values());
+		Collections.sort(sorted, new Comparator<ContentManager>() {
+			@Override
+			public int compare(ContentManager cm1, ContentManager cm2) {
+				return cm1.getPriority() - cm2.getPriority();
+			}
+		});
+
+		// Refresh each content manager
+		for (ContentManager manager : sorted) {
+			log.debug("Refreshing " + manager);
+
+			manager.refresh();
+		}
+
+		refreshed = true;
+	}
+
+	/**
+	 * Returns whether all content was successfully refreshed
+	 * @return
+	 */
+	public boolean isRefreshed() {
+		return refreshed;
+	}
+
+	/**
+	 * Fetches a singleton component from the application context
+	 * @param clazz the class of the component
+	 * @param <T> the class of the component
+	 * @return the singleton instance
+	 * @throws IllegalArgumentException if no such instance exists or more than one instance exists
+	 */
+	protected static <T> T getSingletonComponent(Class<T> clazz) {
+		List<T> all = Context.getRegisteredComponents(clazz);
+		if (all.size() == 0) {
+			throw new IllegalArgumentException("No such object in the application context");
+		}
+		// Because of TRUNK-3889, singleton beans get instantiated twice
+		//else if (all.size() > 1) {
+		//	throw new RuntimeException("Object is not a singleton in the application context");
+		//}
+		else {
+			return all.get(0);
+		}
+	}
+}

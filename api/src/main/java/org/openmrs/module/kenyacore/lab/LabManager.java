@@ -41,7 +41,15 @@ public class LabManager implements ContentManager {
 	private ProgramManager programManager;
 
 	/**
-	 * Reloads all lab data from configurations
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 20;
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {

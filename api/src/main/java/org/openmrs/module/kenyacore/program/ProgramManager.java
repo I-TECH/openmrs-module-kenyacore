@@ -14,6 +14,8 @@
 
 package org.openmrs.module.kenyacore.program;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.Program;
@@ -44,7 +46,17 @@ import java.util.Map;
 @Component
 public class ProgramManager implements ContentManager {
 
+	protected static final Log log = LogFactory.getLog(ProgramManager.class);
+
 	private Map<String, ProgramDescriptor> programs = new LinkedHashMap<String, ProgramDescriptor>();
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 60;
+	}
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
@@ -64,6 +76,8 @@ public class ProgramManager implements ContentManager {
 			}
 
 			programs.put(descriptor.getTargetUuid(), descriptor);
+
+			log.debug("Registered program '" + descriptor.getTarget().getName() + "' (" + descriptor.getTargetUuid() + ")");
 		}
 	}
 

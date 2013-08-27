@@ -63,7 +63,15 @@ public class FormManager implements ContentManager {
 	private ProgramManager programManager;
 
 	/**
-	 * Updates form manager after context refresh
+	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return 70;
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {
@@ -95,7 +103,7 @@ public class FormManager implements ContentManager {
 				FormUtils.setFormXmlResource(form, formDescriptor.getHtmlform());
 			}
 
-			log.info("Registered form '" + form.getName() + "' (" + form.getUuid() + ")");
+			log.debug("Registered form '" + form.getName() + "' (" + form.getUuid() + ")");
 		}
 
 		// Process form configuration beans
