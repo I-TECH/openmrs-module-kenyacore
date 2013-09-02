@@ -15,6 +15,7 @@
 package org.openmrs.module.kenyacore.metadata;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -37,19 +38,28 @@ public class MetadataUtils {
 	 * @throws IllegalArgumentException if no such concept could be found
 	 */
 	public static Concept getConcept(String identifier) {
-		Concept concept = null;
+		Concept concept;
 
 		if (identifier.contains(":")) {
 			String[] tokens = identifier.split(":");
 			concept = Context.getConceptService().getConceptByMapping(tokens[1].trim(), tokens[0].trim());
 		}
 		else {
-			// Assume its a UUID
+			// Assume it's a UUID
 			concept = Context.getConceptService().getConceptByUuid(identifier);
 		}
 
 		if (concept == null) {
 			throw new IllegalArgumentException("No concept with identifier '" + identifier + "'");
+		}
+
+		// getConcept doesn't always return ConceptNumeric for numeric concepts
+		if (concept.getDatatype().isNumeric() && !(concept instanceof ConceptNumeric)) {
+			concept = Context.getConceptService().getConceptNumeric(concept.getId());
+
+			if (concept == null) {
+				throw new IllegalArgumentException("Unable to load numeric concept for '" + identifier + "'");
+			}
 		}
 
 		return concept;
