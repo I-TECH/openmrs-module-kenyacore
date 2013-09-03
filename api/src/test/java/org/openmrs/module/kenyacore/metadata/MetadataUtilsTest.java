@@ -25,10 +25,12 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.VisitAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Tests for {@link MetadataUtils}
@@ -216,6 +218,31 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void getProgram_shouldThrowExceptionForNonExistent() {
 		MetadataUtils.getProgram(INVALID_UUID);
+	}
+
+	/**
+	 * @see MetadataUtils#getVisitAttributeType(String)
+	 */
+	@Test
+	public void getVisitAttributeType_shouldFetchByUuid() {
+		// No location attribute type in the standard test data so make one..
+		VisitAttributeType visitAttrType = new VisitAttributeType();
+		visitAttrType.setName("Test Type");
+		visitAttrType.setMinOccurs(0);
+		visitAttrType.setMaxOccurs(1);
+		visitAttrType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FreeTextDatatype");
+		Context.getVisitService().saveVisitAttributeType(visitAttrType);
+		String savedUuid = visitAttrType.getUuid();
+
+		Assert.assertThat(MetadataUtils.getVisitAttributeType(savedUuid), is(visitAttrType));
+	}
+
+	/**
+	 * @see MetadataUtils#getVisitAttributeType(String)
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void getVisitAttributeType_shouldThrowExceptionForNonExistent() {
+		MetadataUtils.getVisitAttributeType(INVALID_UUID);
 	}
 
 	/**

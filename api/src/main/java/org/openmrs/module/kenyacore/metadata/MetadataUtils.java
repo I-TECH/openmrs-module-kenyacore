@@ -23,6 +23,7 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 
@@ -154,6 +155,20 @@ public class MetadataUtils {
 		Program ret = Context.getProgramWorkflowService().getProgramByUuid(uuid);
 		if (ret == null) {
 			throw new IllegalArgumentException("No such program with identifier " + uuid);
+		}
+		return ret;
+	}
+
+	/**
+	 * Gets the specified visit attribute type
+	 * @param uuid the uuid
+	 * @return the visit attribute type
+	 * @throws IllegalArgumentException if no such visit attribute type exists
+	 */
+	public static VisitAttributeType getVisitAttributeType(String uuid) {
+		VisitAttributeType ret = Context.getVisitService().getVisitAttributeTypeByUuid(uuid);
+		if (ret == null) {
+			throw new IllegalArgumentException("No such visit attribute type with identifier " + uuid);
 		}
 		return ret;
 	}
