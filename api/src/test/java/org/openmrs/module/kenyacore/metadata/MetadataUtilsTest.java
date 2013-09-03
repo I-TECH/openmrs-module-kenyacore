@@ -225,16 +225,8 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getVisitAttributeType_shouldFetchByUuid() {
-		// No location attribute type in the standard test data so make one..
-		VisitAttributeType visitAttrType = new VisitAttributeType();
-		visitAttrType.setName("Test Type");
-		visitAttrType.setMinOccurs(0);
-		visitAttrType.setMaxOccurs(1);
-		visitAttrType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FreeTextDatatype");
-		Context.getVisitService().saveVisitAttributeType(visitAttrType);
-		String savedUuid = visitAttrType.getUuid();
-
-		Assert.assertThat(MetadataUtils.getVisitAttributeType(savedUuid), is(visitAttrType));
+		VisitAttributeType auditDate = Context.getVisitService().getVisitAttributeType(1);
+		Assert.assertThat(MetadataUtils.getVisitAttributeType("8770f6d6-7673-11e0-8f03-001e378eb67e"), is(auditDate));
 	}
 
 	/**
