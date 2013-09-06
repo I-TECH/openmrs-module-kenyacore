@@ -23,21 +23,21 @@ import java.util.Set;
  */
 public class LabConfiguration extends AbstractContentConfiguration {
 
-	private Set<LabTestCatalog> generalCatalogs;
+	private Set<LabTestCatalog> commonCatalogs;
 
 	/**
 	 * Gets the general test catalogs
 	 * @return the catalogs
 	 */
-	public Set<LabTestCatalog> getGeneralCatalogs() {
-		return generalCatalogs;
+	public Set<LabTestCatalog> getCommonCatalogs() {
+		return commonCatalogs;
 	}
 
 	/**
 	 * Sets the general catalogs
-	 * @param generalCatalogs the catalogs
+	 * @param commonCatalogs the catalogs
 	 */
-	public void setGeneralCatalogs(Set<LabTestCatalog> generalCatalogs) {
-		this.generalCatalogs = generalCatalogs;
+	public void setCommonCatalogs(Set<LabTestCatalog> commonCatalogs) {
+		this.commonCatalogs = commonCatalogs;
 	}
 }

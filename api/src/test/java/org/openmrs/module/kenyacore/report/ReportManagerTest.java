@@ -14,31 +14,51 @@
 
 package org.openmrs.module.kenyacore.report;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+
 /**
- * Tests for {@link org.openmrs.module.kenyacore.report.ReportManager}
+ * Tests for {@link ReportManager}
  */
 public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
 	private ReportManager reportManager;
 
+	/**
+	 * Setup each test
+	 */
 	@Before
 	public void setup() {
 		reportManager.refresh();
 	}
 
 	/**
-	 * @see ReportManager#getAllReportBuilders()
+	 * @see ReportManager#getAllReportDescriptors()
 	 */
 	@Test
 	public void getAllReportBuilders() {
-		// TODO add some test report builders
-		Assert.assertNotNull(reportManager.getAllReportBuilders());
+		List<ReportDescriptor> descriptors = reportManager.getAllReportDescriptors();
+		Assert.assertThat(descriptors.size(), is(1));
+		Assert.assertThat(descriptors.get(0), is(instanceOf(CalculationReportDescriptor.class)));
+
+		CalculationReportDescriptor calcReport = (CalculationReportDescriptor) descriptors.get(0);
+		Assert.assertThat(calcReport.getId(), is("test.report.test1"));
+	}
+
+	/**
+	 * @see ReportManager#getReportDescriptor(String)
+	 */
+	@Test
+	public void getReportDescriptor() {
+		ReportDescriptor descriptor = reportManager.getReportDescriptor("test.report.test1");
+		Assert.assertThat(descriptor, is(instanceOf(CalculationReportDescriptor.class)));
 	}
 }

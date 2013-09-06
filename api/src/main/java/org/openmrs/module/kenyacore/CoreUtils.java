@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Utility functions
+ * General utility functions
  */
 public class CoreUtils {
 
@@ -44,26 +44,5 @@ public class CoreUtils {
 		}
 
 		return new ArrayList(merged);
-	}
-
-	/**
-	 * Instantiates and configures a patient calculation
-	 * @param clazz the calculation class
-	 * @param configuration the configuration
-	 * @return the calculation instance
-	 */
-	public static PatientCalculation instantiateCalculation(Class<? extends PatientCalculation> clazz, String configuration) {
-		try {
-			PatientCalculation calc = clazz.newInstance();
-
-			if (configuration != null && ConfigurableCalculation.class.isAssignableFrom(clazz)) {
-				((ConfigurableCalculation) calc).setConfiguration(configuration);
-			}
-
-			return calc;
-		}
-		catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
 	}
 }

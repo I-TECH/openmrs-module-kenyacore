@@ -26,7 +26,7 @@ import org.openmrs.calculation.patient.PatientCalculationService;
 import org.openmrs.calculation.result.CalculationResult;
 import org.openmrs.calculation.result.ResultUtil;
 import org.openmrs.module.kenyacore.ContentManager;
-import org.openmrs.module.kenyacore.CoreUtils;
+import org.openmrs.module.kenyacore.calculation.CalculationUtils;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
@@ -128,7 +128,7 @@ public class ProgramManager implements ContentManager {
 
 		Class<? extends PatientCalculation> clazz = descriptor.getEligibilityCalculation();
 
-		PatientCalculation calculation = CoreUtils.instantiateCalculation(clazz, null);
+		PatientCalculation calculation = CalculationUtils.instantiateCalculation(clazz, null);
 
 		CalculationResult result = Context.getService(PatientCalculationService.class).evaluate(patient.getId(), calculation);
 		return ResultUtil.isTrue(result);

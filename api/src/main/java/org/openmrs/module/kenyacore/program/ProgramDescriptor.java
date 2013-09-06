@@ -18,9 +18,9 @@ import org.openmrs.Program;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
-import org.openmrs.module.kenyacore.lab.LabTestCatalog;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
+import org.openmrs.module.kenyacore.report.ReportDescriptor;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 
 	private Set<FormDescriptor> visitForms;
 
-	private LabTestCatalog labCatalog;
+	private Set<ReportDescriptor> reports;
 
 	private Map<String, UiResource> fragments;
 
@@ -159,19 +159,31 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	}
 
 	/**
-	 * Gets the lab test catalog
-	 * @return the lab test catalog
+	 * Gets the reports
+	 * @return the reports
 	 */
-	public LabTestCatalog getLabCatalog() {
-		return labCatalog;
+	public Set<ReportDescriptor> getReports() {
+		return reports;
 	}
 
 	/**
-	 * Sets the lab test catalog
-	 * @param labCatalog the lab test catalog
+	 * Sets the reports
+	 * @param reports the reports
 	 */
-	public void setLabCatalog(LabTestCatalog labCatalog) {
-		this.labCatalog = labCatalog;
+	public void setReports(Set<ReportDescriptor> reports) {
+		this.reports = reports;
+	}
+
+	/**
+	 * Adds an additional report
+	 * @param report the report
+	 */
+	public void addReport(ReportDescriptor report) {
+		if (reports == null) {
+			reports = new HashSet<ReportDescriptor>();
+		}
+
+		reports.add(report);
 	}
 
 	/**

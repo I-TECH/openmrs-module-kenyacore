@@ -18,16 +18,11 @@ import org.openmrs.Concept;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.ContentManager;
-import org.openmrs.module.kenyacore.program.ProgramDescriptor;
-import org.openmrs.module.kenyacore.program.ProgramManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Lab manager
@@ -35,10 +30,7 @@ import java.util.TreeSet;
 @Component
 public class LabManager implements ContentManager {
 
-	private List<LabTestCatalog> generalCatalogs = new ArrayList<LabTestCatalog>();
-
-	@Autowired
-	private ProgramManager programManager;
+	private List<LabTestCatalog> commonCatalogs = new ArrayList<LabTestCatalog>();
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
@@ -53,13 +45,13 @@ public class LabManager implements ContentManager {
 	 */
 	@Override
 	public synchronized void refresh() {
-		generalCatalogs.clear();
+		commonCatalogs.clear();
 
 		// Process form configuration beans
 		for (LabConfiguration configuration : Context.getRegisteredComponents(LabConfiguration.class)) {
-			// Register general test catalogs
-			if (configuration.getGeneralCatalogs() != null) {
-				generalCatalogs.addAll(configuration.getGeneralCatalogs());
+			// Register common test catalogs
+			if (configuration.getCommonCatalogs() != null) {
+				commonCatalogs.addAll(configuration.getCommonCatalogs());
 			}
 		}
 	}
@@ -71,7 +63,7 @@ public class LabManager implements ContentManager {
 	public List<String> getCategories() {
 		List<String> categories = new ArrayList<String>();
 
-		for (LabTestCatalog catalog : generalCatalogs) {
+		for (LabTestCatalog catalog : commonCatalogs) {
 			categories.addAll(catalog.getTests().keySet());
 		}
 
@@ -85,7 +77,7 @@ public class LabManager implements ContentManager {
 	 */
 	public List<LabTestDefinition> getTests(String category) {
 
-		for (LabTestCatalog catalog : generalCatalogs) {
+		for (LabTestCatalog catalog : commonCatalogs) {
 			if (catalog.getTests().containsKey(category)) {
 				return catalog.getTests().get(category);
 			}
@@ -100,7 +92,7 @@ public class LabManager implements ContentManager {
 	 * @return true if concept is a lab test
 	 */
 	public boolean isLabTest(Concept concept) {
-		for (LabTestCatalog catalog : generalCatalogs) {
+		for (LabTestCatalog catalog : commonCatalogs) {
 			for (Map.Entry<String, List<LabTestDefinition>> entry : catalog.getTests().entrySet()) {
 				for (LabTestDefinition test : entry.getValue()) {
 					if (test.getConcept().getTarget().equals(concept)) {
@@ -118,14 +110,6 @@ public class LabManager implements ContentManager {
 	 * @return the catalog descriptors
 	 */
 	public List<LabTestCatalog> getCatalogsForVisit(Visit visit) {
-		Set<LabTestCatalog> catalogs = new TreeSet<LabTestCatalog>();
-
-		catalogs.addAll(generalCatalogs);
-
-		for (ProgramDescriptor activeProgram : programManager.getPatientActivePrograms(visit.getPatient(), visit.getStartDatetime())) {
-			catalogs.add(activeProgram.getLabCatalog());
-		}
-
-		return new ArrayList<LabTestCatalog>(catalogs);
+		return new ArrayList<LabTestCatalog>(commonCatalogs);
 	}
 }

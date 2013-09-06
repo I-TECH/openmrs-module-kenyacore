@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>kenyacore</artifactId>
-	<version>0.8.3-SNAPSHOT</version>
+	<version>0.9-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 	<name>KenyaCore</name>

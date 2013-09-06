@@ -17,7 +17,9 @@ package org.openmrs.module.kenyacore.report;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.ContentManager;
+import org.openmrs.module.kenyacore.program.ProgramDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -30,7 +32,9 @@ public class ReportManager implements ContentManager {
 
 	protected static final Log log = LogFactory.getLog(ReportManager.class);
 
-	private Map<String, ReportBuilder> reportBuilders = new LinkedHashMap<String, ReportBuilder>();
+	private Map<String, ReportDescriptor> reports = new LinkedHashMap<String, ReportDescriptor>();
+
+	private List<ReportDescriptor> commonReports = new ArrayList<ReportDescriptor>();
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
@@ -45,44 +49,67 @@ public class ReportManager implements ContentManager {
 	 */
 	@Override
 	public synchronized void refresh() {
-		reportBuilders.clear();
+		reports.clear();
 
-		for (ReportBuilder builder : Context.getRegisteredComponents(ReportBuilder.class)) {
-			reportBuilders.put(builder.getClass().getName(), builder);
+		// Process report descriptor components
+		for (ReportDescriptor descriptor : Context.getRegisteredComponents(ReportDescriptor.class)) {
+			reports.put(descriptor.getId(), descriptor);
 
-			log.debug("Found report builder class: " + builder.getClass().getName());
+			log.debug("Registered report descriptor: " + descriptor.getId());
 		}
-	}
 
-	/**
-	 * Gets the report manager with the given name
-	 * @param className the report builder class name
-	 * @return the report builder
-	 */
-	public ReportBuilder getReportBuilder(String className) {
-		return reportBuilders.get(className);
-	}
+		// Process form configuration beans
+		for (ReportConfiguration configuration : Context.getRegisteredComponents(ReportConfiguration.class)) {
+			// Register common reports
+			if (configuration.getCommonReports() != null) {
+				commonReports.addAll(configuration.getCommonReports());
+			}
 
-	/**
-	 * Gets all report builders
-	 * @@return the list of report builders
-	 */
-	public List<ReportBuilder> getAllReportBuilders() {
-		return new ArrayList<ReportBuilder>(reportBuilders.values());
-	}
+			// Register additional program specific reports
+			if (configuration.getProgramReports() != null) {
+				Map<ProgramDescriptor, Set<ReportDescriptor>> programReports = configuration.getProgramReports();
 
-	/**
-	 * Gets the report builders with the given tag
-	 * @param tag the tag
-	 * @return the list of report builders
-	 */
-	public List<ReportBuilder> getReportBuildersByTag(String tag) {
-		List<ReportBuilder> ret = new ArrayList<ReportBuilder>();
-		for (ReportBuilder candidate : reportBuilders.values()) {
-			if (candidate.getTags() != null && Arrays.asList(candidate.getTags()).contains(tag)) {
-				ret.add(candidate);
+				for (ProgramDescriptor programDescriptor : programReports.keySet()) {
+					for (ReportDescriptor report : programReports.get(programDescriptor)) {
+						programDescriptor.addReport(report);
+					}
+				}
 			}
 		}
-		return ret;
+	}
+
+	/**
+	 * Gets a report descriptor by id
+	 * @param id the descriptor id
+	 * @return the report descriptor
+	 */
+	public ReportDescriptor getReportDescriptor(String id) {
+		return reports.get(id);
+	}
+
+	/**
+	 * Gets all report descriptors
+	 * @@return the list of report descriptors
+	 */
+	public List<ReportDescriptor> getAllReportDescriptors() {
+		return new ArrayList<ReportDescriptor>(reports.values());
+	}
+
+	/**
+	 * Gets all general (non program specific) report builders
+	 * @@return the list of report builders
+	 */
+	public List<ReportDescriptor> getCommonReports(AppDescriptor app) {
+		List<ReportDescriptor> filtered = new ArrayList<ReportDescriptor>();
+
+		for (ReportDescriptor descriptor : commonReports) {
+			// Filter by app id
+			if (app != null && descriptor.getApps() != null && !descriptor.getApps().contains(app)) {
+				continue;
+			}
+			filtered.add(descriptor);
+		}
+
+		return filtered;
 	}
 }

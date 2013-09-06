@@ -26,7 +26,7 @@
 	<!-- ==================== Forms ======================== -->
 
 	<bean id="test.config.form" class="org.openmrs.module.kenyacore.form.FormConfiguration">
-		<property name="generalPatientForms">
+		<property name="commonPatientForms">
 			<set>
 				<ref bean="test.form.basic" />
 			</set>
@@ -56,10 +56,22 @@
 		<property name="targetUuid" value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c" />
 	</bean>
 
+	<!-- ==================== Reports ======================== -->
+
+	<bean id="test.report.test1" class="org.openmrs.module.kenyacore.report.CalculationReportDescriptor">
+		<property name="name" value="Test Report" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="displayIdentifier" ref="test.identifier.openmrs" />
+	</bean>
+
 	<!-- ==================== Lab ======================== -->
 
 	<bean id="test.config.lab" class="org.openmrs.module.kenyacore.lab.LabConfiguration">
-		<property name="generalCatalogs">
+		<property name="commonCatalogs">
 			<set>
 				<ref bean="test.catalog.general" />
 			</set>

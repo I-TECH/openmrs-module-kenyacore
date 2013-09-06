@@ -25,44 +25,44 @@ import java.util.Set;
  */
 public class FormConfiguration extends AbstractContentConfiguration {
 
-	private Set<FormDescriptor> generalPatientForms;
+	private Set<FormDescriptor> commonPatientForms;
 
-	private Set<FormDescriptor> generalVisitForms;
+	private Set<FormDescriptor> commonVisitForms;
 
 	private Map<ProgramDescriptor, Set<FormDescriptor>> programPatientForms;
 
 	private Map<ProgramDescriptor, Set<FormDescriptor>> programVisitForms;
 
 	/**
-	 * Gets the general per-patient forms
+	 * Gets the common per-patient forms
 	 * @return the form descriptors
 	 */
-	public Set<FormDescriptor> getGeneralPatientForms() {
-		return generalPatientForms;
+	public Set<FormDescriptor> getCommonPatientForms() {
+		return commonPatientForms;
 	}
 
 	/**
-	 * Sets the general per-patient forms
-	 * @param generalPatientForms the form descriptors
+	 * Sets the common per-patient forms
+	 * @param commonPatientForms the form descriptors
 	 */
-	public void setGeneralPatientForms(Set<FormDescriptor> generalPatientForms) {
-		this.generalPatientForms = generalPatientForms;
+	public void setCommonPatientForms(Set<FormDescriptor> commonPatientForms) {
+		this.commonPatientForms = commonPatientForms;
 	}
 
 	/**
 	 * Gets the general pre-visit forms
 	 * @return the form descriptors
 	 */
-	public Set<FormDescriptor> getGeneralVisitForms() {
-		return generalVisitForms;
+	public Set<FormDescriptor> getCommonVisitForms() {
+		return commonVisitForms;
 	}
 
 	/**
 	 * Sets the general per-visit forms
-	 * @param generalVisitForms the form descriptors
+	 * @param commonVisitForms the form descriptors
 	 */
-	public void setGeneralVisitForms(Set<FormDescriptor> generalVisitForms) {
-		this.generalVisitForms = generalVisitForms;
+	public void setCommonVisitForms(Set<FormDescriptor> commonVisitForms) {
+		this.commonVisitForms = commonVisitForms;
 	}
 
 	/**
