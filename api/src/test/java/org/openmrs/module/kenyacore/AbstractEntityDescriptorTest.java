@@ -38,22 +38,27 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 	@Before
 	public void setup() {
 		descriptor1 = new TestLocationDescriptor();
+		descriptor1.setId("test.location.1");
 		descriptor1.setTargetUuid("dc5c1fcc-0459-4201-bf70-0b90535ba362"); // Unknown location
 		descriptor1.setOrder(100);
 
 		descriptor2 = new TestLocationDescriptor();
+		descriptor2.setId("test.location.2");
 		descriptor2.setTargetUuid("9356400c-a5a2-4532-8f2b-2361b3446eb8"); // Xanadu
 		descriptor2.setOrder(200);
 
 		descriptor3 = new TestLocationDescriptor();
+		descriptor3.setId("test.location.3");
 		descriptor3.setTargetUuid("test-uuid"); // Doesn't exist in db
 		descriptor3.setOrder(300);
 
 		descriptor4 = new TestLocationDescriptor();
+		descriptor4.setId("test.location.4");
 		descriptor4.setTargetUuid("test-uuid"); // Same UUID as previous
 		descriptor4.setOrder(400);
 
 		descriptor5 = new TestLocationDescriptor();
+		descriptor5.setId("test.location.5");
 		descriptor5.setTargetUuid("xxxx");
 		descriptor5.setOrder(400); // Same order as previous
 	}

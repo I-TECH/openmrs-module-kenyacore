@@ -5,9 +5,9 @@ import org.openmrs.module.ModuleFactory;
 /**
  * Abstract base class for configuration components based on a single external resource
  */
-public abstract class AbstractContentConfiguration {
+public abstract class AbstractContentConfiguration extends AbstractDescriptor {
 
-	private String moduleId;
+	protected String moduleId;
 
 	/**
 	 * Gets the class loader to use with this configuration

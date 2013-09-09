@@ -21,7 +21,7 @@ import org.openmrs.util.OpenmrsUtil;
 /**
  * Abstract base class for entity descriptors
  */
-public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implements Comparable<AbstractEntityDescriptor> {
+public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends AbstractDescriptor implements Comparable<AbstractEntityDescriptor> {
 
 	protected String targetUuid;
 
@@ -72,9 +72,9 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implemen
 	public int compareTo(AbstractEntityDescriptor descriptor) {
 		int byOrder = OpenmrsUtil.compareWithNullAsGreatest(order, descriptor.order);
 
-		// Return by target uuid if order is equal. Important to not return zero from this method unless the objects
+		// Return by id if order is equal. Important to not return zero from this method unless the objects
 		// are actually equal. Otherwise TreeSet sees them as equal.
-		return byOrder != 0 ? byOrder : targetUuid.compareTo(descriptor.targetUuid);
+		return byOrder != 0 ? byOrder : id.compareTo(descriptor.id);
 	}
 
 	/**
@@ -103,6 +103,9 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> implemen
 	 */
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("targetUuid", targetUuid).toString();
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.append("targetUuid", targetUuid)
+				.toString();
 	}
 }

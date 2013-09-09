@@ -15,40 +15,21 @@
 package org.openmrs.module.kenyacore.report;
 
 import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.kenyacore.AbstractDescriptor;
 import org.openmrs.module.reporting.definition.DefinitionSummary;
-import org.springframework.beans.factory.BeanNameAware;
 
 import java.util.Set;
 
 /**
- * Abstract base class for report descriptors that are instantiated as components and identified via their component
- * name
+ * Abstract base class for report descriptors
  */
-public abstract class AbstractReportDescriptor implements ReportDescriptor, BeanNameAware {
-
-	protected String id;
+public abstract class AbstractReportDescriptor extends AbstractDescriptor implements ReportDescriptor {
 
 	protected String name;
 
 	protected String description;
 
 	protected Set<AppDescriptor> apps;
-
-	/**
-	 * @see ReportDescriptor#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id
-	 * @param id the id
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	/**
 	 * @see ReportDescriptor#getName()
@@ -108,13 +89,5 @@ public abstract class AbstractReportDescriptor implements ReportDescriptor, Bean
 		ret.setDescription(getDescription());
 		ret.setUuid(id);
 		return ret;
-	}
-
-	/**
-	 * @see BeanNameAware#setBeanName(String)
-	 */
-	@Override
-	public void setBeanName(String id) {
-		setId(id);
 	}
 }
