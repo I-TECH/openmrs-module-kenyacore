@@ -20,6 +20,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.program.ProgramDescriptor;
+import org.openmrs.module.kenyacore.report.builder.Builds;
+import org.openmrs.module.kenyacore.report.builder.ReportBuilder;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -35,6 +38,8 @@ public class ReportManager implements ContentManager {
 	private Map<String, ReportDescriptor> reports = new LinkedHashMap<String, ReportDescriptor>();
 
 	private List<ReportDescriptor> commonReports = new ArrayList<ReportDescriptor>();
+
+	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
@@ -76,6 +81,12 @@ public class ReportManager implements ContentManager {
 				}
 			}
 		}
+
+		// Process report builder components
+		for (ReportBuilder builder : Context.getRegisteredComponents(ReportBuilder.class)) {
+			Builds builds = builder.getClass().getAnnotation(Builds.class);
+			builders.put(builds.value(), builder);
+		}
 	}
 
 	/**
@@ -111,5 +122,20 @@ public class ReportManager implements ContentManager {
 		}
 
 		return filtered;
+	}
+
+	/**
+	 * Gets a report definition for the given report
+	 * @param report the report
+	 * @return the report definition
+	 */
+	public ReportDefinition getReportDefinition(ReportDescriptor report) {
+		ReportBuilder builder = builders.containsKey(report.getId()) ? builders.get(report.getId()) : builders.get("*");
+
+		if (builder == null) {
+			throw new RuntimeException("No suitable report builder component found");
+		}
+
+		return builder.getDefinition(report);
 	}
 }
