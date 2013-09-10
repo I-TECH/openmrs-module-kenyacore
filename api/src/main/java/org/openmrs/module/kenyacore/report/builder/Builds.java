@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation for report builders
  *
- * I don't really like this approach but for now it works...
+ * I really don't like this approach but for now it works...
  */
 @Target(value = {ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

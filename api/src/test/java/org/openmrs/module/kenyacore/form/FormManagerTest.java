@@ -55,12 +55,15 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 		formManager.refresh();
 	}
 
+	/**
+	 * @see FormManager#getCommonFormsForPatient(org.openmrs.module.appframework.AppDescriptor, org.openmrs.Patient)
+	 */
 	@Test
-	public void getFormsForPatient() {
+	public void getCommonFormsForPatient() {
 		Assert.assertNotNull(testApp1);
 
 		Patient patient = TestUtils.getPatient(7);
 
-		Assert.assertThat(formManager.getFormsForPatient(testApp1, patient), contains(basicForm));
+		Assert.assertThat(formManager.getCommonFormsForPatient(testApp1, patient), contains(basicForm));
 	}
 }

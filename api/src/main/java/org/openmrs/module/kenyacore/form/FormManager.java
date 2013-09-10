@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.Program;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.AppDescriptor;
@@ -56,8 +57,8 @@ public class FormManager implements ContentManager {
 
 	private Map<String, FormDescriptor> forms = new LinkedHashMap<String, FormDescriptor>();
 
-	private List<FormDescriptor> generalPatientForms = new ArrayList<FormDescriptor>();
-	private List<FormDescriptor> generalVisitForms = new ArrayList<FormDescriptor>();
+	private List<FormDescriptor> commonPatientForms = new ArrayList<FormDescriptor>();
+	private List<FormDescriptor> commonVisitForms = new ArrayList<FormDescriptor>();
 
 	@Autowired
 	private ProgramManager programManager;
@@ -76,8 +77,8 @@ public class FormManager implements ContentManager {
 	@Override
 	public synchronized void refresh() {
 		forms.clear();
-		generalPatientForms.clear();
-		generalVisitForms.clear();
+		commonPatientForms.clear();
+		commonVisitForms.clear();
 
 		List<FormDescriptor> descriptors = Context.getRegisteredComponents(FormDescriptor.class);
 
@@ -110,12 +111,12 @@ public class FormManager implements ContentManager {
 		for (FormConfiguration configuration : Context.getRegisteredComponents(FormConfiguration.class)) {
 			// Register general per-patient forms
 			if (configuration.getCommonPatientForms() != null) {
-				generalPatientForms.addAll(configuration.getCommonPatientForms());
+				commonPatientForms.addAll(configuration.getCommonPatientForms());
 			}
 
 			// Register general per-visit forms
 			if (configuration.getCommonVisitForms() != null) {
-				generalVisitForms.addAll(configuration.getCommonVisitForms());
+				commonVisitForms.addAll(configuration.getCommonVisitForms());
 			}
 
 			// Register additional program specific per-patient forms
@@ -141,8 +142,8 @@ public class FormManager implements ContentManager {
 			}
 		}
 
-		generalPatientForms = CoreUtils.merge(generalPatientForms); // Sorts and removes duplicates
-		generalVisitForms = CoreUtils.merge(generalVisitForms);
+		commonPatientForms = CoreUtils.merge(commonPatientForms); // Sorts and removes duplicates
+		commonVisitForms = CoreUtils.merge(commonVisitForms);
 
 		refreshTagHandlers();
 	}
@@ -188,8 +189,23 @@ public class FormManager implements ContentManager {
 	 * @param patient the patient
 	 * @return the form descriptors
 	 */
-	public List<FormDescriptor> getFormsForPatient(AppDescriptor app, Patient patient) {
-		return filterForms(generalPatientForms, app, patient);
+	public List<FormDescriptor> getCommonFormsForPatient(AppDescriptor app, Patient patient) {
+		return filterForms(commonPatientForms, app, patient);
+	}
+
+	/**
+	 * Gets the program specific per-patient forms
+	 * @param app the current application
+	 * @param program the program
+	 * @param patient the patient
+	 * @return the form descriptors
+	 */
+	public List<FormDescriptor> getProgramFormsForPatient(AppDescriptor app, Program program, Patient patient) {
+		ProgramDescriptor programDescriptor = programManager.getProgramDescriptor(program);
+		if (programDescriptor.getPatientForms() != null) {
+			return filterForms(programDescriptor.getPatientForms(), app, patient);
+		}
+		return Collections.emptyList();
 	}
 
 	/**
@@ -198,7 +214,7 @@ public class FormManager implements ContentManager {
 	 * @param visit the visit
 	 * @return the form descriptors
 	 */
-	public List<FormDescriptor> getUncompletedFormsForVisit(AppDescriptor app, Visit visit) {
+	public List<FormDescriptor> getAllUncompletedFormsForVisit(AppDescriptor app, Visit visit) {
 		List<FormDescriptor> uncompletedForms = new ArrayList<FormDescriptor>();
 		Set<Form> completedForms = new HashSet<Form>();
 
@@ -210,7 +226,7 @@ public class FormManager implements ContentManager {
 		}
 
 		// Include only forms that haven't been completed for this visit
-		for (FormDescriptor suitableForms : getFormsForVisit(app, visit)) {
+		for (FormDescriptor suitableForms : getAllFormsForVisit(app, visit)) {
 			if (!completedForms.contains(suitableForms.getTarget())) {
 				uncompletedForms.add(suitableForms);
 			}
@@ -225,10 +241,10 @@ public class FormManager implements ContentManager {
 	 * @param visit the visit
 	 * @return the form descriptors
 	 */
-	public List<FormDescriptor> getFormsForVisit(AppDescriptor app, Visit visit) {
+	public List<FormDescriptor> getAllFormsForVisit(AppDescriptor app, Visit visit) {
 		Set<FormDescriptor> forms = new TreeSet<FormDescriptor>();
 
-		forms.addAll(generalVisitForms);
+		forms.addAll(commonVisitForms);
 
 		// Consider all programs active on the visit stop date, or if visit is still open, active now
 		Date activeOnDate = (visit.getStopDatetime() != null) ? visit.getStopDatetime() : new Date();
