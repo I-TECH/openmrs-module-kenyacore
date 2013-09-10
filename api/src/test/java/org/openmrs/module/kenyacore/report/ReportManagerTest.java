@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore.report;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,5 +61,15 @@ public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 	public void getReportDescriptor() {
 		ReportDescriptor descriptor = reportManager.getReportDescriptor("test.report.test1");
 		Assert.assertThat(descriptor, is(instanceOf(CalculationReportDescriptor.class)));
+	}
+
+	/**
+	 * @see ReportManager#getReportDefinition(ReportDescriptor)
+	 */
+	@Test
+	public void getReportDefinition() {
+		ReportDescriptor descriptor = reportManager.getReportDescriptor("test.report.test1");
+		ReportDefinition definition = reportManager.getReportDefinition(descriptor);
+		Assert.assertThat(definition, is(notNullValue()));
 	}
 }

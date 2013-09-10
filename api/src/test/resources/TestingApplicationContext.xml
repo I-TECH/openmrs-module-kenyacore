@@ -60,6 +60,7 @@
 
 	<bean id="test.report.test1" class="org.openmrs.module.kenyacore.report.CalculationReportDescriptor">
 		<property name="name" value="Test Report" />
+		<property name="calculation" value="org.openmrs.module.kenyacore.test.TestCalculation" />
 		<property name="apps">
 			<set>
 				<ref bean="test.app.app1" />
@@ -92,6 +93,13 @@
 				</entry>
 			</map>
 		</property>
+	</bean>
+
+	<bean id="test.descriptor1" class="org.openmrs.module.kenyacore.test.TestDescriptor">
+		<property name="order" value="3" />
+	</bean>
+	<bean id="test.descriptor2" class="org.openmrs.module.kenyacore.test.TestDescriptor">
+		<property name="order" value="2" />
 	</bean>
 
 	<!--

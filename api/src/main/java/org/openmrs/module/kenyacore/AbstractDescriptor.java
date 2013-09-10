@@ -55,9 +55,9 @@ public abstract class AbstractDescriptor implements BeanNameAware {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof AbstractEntityDescriptor)) return false;
+		if (!(o instanceof AbstractDescriptor)) return false;
 
-		AbstractEntityDescriptor that = (AbstractEntityDescriptor) o;
+		AbstractDescriptor that = (AbstractDescriptor) o;
 
 		return id.equals(that.id);
 	}

@@ -94,19 +94,6 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	public void hashCode_shouldReturnSameValueIfSameTargetUuid() {
-		Assert.assertThat(descriptor3.hashCode(), is(descriptor4.hashCode()));
-	}
-
-	@Test
-	public void equals_shouldReturnTrueIfEqual() {
-		Assert.assertThat(descriptor1.equals(descriptor1), is(true)); // Same object
-		Assert.assertThat(descriptor3.equals(descriptor4), is(true)); // Same target
-
-		Assert.assertThat(descriptor3.equals(new Integer(123)), is(false)); // Different class
-	}
-
-	@Test
 	public void toString_shouldReturnNonNull() {
 		Assert.assertThat(descriptor1.toString(), is(notNullValue()));
 		Assert.assertThat(descriptor2.toString(), is(notNullValue()));

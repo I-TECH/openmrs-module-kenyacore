@@ -15,7 +15,7 @@
 package org.openmrs.module.kenyacore.report;
 
 import org.openmrs.module.appframework.AppDescriptor;
-import org.openmrs.module.kenyacore.AbstractDescriptor;
+import org.openmrs.module.kenyacore.AbstractOrderedDescriptor;
 import org.openmrs.module.reporting.definition.DefinitionSummary;
 
 import java.util.Set;
@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Abstract base class for report descriptors
  */
-public abstract class AbstractReportDescriptor extends AbstractDescriptor implements ReportDescriptor {
+public abstract class AbstractReportDescriptor extends AbstractOrderedDescriptor implements ReportDescriptor {
 
 	protected String name;
 

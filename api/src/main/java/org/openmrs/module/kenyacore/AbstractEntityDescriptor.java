@@ -19,13 +19,11 @@ import org.openmrs.OpenmrsObject;
 import org.openmrs.util.OpenmrsUtil;
 
 /**
- * Abstract base class for entity descriptors
+ * Abstract base class for descriptors that target an existing OpenMRS object
  */
-public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends AbstractDescriptor implements Comparable<AbstractEntityDescriptor> {
+public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends AbstractOrderedDescriptor {
 
 	protected String targetUuid;
-
-	protected Integer order;
 
 	/**
 	 * Gets the target object UUID
@@ -50,62 +48,10 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends 
 	public abstract T getTarget();
 
 	/**
-	 * Gets the order
-	 * @return the order
-	 */
-	public Integer getOrder() {
-		return order;
-	}
-
-	/**
-	 * Sets the order
-	 * @param order the order
-	 */
-	public void setOrder(Integer order) {
-		this.order = order;
-	}
-
-	/**
-	 * @see Comparable#compareTo(Object)
-	 */
-	@Override
-	public int compareTo(AbstractEntityDescriptor descriptor) {
-		int byOrder = OpenmrsUtil.compareWithNullAsGreatest(order, descriptor.order);
-
-		// Return by id if order is equal. Important to not return zero from this method unless the objects
-		// are actually equal. Otherwise TreeSet sees them as equal.
-		return byOrder != 0 ? byOrder : id.compareTo(descriptor.id);
-	}
-
-	/**
-	 * @see Object#equals(Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof AbstractEntityDescriptor)) return false;
-
-		AbstractEntityDescriptor that = (AbstractEntityDescriptor) o;
-
-		return targetUuid.equals(that.targetUuid);
-	}
-
-	/**
-	 * @see Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return targetUuid.hashCode();
-	}
-
-	/**
 	 * @see Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-				.append("id", id)
-				.append("targetUuid", targetUuid)
-				.toString();
+		return new ToStringBuilder(this).append("id", id).append("targetUuid", targetUuid).toString();
 	}
 }

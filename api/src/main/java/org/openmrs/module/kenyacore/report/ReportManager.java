@@ -21,8 +21,11 @@ import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.program.ProgramDescriptor;
 import org.openmrs.module.kenyacore.report.builder.Builds;
+import org.openmrs.module.kenyacore.report.builder.CalculationReportBuilder;
 import org.openmrs.module.kenyacore.report.builder.ReportBuilder;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -40,6 +43,10 @@ public class ReportManager implements ContentManager {
 	private List<ReportDescriptor> commonReports = new ArrayList<ReportDescriptor>();
 
 	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
+
+	@Autowired
+	@Qualifier("kenyacore.genericCalcReportBuilder")
+	private CalculationReportBuilder calculationReportBuilder;
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
@@ -85,7 +92,9 @@ public class ReportManager implements ContentManager {
 		// Process report builder components
 		for (ReportBuilder builder : Context.getRegisteredComponents(ReportBuilder.class)) {
 			Builds builds = builder.getClass().getAnnotation(Builds.class);
-			builders.put(builds.value(), builder);
+			if (builds != null) {
+				builders.put(builds.value(), builder);
+			}
 		}
 	}
 
@@ -130,7 +139,13 @@ public class ReportManager implements ContentManager {
 	 * @return the report definition
 	 */
 	public ReportDefinition getReportDefinition(ReportDescriptor report) {
-		ReportBuilder builder = builders.containsKey(report.getId()) ? builders.get(report.getId()) : builders.get("*");
+		// Look for specific builder
+		ReportBuilder builder = builders.get(report.getId());
+
+		// Can we use the generic calculation report builder?
+		if (builder == null && report instanceof CalculationReportDescriptor) {
+			builder = calculationReportBuilder;
+		}
 
 		if (builder == null) {
 			throw new RuntimeException("No suitable report builder component found");
