@@ -16,10 +16,12 @@ package org.openmrs.module.kenyacore.report;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.program.ProgramDescriptor;
+import org.openmrs.module.kenyacore.program.ProgramManager;
 import org.openmrs.module.kenyacore.report.builder.Builds;
 import org.openmrs.module.kenyacore.report.builder.CalculationReportBuilder;
 import org.openmrs.module.kenyacore.report.builder.ReportBuilder;
@@ -43,6 +45,9 @@ public class ReportManager implements ContentManager {
 	private List<ReportDescriptor> commonReports = new ArrayList<ReportDescriptor>();
 
 	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
+
+	@Autowired
+	private ProgramManager programManager;
 
 	@Autowired
 	@Qualifier("kenyacore.genericCalcReportBuilder")
@@ -116,21 +121,23 @@ public class ReportManager implements ContentManager {
 	}
 
 	/**
-	 * Gets all general (non program specific) report builders
-	 * @@return the list of report builders
+	 * Gets all common (non program specific) reports
+	 * @@return the list of reports
 	 */
 	public List<ReportDescriptor> getCommonReports(AppDescriptor app) {
-		List<ReportDescriptor> filtered = new ArrayList<ReportDescriptor>();
+		return filterReports(commonReports, app);
+	}
 
-		for (ReportDescriptor descriptor : commonReports) {
-			// Filter by app id
-			if (app != null && descriptor.getApps() != null && !descriptor.getApps().contains(app)) {
-				continue;
-			}
-			filtered.add(descriptor);
+	/**
+	 * Gets program specific reports
+	 * @@return the list of reports
+	 */
+	public List<ReportDescriptor> getProgramReports(AppDescriptor app, Program program) {
+		ProgramDescriptor programDescriptor = programManager.getProgramDescriptor(program);
+		if (programDescriptor.getReports() != null) {
+			return filterReports(programDescriptor.getReports(), app);
 		}
-
-		return filtered;
+		return Collections.emptyList();
 	}
 
 	/**
@@ -152,5 +159,24 @@ public class ReportManager implements ContentManager {
 		}
 
 		return builder.getDefinition(report);
+	}
+
+	/**
+	 * Filters the given collection of reports to those applicable for the given application
+	 * @param app the application
+	 * @return the filtered reports
+	 */
+	protected List<ReportDescriptor> filterReports(Collection<ReportDescriptor> descriptors, AppDescriptor app) {
+		List<ReportDescriptor> filtered = new ArrayList<ReportDescriptor>();
+		for (ReportDescriptor descriptor : descriptors) {
+			// Filter by app id
+			if (app != null && !descriptor.getApps().contains(app)) {
+				continue;
+			}
+
+			filtered.add(descriptor);
+		}
+
+		return filtered;
 	}
 }
