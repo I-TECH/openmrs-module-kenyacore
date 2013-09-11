@@ -113,22 +113,26 @@ public class CalculationUtils {
 	public static CalculationResultMap evaluateWithReporting(DataDefinition dataDefinition, Collection<Integer> cohort, Map<String, Object> parameterValues, PatientCalculation calculation, PatientCalculationContext calculationContext) {
 		try {
 			EvaluationContext reportingContext = ensureReportingContext(calculationContext, cohort, parameterValues);
-
 			Map<Integer, Object> data;
+
 			if (dataDefinition instanceof PersonDataDefinition) {
 				EvaluatedPersonData result = Context.getService(PersonDataService.class).evaluate((PersonDataDefinition) dataDefinition, reportingContext);
 				data = result.getData();
-			} else if (dataDefinition instanceof PatientDataDefinition) {
+			}
+			else if (dataDefinition instanceof PatientDataDefinition) {
 				EvaluatedPatientData result = Context.getService(PatientDataService.class).evaluate((PatientDataDefinition) dataDefinition, reportingContext);
 				data = result.getData();
-			} else {
+			}
+			else {
 				throw new RuntimeException("Unknown DataDefinition type: " + dataDefinition.getClass());
 			}
+
 			CalculationResultMap ret = new CalculationResultMap();
 			for (Integer ptId : cohort) {
 				Object reportingResult = data.get(ptId);
 				ret.put(ptId, toCalculationResult(reportingResult, calculation, calculationContext));
 			}
+
 			return ret;
 		} catch (EvaluationException ex) {
 			throw new APIException(ex);
@@ -199,5 +203,33 @@ public class CalculationUtils {
 		ret.setParameterValues(parameterValues);
 		calculationContext.addToCache("reportingEvaluationContext", ret);
 		return ret;
+	}
+
+	/**
+	 * Ensures all patients exist in a result map. If map is missing entries for any of patientIds, they are added with a null result
+	 * @param results the calculation result map
+	 * @param cohort the patient ids
+	 */
+	public static CalculationResultMap ensureNullResults(CalculationResultMap results, Collection<Integer> cohort) {
+		for (Integer ptId : cohort) {
+			if (!results.containsKey(ptId)) {
+				results.put(ptId, null);
+			}
+		}
+		return results;
+	}
+
+	/**
+	 * Ensures all patients exist in a result map. If map is missing entries for any of patientIds, they are added with an empty list result
+	 * @param results the calculation result map
+	 * @param cohort the patient ids
+	 */
+	public static CalculationResultMap ensureEmptyListResults(CalculationResultMap results, Collection<Integer> cohort) {
+		for (Integer ptId : cohort) {
+			if (!results.containsKey(ptId) || results.get(ptId) == null) {
+				results.put(ptId, new ListResult());
+			}
+		}
+		return results;
 	}
 }
