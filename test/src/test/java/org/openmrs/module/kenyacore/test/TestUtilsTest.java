@@ -84,4 +84,16 @@ public class TestUtilsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(visit.getStopDatetime(), is(nullValue()));
 		Assert.assertThat(visit.getUuid(), is(notNullValue()));
 	}
+
+	@Test
+	public void modifyConstant() throws Exception {
+		Assert.assertThat(TestConstants.CONSTANT, is("XXX"));
+		TestUtils.modifyConstant(TestConstants.class, "CONSTANT", "YYY");
+		Assert.assertThat(TestConstants.CONSTANT, is("YYY"));
+	}
+
+	protected static class TestConstants {
+		// Value needs to be an expression or it will be inlined by the compiler and impossible to modify later
+		private static final String CONSTANT = (null != null) ? "": "XXX";
+	}
 }

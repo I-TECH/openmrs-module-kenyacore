@@ -33,6 +33,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatype;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -297,6 +299,31 @@ public class TestUtils {
 		}
 		gp.setDatatypeClassname(datatypeClass.getName());
 		return Context.getAdministrationService().saveGlobalProperty(gp);
+	}
+
+	/**
+	 * Modifies a constant in a constants class. If the constant is final and not based on a runtime expression, then
+	 * it's value will have been inlined by the compiler and this method will have no effect.
+	 * @param constantsClass the class of constants
+	 * @param fieldName the field name of the constant
+	 * @param newValue the new value for the constant
+	 * @throws Exception if field not found or couldn't be modified
+	 */
+	public static void modifyConstant(Class<?> constantsClass, String fieldName, Object newValue) throws Exception {
+		Field field = constantsClass.getDeclaredField(fieldName);
+		field.setAccessible(true);
+
+		int existingModifiers = field.getModifiers();
+
+		// Remove final modifier from field
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(field, existingModifiers & ~Modifier.FINAL);
+
+		field.set(null, newValue);
+
+		// Reset previous modifiers
+		modifiersField.setInt(field, existingModifiers);
 	}
 
 	/**
