@@ -39,13 +39,14 @@ public abstract class AbstractMetadataInstaller extends AbstractDescriptor {
 	 * @return the encounter type
 	 */
 	public EncounterType installEncounterType(String name, String description, String uuid) {
-		EncounterType obj = Context.getEncounterService().getEncounterTypeByUuid(uuid);
+		EncounterType obj = findExistingEncounterType(name, uuid);
 		if (obj == null) {
 			obj = new EncounterType();
-			obj.setUuid(uuid);
 		}
+
 		obj.setName(name);
 		obj.setDescription(description);
+		obj.setUuid(uuid);
 
 		return Context.getEncounterService().saveEncounterType(obj);
 	}
@@ -59,15 +60,16 @@ public abstract class AbstractMetadataInstaller extends AbstractDescriptor {
 	 * @return the form
 	 */
 	public Form installForm(String name, String description, String encTypeUuid, String version, String uuid) {
-		Form obj = Context.getFormService().getFormByUuid(uuid);
+		Form obj = findExistingForm(name, version, uuid);
 		if (obj == null) {
 			obj = new Form();
-			obj.setUuid(uuid);
 		}
+
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setEncounterType(MetadataUtils.getEncounterType(encTypeUuid));
 		obj.setVersion(version);
+		obj.setUuid(uuid);
 
 		return Context.getFormService().saveForm(obj);
 	}
@@ -81,14 +83,15 @@ public abstract class AbstractMetadataInstaller extends AbstractDescriptor {
 	 * @return the program
 	 */
 	public Program installProgram(String name, String description, String concept, String uuid) {
-		Program obj = Context.getProgramWorkflowService().getProgramByUuid(uuid);
+		Program obj = findExistingProgram(name, uuid);
 		if (obj == null) {
 			obj = new Program();
-			obj.setUuid(uuid);
 		}
+
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setConcept(MetadataUtils.getConcept(concept));
+		obj.setUuid(uuid);
 
 		return Context.getProgramWorkflowService().saveProgram(obj);
 	}
@@ -104,11 +107,64 @@ public abstract class AbstractMetadataInstaller extends AbstractDescriptor {
 		VisitType obj = Context.getVisitService().getVisitTypeByUuid(uuid);
 		if (obj == null) {
 			obj = new VisitType();
-			obj.setUuid(uuid);
 		}
+
 		obj.setName(name);
 		obj.setDescription(description);
+		obj.setUuid(uuid);
 
 		return Context.getVisitService().saveVisitType(obj);
+	}
+
+	/**
+	 * Finds an existing encounter type
+	 * @param name the name
+	 * @param uuid the uuid
+	 * @return the encounter type or null
+	 */
+	protected EncounterType findExistingEncounterType(String name, String uuid) {
+		EncounterType obj = Context.getEncounterService().getEncounterTypeByUuid(uuid);
+		if (obj != null) {
+			return obj;
+		}
+
+		return Context.getEncounterService().getEncounterType(name);
+	}
+
+	/**
+	 * Finds an existing form
+	 * @param name the name
+	 * @param version the version
+	 * @param uuid the uuid
+	 * @return the form or null
+	 */
+	protected Form findExistingForm(String name, String version, String uuid) {
+		Form obj = Context.getFormService().getFormByUuid(uuid);
+		if (obj != null) {
+			return obj;
+		}
+
+		return Context.getFormService().getForm(name, version);
+	}
+
+	/**
+	 * Finds an existing program
+	 * @param name the name
+	 * @param uuid the uuid
+	 * @return the program or null
+	 */
+	protected Program findExistingProgram(String name, String uuid) {
+		Program obj = Context.getProgramWorkflowService().getProgramByUuid(uuid);
+		if (obj != null) {
+			return obj;
+		}
+
+		// In 1.9.x getProgramByName incorrectly looks at concept name (TRUNK-3504)
+		for (Program p : Context.getProgramWorkflowService().getAllPrograms(true)) {
+			if (p.getName().equals(name)) {
+				return p;
+			}
+		}
+		return null;
 	}
 }

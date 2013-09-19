@@ -124,6 +124,18 @@ public class AbstractMetadataInstallerTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(prog.getName(), is("New name"));
 		Assert.assertThat(prog.getDescription(), is("New desc"));
 		Assert.assertThat(prog.getConcept(), is(Context.getConceptService().getConceptByUuid(MALARIA_PROGRAM_UUID)));
+
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check update existing when name conflicts
+		installer.installProgram("New name", "Diff desc", MALARIA_PROGRAM_UUID, "prog-type2-uuid");
+		prog = Context.getProgramWorkflowService().getProgramByUuid("prog-type2-uuid");
+		Assert.assertThat(prog.getName(), is("New name"));
+		Assert.assertThat(prog.getDescription(), is("Diff desc"));
+
+		prog = Context.getProgramWorkflowService().getProgramByUuid("prog-type-uuid");
+		Assert.assertThat(prog, is(nullValue()));
 	}
 
 	/**
