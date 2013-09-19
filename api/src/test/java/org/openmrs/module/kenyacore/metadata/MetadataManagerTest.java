@@ -16,8 +16,14 @@ package org.openmrs.module.kenyacore.metadata;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+
+import static org.hamcrest.Matchers.*;
 
 /**
  * Tests for {@link org.openmrs.module.kenyacore.metadata.MetadataManager}
@@ -26,6 +32,15 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
 	private MetadataManager metadataManager;
+
+	@Autowired
+	private TestInstaller1 testInstaller1;
+
+	@Autowired
+	private TestInstaller2 testInstaller2;
+
+	@Autowired
+	private TestInstaller3 testInstaller3;
 
 	/**
 	 * @see MetadataManager#ensurePackageInstalled(String, String, ClassLoader)
@@ -46,11 +61,49 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 		}
 
 		// Simulate first time startup
-		Assert.assertTrue(metadataManager.ensurePackageInstalled(TEST_PACKAGE_GROUP_UUID, TEST_PACKAGE_FILENAME, null));
-		Assert.assertNotNull(MetadataUtils.getVisitType("3371a4d4-f66f-4454-a86d-92c7b3da990c"));
+		Assert.assertThat(metadataManager.ensurePackageInstalled(TEST_PACKAGE_GROUP_UUID, TEST_PACKAGE_FILENAME, null), is(true));
+		Assert.assertThat(MetadataUtils.getVisitType("3371a4d4-f66f-4454-a86d-92c7b3da990c"), is(notNullValue()));
 
 		// Simulate starting a second time
-		Assert.assertFalse(metadataManager.ensurePackageInstalled(TEST_PACKAGE_GROUP_UUID, TEST_PACKAGE_FILENAME, null));
-		Assert.assertNotNull(MetadataUtils.getVisitType("3371a4d4-f66f-4454-a86d-92c7b3da990c"));
+		Assert.assertThat(metadataManager.ensurePackageInstalled(TEST_PACKAGE_GROUP_UUID, TEST_PACKAGE_FILENAME, null), is(false));
+		Assert.assertThat(MetadataUtils.getVisitType("3371a4d4-f66f-4454-a86d-92c7b3da990c"), is(notNullValue()));
+	}
+
+	/**
+	 * @see MetadataManager#processInstallers(java.util.List)
+	 */
+	@Test
+	public void processInstallers() {
+		metadataManager.processInstallers(Arrays.asList(testInstaller3, testInstaller2, testInstaller1));
+
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid"), is(notNullValue()));
+		Assert.assertThat(Context.getFormService().getFormByUuid("form1-uuid"), is(notNullValue()));
+		Assert.assertThat(Context.getFormService().getFormByUuid("form2-uuid"), is(notNullValue()));
+	}
+
+	@Component("test.installer.1")
+	public static class TestInstaller1 extends AbstractMetadataInstaller {
+		@Override
+		public void install() {
+			installEncounterType("Test Encounter", "Testing", "enc-type-uuid");
+		}
+	}
+
+	@Component("test.installer.2")
+	@Requires({ "test.installer.1" })
+	public static class TestInstaller2 extends AbstractMetadataInstaller {
+		@Override
+		public void install() {
+			installForm("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid");
+		}
+	}
+
+	@Component("test.installer.3")
+	@Requires({ "test.installer.1" })
+	public static class TestInstaller3 extends AbstractMetadataInstaller {
+		@Override
+		public void install() {
+			installForm("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid");
+		}
 	}
 }

@@ -28,8 +28,11 @@ import org.openmrs.module.metadatasharing.wrapper.PackageImporter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +57,7 @@ public class MetadataManager implements ContentManager {
 	 */
 	@Override
 	public synchronized void refresh() {
+		// Process configuration beans
 		for (MetadataConfiguration configuration : Context.getRegisteredComponents(MetadataConfiguration.class)) {
 			String moduleId = configuration.getModuleId();
 			ClassLoader loader =  ModuleFactory.getModuleClassLoader(moduleId);
@@ -65,6 +69,9 @@ public class MetadataManager implements ContentManager {
 				throw new RuntimeException("Error occured while loading metadata packages from " + moduleId, ex);
 			}
 		}
+
+		// Process installer components
+		processInstallers(Context.getRegisteredComponents(AbstractMetadataInstaller.class));
 	}
 
 	/**
@@ -136,5 +143,55 @@ public class MetadataManager implements ContentManager {
 		} catch (Exception ex) {
 			throw new RuntimeException("Failed to install metadata package " + filename, ex);
 		}
+	}
+
+	/**
+	 * Processes the given list of installers
+	 * @param installers the installers
+	 */
+	protected void processInstallers(List<AbstractMetadataInstaller> installers) {
+		// Organize into map by id
+		Map<String, AbstractMetadataInstaller> all = new HashMap<String, AbstractMetadataInstaller>();
+		for (AbstractMetadataInstaller installer : installers) {
+			all.put(installer.getId(), installer);
+		}
+
+		// Begin recursive processing
+		Set<AbstractMetadataInstaller> installed = new HashSet<AbstractMetadataInstaller>();
+		for (AbstractMetadataInstaller installer : installers) {
+			processInstaller(installer, all, installed);
+		}
+	}
+
+	/**
+	 * Processes an installer by recursively processing it's required installers
+	 * @param installer the installer
+	 * @param all the map of all installers and their ids
+	 * @param installed the set of previously processed installers
+	 */
+	protected void processInstaller(AbstractMetadataInstaller installer, Map<String, AbstractMetadataInstaller> all, Set<AbstractMetadataInstaller> installed) {
+		// Return immediately if installer has already been installed
+		if (installed.contains(installer)) {
+			return;
+		}
+
+		// Install required installers first
+		Requires requires = installer.getClass().getAnnotation(Requires.class);
+		if (requires != null) {
+			for (String requiredId : requires.value()) {
+				AbstractMetadataInstaller required = all.get(requiredId);
+
+				if (required == null) {
+					throw new RuntimeException("Can't find required installer " + requiredId + " for " + installer.getId());
+				}
+
+				processInstaller(required, all, installed);
+			}
+		}
+
+		installer.install();
+		installed.add(installer);
+
+		Context.flushSession();
 	}
 }
