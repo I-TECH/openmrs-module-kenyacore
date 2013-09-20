@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>kenyacore</artifactId>
-	<version>0.10.3-SNAPSHOT</version>
+	<version>0.11</version>
 
 	<packaging>pom</packaging>
 	<name>KenyaCore</name>
@@ -24,7 +24,7 @@
 		<connection>scm:git:git@github.com:I-TECH/openmrs-module-kenyacore.git</connection>
 		<developerConnection>scm:git:git@github.com:I-TECH/openmrs-module-kenyacore.git</developerConnection>
 		<url>scm:git:git@github.com:I-TECH/openmrs-module-kenyacore.git</url>
-		<tag>HEAD</tag>
+		<tag>0.11</tag>
 	</scm>
 
 	<modules>
