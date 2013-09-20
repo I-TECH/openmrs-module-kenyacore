@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore.metadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.metadata.installer.CoreMetadataInstaller;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -70,40 +71,66 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see MetadataManager#processInstallers(java.util.List)
+	 * @see MetadataManager#installMetadataProviders(java.util.List)
 	 */
 	@Test
 	public void processInstallers() {
-		metadataManager.processInstallers(Arrays.asList(testInstaller3, testInstaller2, testInstaller1));
+		metadataManager.installMetadataProviders(Arrays.asList(testInstaller3, testInstaller2, testInstaller1));
 
 		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid"), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid("form1-uuid"), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid("form2-uuid"), is(notNullValue()));
 	}
 
+	/**
+	 * @see MetadataManager#installMetadataProviders(java.util.List)
+	 */
+	@Test(expected = RuntimeException.class)
+	public void processInstallers_shouldThrowExceptionIfFindBrokenRequirement() {
+		metadataManager.installMetadataProviders(Arrays.asList(testInstaller1, new TestInstaller4()));
+	}
+
 	@Component("test.installer.1")
-	public static class TestInstaller1 extends AbstractMetadataInstaller {
+	public static class TestInstaller1 extends AbstractMetadataProvider {
+		@Autowired
+		private CoreMetadataInstaller installer;
+
 		@Override
 		public void install() {
-			installEncounterType("Test Encounter", "Testing", "enc-type-uuid");
+			installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
 		}
 	}
 
-	@Component("test.installer.2")
+	@Component
 	@Requires({ "test.installer.1" })
-	public static class TestInstaller2 extends AbstractMetadataInstaller {
+	public static class TestInstaller2 extends AbstractMetadataProvider {
+		@Autowired
+		private CoreMetadataInstaller installer;
+
 		@Override
 		public void install() {
-			installForm("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid");
+			installer.form("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid");
 		}
 	}
 
-	@Component("test.installer.3")
+	@Component
 	@Requires({ "test.installer.1" })
-	public static class TestInstaller3 extends AbstractMetadataInstaller {
+	public static class TestInstaller3 extends AbstractMetadataProvider {
+		@Autowired
+		private CoreMetadataInstaller installer;
+
 		@Override
 		public void install() {
-			installForm("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid");
+			installer.form("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid");
 		}
+	}
+
+	/**
+	 * Has broken requirement
+	 */
+	@Requires({ "test.installer.xxx" })
+	public static class TestInstaller4 extends AbstractMetadataProvider {
+		@Override
+		public void install() { }
 	}
 }

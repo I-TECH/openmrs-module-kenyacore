@@ -70,8 +70,8 @@ public class MetadataManager implements ContentManager {
 			}
 		}
 
-		// Process installer components
-		processInstallers(Context.getRegisteredComponents(AbstractMetadataInstaller.class));
+		// Install provider components
+		installMetadataProviders(Context.getRegisteredComponents(AbstractMetadataProvider.class));
 	}
 
 	/**
@@ -146,51 +146,51 @@ public class MetadataManager implements ContentManager {
 	}
 
 	/**
-	 * Processes the given list of installers
-	 * @param installers the installers
+	 * Processes the given list of metadata providers
+	 * @param providers the providers
 	 */
-	protected void processInstallers(List<AbstractMetadataInstaller> installers) {
+	protected void installMetadataProviders(List<AbstractMetadataProvider> providers) {
 		// Organize into map by id
-		Map<String, AbstractMetadataInstaller> all = new HashMap<String, AbstractMetadataInstaller>();
-		for (AbstractMetadataInstaller installer : installers) {
-			all.put(installer.getId(), installer);
+		Map<String, AbstractMetadataProvider> all = new HashMap<String, AbstractMetadataProvider>();
+		for (AbstractMetadataProvider provider : providers) {
+			all.put(provider.getId(), provider);
 		}
 
 		// Begin recursive processing
-		Set<AbstractMetadataInstaller> installed = new HashSet<AbstractMetadataInstaller>();
-		for (AbstractMetadataInstaller installer : installers) {
-			processInstaller(installer, all, installed);
+		Set<AbstractMetadataProvider> installed = new HashSet<AbstractMetadataProvider>();
+		for (AbstractMetadataProvider provider : providers) {
+			installMetadataProvider(provider, all, installed);
 		}
 	}
 
 	/**
-	 * Processes an installer by recursively processing it's required installers
-	 * @param installer the installer
-	 * @param all the map of all installers and their ids
-	 * @param installed the set of previously processed installers
+	 * Installs a metadata provider by recursively installing it's required providers
+	 * @param provider the provider
+	 * @param all the map of all providers and their ids
+	 * @param installed the set of previously installed providers
 	 */
-	protected void processInstaller(AbstractMetadataInstaller installer, Map<String, AbstractMetadataInstaller> all, Set<AbstractMetadataInstaller> installed) {
-		// Return immediately if installer has already been installed
-		if (installed.contains(installer)) {
+	protected void installMetadataProvider(AbstractMetadataProvider provider, Map<String, AbstractMetadataProvider> all, Set<AbstractMetadataProvider> installed) {
+		// Return immediately if provider has already been installed
+		if (installed.contains(provider)) {
 			return;
 		}
 
-		// Install required installers first
-		Requires requires = installer.getClass().getAnnotation(Requires.class);
+		// Install required providers first
+		Requires requires = provider.getClass().getAnnotation(Requires.class);
 		if (requires != null) {
 			for (String requiredId : requires.value()) {
-				AbstractMetadataInstaller required = all.get(requiredId);
+				AbstractMetadataProvider required = all.get(requiredId);
 
 				if (required == null) {
-					throw new RuntimeException("Can't find required installer " + requiredId + " for " + installer.getId());
+					throw new RuntimeException("Can't find required provider " + requiredId + " for " + provider.getId());
 				}
 
-				processInstaller(required, all, installed);
+				installMetadataProvider(required, all, installed);
 			}
 		}
 
-		installer.install();
-		installed.add(installer);
+		provider.install();
+		installed.add(provider);
 
 		Context.flushSession();
 	}
