@@ -125,12 +125,14 @@ public class CoreMetadataInstaller {
 	 * @param property the property
 	 * @param description the description
 	 * @param datatype the custom data type (can be null)
+	 * @param datatypeConfig the data type config (can be null)
 	 * @param value the value (can be null)
 	 * @return the global property
 	 */
 	public <T, H extends CustomDatatype<T>> GlobalProperty globalProperty(String property,
 																		  String description,
 																		  Class<H> datatype,
+																		  String datatypeConfig,
 																		  T value,
 																		  String uuid) {
 		GlobalProperty obj = findGlobalProperty(property, uuid);
@@ -143,6 +145,7 @@ public class CoreMetadataInstaller {
 
 		if (datatype != null) {
 			obj.setDatatypeClassname(datatype.getName());
+			obj.setDatatypeConfig(datatypeConfig);
 
 			if (value != null) {
 				obj.setValue(value);
@@ -162,12 +165,13 @@ public class CoreMetadataInstaller {
 	 * @param name the name
 	 * @param description the description
 	 * @param datatype the datatype class
+	 * @param datatypeConfig the data type config (can be null)
 	 * @param minOccurs the minimum allowed occurrences
 	 * @param maxOccurs the maximum allowed occurrences
 	 * @param uuid the UUID
 	 * @return the program
 	 */
-	public LocationAttributeType locationAttributeType(String name, String description, Class<?> datatype, int minOccurs, int maxOccurs, String uuid) {
+	public LocationAttributeType locationAttributeType(String name, String description, Class<?> datatype, String datatypeConfig, int minOccurs, int maxOccurs, String uuid) {
 		LocationAttributeType obj = locationService.getLocationAttributeTypeByUuid(uuid);
 		if (obj == null) {
 			obj = new LocationAttributeType();
@@ -176,6 +180,7 @@ public class CoreMetadataInstaller {
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setDatatypeClassname(datatype.getName());
+		obj.setDatatypeConfig(datatypeConfig);
 		obj.setMinOccurs(minOccurs);
 		obj.setMaxOccurs(maxOccurs);
 		obj.setUuid(uuid);
@@ -279,12 +284,13 @@ public class CoreMetadataInstaller {
 	 * @param name the name
 	 * @param description the description
 	 * @param datatype the datatype class
+	 * @param datatypeConfig the data type config (can be null)
 	 * @param minOccurs the minimum allowed occurrences
 	 * @param maxOccurs the maximum allowed occurrences
 	 * @param uuid the UUID
 	 * @return the program
 	 */
-	public VisitAttributeType visitAttributeType(String name, String description, Class<?> datatype, int minOccurs, int maxOccurs, String uuid) {
+	public VisitAttributeType visitAttributeType(String name, String description, Class<?> datatype, String datatypeConfig, int minOccurs, int maxOccurs, String uuid) {
 		VisitAttributeType obj = visitService.getVisitAttributeTypeByUuid(uuid);
 		if (obj == null) {
 			obj = new VisitAttributeType();
@@ -293,6 +299,7 @@ public class CoreMetadataInstaller {
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setDatatypeClassname(datatype.getName());
+		obj.setDatatypeConfig(datatypeConfig);
 		obj.setMinOccurs(minOccurs);
 		obj.setMaxOccurs(maxOccurs);
 		obj.setUuid(uuid);

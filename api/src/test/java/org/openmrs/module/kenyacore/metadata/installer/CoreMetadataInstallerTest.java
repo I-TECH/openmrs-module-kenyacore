@@ -96,12 +96,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#globalProperty(String, String, Class, Object, String)
+	 * @see CoreMetadataInstaller#globalProperty(String, String, Class, String, Object, String)
 	 */
 	@Test
 	public void globalProperty() throws Exception {
 		// Check creating new
-		installer.globalProperty("test.property", "Testing", null, "Value", "gp1-uuid");
+		installer.globalProperty("test.property", "Testing", null, null, "Value", "gp1-uuid");
 
 		GlobalProperty created = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(created.getDescription(), is("Testing"));
@@ -112,7 +112,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.globalProperty("test.property", "New desc", null, "New value", "gp1-uuid");
+		installer.globalProperty("test.property", "New desc", null, null, "New value", "gp1-uuid");
 
 		GlobalProperty updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("New desc"));
@@ -123,7 +123,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing by property name
-		installer.globalProperty("test.property", "Diff desc", null, "Diff value", "gp2-uuid");
+		installer.globalProperty("test.property", "Diff desc", null, null, "Diff value", "gp2-uuid");
 
 		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("Diff desc"));
@@ -132,29 +132,30 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(updated.getUuid(), is("gp2-uuid"));
 
 		// Check with custom data type and null value
-		GlobalProperty custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, null, "gp3-uuid");
+		GlobalProperty custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is(nullValue()));
 
 		// Check with custom data type and non-null value
 		EncounterType encType = installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
-		custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, encType, "gp3-uuid");
+		custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType, "gp3-uuid");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is((Object) encType));
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#locationAttributeType(String, String, Class, int, int, String)
+	 * @see CoreMetadataInstaller#locationAttributeType(String, String, Class, String, int, int, String)
 	 */
 	@Test
 	public void locationAttributeType() throws Exception {
 		// Check creating new
-		installer.locationAttributeType("Test Type", "Testing", TestingDatatype.class, 0, 1, "obj1-uuid");
+		installer.locationAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid");
 
 		LocationAttributeType type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
 		Assert.assertThat(type.getDescription(), is("Testing"));
 		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getDatatypeConfig(), is("config1"));
 		Assert.assertThat(type.getMinOccurs(), is(0));
 		Assert.assertThat(type.getMaxOccurs(), is(1));
 
@@ -162,12 +163,13 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.locationAttributeType("New name", "New desc", TestingDatatype.class, 1, 2, "obj1-uuid");
+		installer.locationAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid");
 
 		type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
 		Assert.assertThat(type.getDescription(), is("New desc"));
 		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getDatatypeConfig(), is("config2"));
 		Assert.assertThat(type.getMinOccurs(), is(1));
 		Assert.assertThat(type.getMaxOccurs(), is(2));
 	}
@@ -301,17 +303,18 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#visitAttributeType(String, String, Class, int, int, String)
+	 * @see CoreMetadataInstaller#visitAttributeType(String, String, Class, String, int, int, String)
 	 */
 	@Test
 	public void visitAttributeType() throws Exception {
 		// Check creating new
-		installer.visitAttributeType("Test Type", "Testing", TestingDatatype.class, 0, 1, "obj1-uuid");
+		installer.visitAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid");
 
 		VisitAttributeType type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
 		Assert.assertThat(type.getDescription(), is("Testing"));
 		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getDatatypeConfig(), is("config1"));
 		Assert.assertThat(type.getMinOccurs(), is(0));
 		Assert.assertThat(type.getMaxOccurs(), is(1));
 
@@ -319,12 +322,13 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.visitAttributeType("New name", "New desc", TestingDatatype.class, 1, 2, "obj1-uuid");
+		installer.visitAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid");
 
 		type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
 		Assert.assertThat(type.getDescription(), is("New desc"));
 		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getDatatypeConfig(), is("config2"));
 		Assert.assertThat(type.getMinOccurs(), is(1));
 		Assert.assertThat(type.getMaxOccurs(), is(2));
 	}
