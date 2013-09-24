@@ -196,7 +196,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.patientIdentifierType("New name", "New desc", "\\d*", "New format desc", TestingIdentifierValidator.class,
+		installer.patientIdentifierType("New name", "New desc", "\\d*", "New format desc", null,
 				PatientIdentifierType.LocationBehavior.REQUIRED, true, "obj1-uuid");
 
 		type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
@@ -204,7 +204,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(type.getDescription(), is("New desc"));
 		Assert.assertThat(type.getFormat(), is("\\d*"));
 		Assert.assertThat(type.getFormatDescription(), is("New format desc"));
-		Assert.assertThat(type.getValidator(), is(TestingIdentifierValidator.class.getName()));
+		Assert.assertThat(type.getValidator(), is(nullValue()));
 		Assert.assertThat(type.getLocationBehavior(), is(PatientIdentifierType.LocationBehavior.REQUIRED));
 		Assert.assertThat(type.getRequired(), is(true));
 	}

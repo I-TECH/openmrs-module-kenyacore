@@ -214,7 +214,7 @@ public class CoreMetadataInstaller {
 		obj.setDescription(description);
 		obj.setFormat(format);
 		obj.setFormatDescription(formatDescription);
-		obj.setValidator(validator.getName());
+		obj.setValidator(validator != null ? validator.getName() : null);
 		obj.setLocationBehavior(locationBehavior);
 		obj.setRequired(required);
 		obj.setUuid(uuid);
