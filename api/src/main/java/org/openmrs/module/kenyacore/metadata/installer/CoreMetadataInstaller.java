@@ -17,18 +17,27 @@ package org.openmrs.module.kenyacore.metadata.installer;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.GlobalProperty;
+import org.openmrs.LocationAttributeType;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.api.VisitService;
 import org.openmrs.customdatatype.CustomDatatype;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
+import org.openmrs.patient.IdentifierValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Validator;
 
 /**
  * Component for installing standard types of metadata
@@ -47,6 +56,18 @@ public class CoreMetadataInstaller {
 	@Autowired
 	@Qualifier("formService")
 	private FormService formService;
+
+	@Autowired
+	@Qualifier("locationService")
+	private LocationService locationService;
+
+	@Autowired
+	@Qualifier("patientService")
+	private PatientService patientService;
+
+	@Autowired
+	@Qualifier("personService")
+	private PersonService personService;
 
 	@Autowired
 	@Qualifier("programWorkflowService")
@@ -103,11 +124,15 @@ public class CoreMetadataInstaller {
 	 * Installs a global property
 	 * @param property the property
 	 * @param description the description
-	 * @param dataType the custom data type (can be null)
+	 * @param datatype the custom data type (can be null)
 	 * @param value the value (can be null)
 	 * @return the global property
 	 */
-	public <T, H extends CustomDatatype<T>> GlobalProperty globalProperty(String property, String description, Class<H> dataType, T value, String uuid) {
+	public <T, H extends CustomDatatype<T>> GlobalProperty globalProperty(String property,
+																		  String description,
+																		  Class<H> datatype,
+																		  T value,
+																		  String uuid) {
 		GlobalProperty obj = findGlobalProperty(property, uuid);
 		if (obj == null) {
 			obj = new GlobalProperty();
@@ -116,8 +141,8 @@ public class CoreMetadataInstaller {
 		obj.setProperty(property);
 		obj.setDescription(description);
 
-		if (dataType != null) {
-			obj.setDatatypeClassname(dataType.getName());
+		if (datatype != null) {
+			obj.setDatatypeClassname(datatype.getName());
 
 			if (value != null) {
 				obj.setValue(value);
@@ -130,6 +155,101 @@ public class CoreMetadataInstaller {
 		obj.setUuid(uuid);
 
 		return administrationService.saveGlobalProperty(obj);
+	}
+
+	/**
+	 * Installs a location attribute type
+	 * @param name the name
+	 * @param description the description
+	 * @param datatype the datatype class
+	 * @param minOccurs the minimum allowed occurrences
+	 * @param maxOccurs the maximum allowed occurrences
+	 * @param uuid the UUID
+	 * @return the program
+	 */
+	public LocationAttributeType locationAttributeType(String name, String description, Class<?> datatype, int minOccurs, int maxOccurs, String uuid) {
+		LocationAttributeType obj = locationService.getLocationAttributeTypeByUuid(uuid);
+		if (obj == null) {
+			obj = new LocationAttributeType();
+		}
+
+		obj.setName(name);
+		obj.setDescription(description);
+		obj.setDatatypeClassname(datatype.getName());
+		obj.setMinOccurs(minOccurs);
+		obj.setMaxOccurs(maxOccurs);
+		obj.setUuid(uuid);
+
+		return locationService.saveLocationAttributeType(obj);
+	}
+
+	/**
+	 * Installs a patient identifier type
+	 * @param name the name
+	 * @param description the description
+	 * @param format the format regex
+	 * @param uuid the UUID
+	 * @return the program
+	 */
+	public PatientIdentifierType patientIdentifierType(String name,
+													   String description,
+													   String format,
+													   String formatDescription,
+													   Class<? extends IdentifierValidator> validator,
+													   PatientIdentifierType.LocationBehavior locationBehavior,
+													   boolean required,
+													   String uuid) {
+
+		PatientIdentifierType obj = findPatientIdentifierType(name, uuid);
+		if (obj == null) {
+			obj = new PatientIdentifierType();
+		}
+
+		obj.setName(name);
+		obj.setDescription(description);
+		obj.setFormat(format);
+		obj.setFormatDescription(formatDescription);
+		obj.setValidator(validator.getName());
+		obj.setLocationBehavior(locationBehavior);
+		obj.setRequired(required);
+		obj.setUuid(uuid);
+
+		return patientService.savePatientIdentifierType(obj);
+	}
+
+	/**
+	 * Installs a person attribute type
+	 * @param name the name
+	 * @param description the description
+	 * @param format the format class
+	 * @param foreignKey the foreign key (can be null)
+	 * @param searchable whether attribute is searchable
+	 * @param sortWeight the sort weight
+	 * @param uuid the UUID
+	 * @return the program
+	 */
+	public PersonAttributeType personAttributeType(String name,
+												   String description,
+												   Class<?> format,
+												   Integer foreignKey,
+												   boolean searchable,
+												   double sortWeight,
+												   String uuid) {
+
+		PersonAttributeType obj = findPersonAttributeType(name, uuid);
+		if (obj == null) {
+			obj = new PersonAttributeType();
+		}
+
+		obj.setName(name);
+		obj.setDescription(description);
+		obj.setFormat(format.getName());
+		obj.setForeignKey(foreignKey);
+		obj.setSearchable(searchable);
+		obj.setSortWeight(sortWeight);
+		obj.setUuid(uuid);
+
+		return personService.savePersonAttributeType(obj);
 	}
 
 	/**
@@ -152,6 +272,32 @@ public class CoreMetadataInstaller {
 		obj.setUuid(uuid);
 
 		return programService.saveProgram(obj);
+	}
+
+	/**
+	 * Installs a visit attribute type
+	 * @param name the name
+	 * @param description the description
+	 * @param datatype the datatype class
+	 * @param minOccurs the minimum allowed occurrences
+	 * @param maxOccurs the maximum allowed occurrences
+	 * @param uuid the UUID
+	 * @return the program
+	 */
+	public VisitAttributeType visitAttributeType(String name, String description, Class<?> datatype, int minOccurs, int maxOccurs, String uuid) {
+		VisitAttributeType obj = visitService.getVisitAttributeTypeByUuid(uuid);
+		if (obj == null) {
+			obj = new VisitAttributeType();
+		}
+
+		obj.setName(name);
+		obj.setDescription(description);
+		obj.setDatatypeClassname(datatype.getName());
+		obj.setMinOccurs(minOccurs);
+		obj.setMaxOccurs(maxOccurs);
+		obj.setUuid(uuid);
+
+		return visitService.saveVisitAttributeType(obj);
 	}
 
 	/**
@@ -218,6 +364,36 @@ public class CoreMetadataInstaller {
 		}
 
 		return administrationService.getGlobalPropertyObject(property);
+	}
+
+	/**
+	 * Finds an existing patient identifier type
+	 * @param name the name
+	 * @param uuid the uuid
+	 * @return the patient identifier type or null
+	 */
+	protected PatientIdentifierType findPatientIdentifierType(String name, String uuid) {
+		PatientIdentifierType obj = patientService.getPatientIdentifierTypeByUuid(uuid);
+		if (obj != null) {
+			return obj;
+		}
+
+		return patientService.getPatientIdentifierTypeByName(name);
+	}
+
+	/**
+	 * Finds an existing person attribute type
+	 * @param name the name
+	 * @param uuid the uuid
+	 * @return the person attribute type or null
+	 */
+	protected PersonAttributeType findPersonAttributeType(String name, String uuid) {
+		PersonAttributeType obj = personService.getPersonAttributeTypeByUuid(uuid);
+		if (obj != null) {
+			return obj;
+		}
+
+		return personService.getPersonAttributeTypeByName(name);
 	}
 
 	/**

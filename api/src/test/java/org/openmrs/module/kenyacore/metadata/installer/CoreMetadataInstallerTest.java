@@ -20,17 +20,23 @@ import org.junit.Test;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.GlobalProperty;
+import org.openmrs.LocationAttributeType;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.SerializingCustomDatatype;
+import org.openmrs.patient.IdentifierValidator;
+import org.openmrs.patient.UnallowedIdentifierException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.Matchers.*;
 
 /**
- * Tests for {@link org.openmrs.module.kenyacore.metadata.installer.CoreMetadataInstaller}
+ * Tests for {@link CoreMetadataInstaller}
  */
 public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 
@@ -43,9 +49,9 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void encounterType() throws Exception {
 		// Check creating new
-		installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
+		installer.encounterType("Test Encounter", "Testing", "obj1-uuid");
 
-		EncounterType created = Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid");
+		EncounterType created = Context.getEncounterService().getEncounterTypeByUuid("obj1-uuid");
 		Assert.assertThat(created.getName(), is("Test Encounter"));
 		Assert.assertThat(created.getDescription(), is("Testing"));
 
@@ -53,9 +59,9 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.encounterType("New name", "New desc", "enc-type-uuid");
+		installer.encounterType("New name", "New desc", "obj1-uuid");
 
-		EncounterType updated = Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid");
+		EncounterType updated = Context.getEncounterService().getEncounterTypeByUuid("obj1-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("New desc"));
 	}
@@ -127,12 +133,107 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 
 		// Check with custom data type and null value
 		GlobalProperty custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, null, "gp3-uuid");
+		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is(nullValue()));
 
 		// Check with custom data type and non-null value
 		EncounterType encType = installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
 		custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, encType, "gp3-uuid");
+		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is((Object) encType));
+	}
+
+	/**
+	 * @see CoreMetadataInstaller#locationAttributeType(String, String, Class, int, int, String)
+	 */
+	@Test
+	public void locationAttributeType() throws Exception {
+		// Check creating new
+		installer.locationAttributeType("Test Type", "Testing", TestingDatatype.class, 0, 1, "obj1-uuid");
+
+		LocationAttributeType type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("Test Type"));
+		Assert.assertThat(type.getDescription(), is("Testing"));
+		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getMinOccurs(), is(0));
+		Assert.assertThat(type.getMaxOccurs(), is(1));
+
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check updating existing
+		installer.locationAttributeType("New name", "New desc", TestingDatatype.class, 1, 2, "obj1-uuid");
+
+		type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("New name"));
+		Assert.assertThat(type.getDescription(), is("New desc"));
+		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getMinOccurs(), is(1));
+		Assert.assertThat(type.getMaxOccurs(), is(2));
+	}
+
+	/**
+	 * @see CoreMetadataInstaller#patientIdentifierType(String, String, String, String, Class, org.openmrs.PatientIdentifierType.LocationBehavior, boolean, String)
+	 */
+	@Test
+	public void patientIdentifierType() throws Exception {
+		// Check creating new
+		installer.patientIdentifierType("Test Type", "Testing", "\\d+", "Format desc", TestingIdentifierValidator.class,
+				PatientIdentifierType.LocationBehavior.NOT_USED, false, "obj1-uuid");
+
+		PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("Test Type"));
+		Assert.assertThat(type.getDescription(), is("Testing"));
+		Assert.assertThat(type.getFormat(), is("\\d+"));
+		Assert.assertThat(type.getFormatDescription(), is("Format desc"));
+		Assert.assertThat(type.getValidator(), is(TestingIdentifierValidator.class.getName()));
+		Assert.assertThat(type.getLocationBehavior(), is(PatientIdentifierType.LocationBehavior.NOT_USED));
+		Assert.assertThat(type.getRequired(), is(false));
+
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check updating existing
+		installer.patientIdentifierType("New name", "New desc", "\\d*", "New format desc", TestingIdentifierValidator.class,
+				PatientIdentifierType.LocationBehavior.REQUIRED, true, "obj1-uuid");
+
+		type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("New name"));
+		Assert.assertThat(type.getDescription(), is("New desc"));
+		Assert.assertThat(type.getFormat(), is("\\d*"));
+		Assert.assertThat(type.getFormatDescription(), is("New format desc"));
+		Assert.assertThat(type.getValidator(), is(TestingIdentifierValidator.class.getName()));
+		Assert.assertThat(type.getLocationBehavior(), is(PatientIdentifierType.LocationBehavior.REQUIRED));
+		Assert.assertThat(type.getRequired(), is(true));
+	}
+
+	/**
+	 * @see CoreMetadataInstaller#personAttributeType(String, String, Class, Integer, boolean, double, String)
+	 */
+	@Test
+	public void personAttributeType() throws Exception {
+		// Check creating new
+		installer.personAttributeType("Test Type", "Testing", String.class, null, false, 1.0, "obj1-uuid");
+
+		PersonAttributeType type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("Test Type"));
+		Assert.assertThat(type.getDescription(), is("Testing"));
+		Assert.assertThat(type.getFormat(), is(String.class.getName()));
+		Assert.assertThat(type.isSearchable(), is(false));
+		Assert.assertThat(type.getSortWeight(), is(1.0));
+
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check updating existing
+		installer.personAttributeType("New name", "New desc", String.class, null, true, 2.0, "obj1-uuid");
+
+		type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("New name"));
+		Assert.assertThat(type.getDescription(), is("New desc"));
+		Assert.assertThat(type.getFormat(), is(String.class.getName()));
+		Assert.assertThat(type.isSearchable(), is(true));
+		Assert.assertThat(type.getSortWeight(), is(2.0));
 	}
 
 	/**
@@ -145,9 +246,9 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		final String MALARIA_PROGRAM_UUID = "f923524a-b90c-4870-a948-4125638606fd";
 
 		// Check creating new
-		installer.program("Test Program", "Testing", HIV_PROGRAM_UUID, "prog-type-uuid");
+		installer.program("Test Program", "Testing", HIV_PROGRAM_UUID, "obj1-uuid");
 
-		Program created = Context.getProgramWorkflowService().getProgramByUuid("prog-type-uuid");
+		Program created = Context.getProgramWorkflowService().getProgramByUuid("obj1-uuid");
 		Assert.assertThat(created.getName(), is("Test Program"));
 		Assert.assertThat(created.getDescription(), is("Testing"));
 		Assert.assertThat(created.getConcept(), is(Context.getConceptService().getConceptByUuid(HIV_PROGRAM_UUID)));
@@ -156,9 +257,9 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.program("New name", "New desc", MALARIA_PROGRAM_UUID, "prog-type-uuid");
+		installer.program("New name", "New desc", MALARIA_PROGRAM_UUID, "obj1-uuid");
 
-		Program updated = Context.getProgramWorkflowService().getProgramByUuid("prog-type-uuid");
+		Program updated = Context.getProgramWorkflowService().getProgramByUuid("obj1-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("New desc"));
 		Assert.assertThat(updated.getConcept(), is(Context.getConceptService().getConceptByUuid(MALARIA_PROGRAM_UUID)));
@@ -167,12 +268,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check update existing when name conflicts
-		installer.program("New name", "Diff desc", MALARIA_PROGRAM_UUID, "prog-type2-uuid");
-		updated = Context.getProgramWorkflowService().getProgramByUuid("prog-type2-uuid");
+		installer.program("New name", "Diff desc", MALARIA_PROGRAM_UUID, "obj2-uuid");
+		updated = Context.getProgramWorkflowService().getProgramByUuid("obj2-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("Diff desc"));
 
-		Program old = Context.getProgramWorkflowService().getProgramByUuid("prog-type-uuid");
+		Program old = Context.getProgramWorkflowService().getProgramByUuid("obj1-uuid");
 		Assert.assertThat(old, is(nullValue()));
 	}
 
@@ -182,9 +283,9 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void visitType() throws Exception {
 		// Check creating new
-		installer.visitType("Test Visit", "Testing", "visit-type-uuid");
+		installer.visitType("Test Visit", "Testing", "obj1-uuid");
 
-		VisitType type = Context.getVisitService().getVisitTypeByUuid("visit-type-uuid");
+		VisitType type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Visit"));
 		Assert.assertThat(type.getDescription(), is("Testing"));
 
@@ -192,11 +293,40 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.visitType("New name", "New desc", "visit-type-uuid");
+		installer.visitType("New name", "New desc", "obj1-uuid");
 
-		type = Context.getVisitService().getVisitTypeByUuid("visit-type-uuid");
+		type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
 		Assert.assertThat(type.getDescription(), is("New desc"));
+	}
+
+	/**
+	 * @see CoreMetadataInstaller#visitAttributeType(String, String, Class, int, int, String)
+	 */
+	@Test
+	public void visitAttributeType() throws Exception {
+		// Check creating new
+		installer.visitAttributeType("Test Type", "Testing", TestingDatatype.class, 0, 1, "obj1-uuid");
+
+		VisitAttributeType type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("Test Type"));
+		Assert.assertThat(type.getDescription(), is("Testing"));
+		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getMinOccurs(), is(0));
+		Assert.assertThat(type.getMaxOccurs(), is(1));
+
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check updating existing
+		installer.visitAttributeType("New name", "New desc", TestingDatatype.class, 1, 2, "obj1-uuid");
+
+		type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
+		Assert.assertThat(type.getName(), is("New name"));
+		Assert.assertThat(type.getDescription(), is("New desc"));
+		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(type.getMinOccurs(), is(1));
+		Assert.assertThat(type.getMaxOccurs(), is(2));
 	}
 
 	/**
@@ -212,6 +342,32 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		@Override
 		public EncounterType deserialize(String serializedValue) {
 			return StringUtils.isNotEmpty(serializedValue) ? Context.getEncounterService().getEncounterType(Integer.valueOf(serializedValue)) : null;
+		}
+	}
+
+	/**
+	 * Custom identifier validator for testing
+	 */
+	public static class TestingIdentifierValidator implements IdentifierValidator {
+
+		@Override
+		public String getName() {
+			return "Test validator";
+		}
+
+		@Override
+		public boolean isValid(String identifier) throws UnallowedIdentifierException {
+			return true;
+		}
+
+		@Override
+		public String getValidIdentifier(String undecoratedIdentifier) throws UnallowedIdentifierException {
+			return null;
+		}
+
+		@Override
+		public String getAllowedCharacters() {
+			return null;
 		}
 	}
 }
