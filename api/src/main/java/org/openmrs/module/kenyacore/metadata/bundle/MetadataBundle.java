@@ -12,17 +12,15 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.metadata;
-
-import org.openmrs.module.kenyacore.AbstractDescriptor;
+package org.openmrs.module.kenyacore.metadata.bundle;
 
 /**
- * Abstract base class for metadata provider components
+ * Interface for metadata bundles which can be installed
  */
-public abstract class AbstractMetadataProvider extends AbstractDescriptor {
+public interface MetadataBundle {
 
 	/**
-	 * Performs the installation of metadata items
+	 * Performs the installation of the metadata items
 	 */
-	public abstract void install();
+	void install();
 }

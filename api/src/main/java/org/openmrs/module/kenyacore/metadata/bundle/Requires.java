@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.metadata;
+package org.openmrs.module.kenyacore.metadata.bundle;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

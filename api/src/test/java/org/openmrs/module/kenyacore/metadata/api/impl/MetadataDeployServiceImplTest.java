@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.metadata.installer;
+package org.openmrs.module.kenyacore.metadata.api.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -28,28 +28,30 @@ import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.SerializingCustomDatatype;
+import org.openmrs.module.kenyacore.metadata.api.MetadataDeployService;
 import org.openmrs.patient.IdentifierValidator;
 import org.openmrs.patient.UnallowedIdentifierException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
 
 /**
- * Tests for {@link CoreMetadataInstaller}
+ * Tests for {@link MetadataDeployServiceImpl}
  */
-public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
+public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
-	private CoreMetadataInstaller installer;
+	private MetadataDeployService deployService;
 
 	/**
-	 * @see CoreMetadataInstaller#encounterType(String, String, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void encounterType() throws Exception {
-		// Check creating new
-		installer.encounterType("Test Encounter", "Testing", "obj1-uuid");
+	public void installObject_shouldInstallEncounterType() {
+		deployService.installObject(encounterType("Test Encounter", "Testing", "obj1-uuid"));
 
 		EncounterType created = Context.getEncounterService().getEncounterTypeByUuid("obj1-uuid");
 		Assert.assertThat(created.getName(), is("Test Encounter"));
@@ -59,21 +61,37 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.encounterType("New name", "New desc", "obj1-uuid");
+		deployService.installObject(encounterType("New name", "New desc", "obj1-uuid"));
 
 		EncounterType updated = Context.getEncounterService().getEncounterTypeByUuid("obj1-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("New desc"));
+
+		// Retire object
+		Context.getEncounterService().retireEncounterType(updated, "Testing");
+		Context.flushSession();
+		Context.clearSession();
+
+		// Check that re-install unretires
+		deployService.installObject(encounterType("Unretired name", "Unretired desc", "obj1-uuid"));
+
+		EncounterType unretired = Context.getEncounterService().getEncounterTypeByUuid("obj1-uuid");
+		Assert.assertThat(unretired.getName(), is("Unretired name"));
+		Assert.assertThat(unretired.getDescription(), is("Unretired desc"));
+		Assert.assertThat(unretired.isRetired(), is(false));
+		Assert.assertThat(unretired.getDateRetired(), is(nullValue()));
+		Assert.assertThat(unretired.getRetiredBy(), is(nullValue()));
+		Assert.assertThat(unretired.getRetireReason(), is(nullValue()));
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#form(String, String, String, String, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void form() throws Exception {
+	public void installObject_shouldInstallForm() throws Exception {
 		// Check creating new
-		installer.encounterType("Test Encounter", "Testing", "enc-type1-uuid");
-		installer.form("Test Form #1", "Testing", "enc-type1-uuid", "1.0", "form-uuid");
+		deployService.installObject(encounterType("Test Encounter", "Testing", "enc-type1-uuid"));
+		deployService.installObject(form("Test Form #1", "Testing", "enc-type1-uuid", "1.0", "form-uuid"));
 
 		Form created = Context.getFormService().getFormByUuid("form-uuid");
 		Assert.assertThat(created.getName(), is("Test Form #1"));
@@ -85,8 +103,8 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.encounterType("Other Encounter", "Testing", "enc-type2-uuid");
-		installer.form("New name", "New desc", "enc-type2-uuid", "2.0", "form-uuid");
+		deployService.installObject(encounterType("Other Encounter", "Testing", "enc-type2-uuid"));
+		deployService.installObject(form("New name", "New desc", "enc-type2-uuid", "2.0", "form-uuid"));
 
 		Form updated = Context.getFormService().getFormByUuid("form-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
@@ -96,12 +114,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#globalProperty(String, String, Class, String, Object, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void globalProperty() throws Exception {
+	public void installObject_shouldInstallGlobalProperty() throws Exception {
 		// Check creating new
-		installer.globalProperty("test.property", "Testing", null, null, "Value", "gp1-uuid");
+		deployService.installObject(globalProperty("test.property", "Testing", null, null, "Value", "gp1-uuid"));
 
 		GlobalProperty created = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(created.getDescription(), is("Testing"));
@@ -112,7 +130,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.globalProperty("test.property", "New desc", null, null, "New value", "gp1-uuid");
+		deployService.installObject(globalProperty("test.property", "New desc", null, null, "New value", "gp1-uuid"));
 
 		GlobalProperty updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("New desc"));
@@ -123,8 +141,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing by property name
-		installer.globalProperty("test.property", "Diff desc", null, null, "Diff value", "gp2-uuid");
-
+		deployService.installObject(globalProperty("test.property", "Diff desc", null, null, "Diff value", "gp2-uuid"));
 		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("Diff desc"));
 		Assert.assertThat(updated.getDatatypeClassname(), is(nullValue()));
@@ -132,24 +149,27 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(updated.getUuid(), is("gp2-uuid"));
 
 		// Check with custom data type and null value
-		GlobalProperty custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid");
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid"));
+		GlobalProperty custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is(nullValue()));
 
 		// Check with custom data type and non-null value
-		EncounterType encType = installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
-		custom = installer.globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType, "gp3-uuid");
+		deployService.installObject(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
+		EncounterType encType = Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid");
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType, "gp3-uuid"));
+		custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is((Object) encType));
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#locationAttributeType(String, String, Class, String, int, int, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void locationAttributeType() throws Exception {
+	public void installObject_shouldInstallLocationAttributeType() throws Exception {
 		// Check creating new
-		installer.locationAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid");
+		deployService.installObject(locationAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid"));
 
 		LocationAttributeType type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
@@ -163,7 +183,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.locationAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid");
+		deployService.installObject(locationAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid"));
 
 		type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
@@ -175,13 +195,13 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#patientIdentifierType(String, String, String, String, Class, org.openmrs.PatientIdentifierType.LocationBehavior, boolean, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void patientIdentifierType() throws Exception {
+	public void installObject_shouldInstallPatientIdentifierType() throws Exception {
 		// Check creating new
-		installer.patientIdentifierType("Test Type", "Testing", "\\d+", "Format desc", TestingIdentifierValidator.class,
-				PatientIdentifierType.LocationBehavior.NOT_USED, false, "obj1-uuid");
+		deployService.installObject(patientIdentifierType("Test Type", "Testing", "\\d+", "Format desc", TestingIdentifierValidator.class,
+				PatientIdentifierType.LocationBehavior.NOT_USED, false, "obj1-uuid"));
 
 		PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
@@ -196,8 +216,8 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.patientIdentifierType("New name", "New desc", "\\d*", "New format desc", null,
-				PatientIdentifierType.LocationBehavior.REQUIRED, true, "obj1-uuid");
+		deployService.installObject(patientIdentifierType("New name", "New desc", "\\d*", "New format desc", null,
+				PatientIdentifierType.LocationBehavior.REQUIRED, true, "obj1-uuid"));
 
 		type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
@@ -210,12 +230,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#personAttributeType(String, String, Class, Integer, boolean, double, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void personAttributeType() throws Exception {
+	public void installObject_shouldInstallPersonAttributeType() throws Exception {
 		// Check creating new
-		installer.personAttributeType("Test Type", "Testing", String.class, null, false, 1.0, "obj1-uuid");
+		deployService.installObject(personAttributeType("Test Type", "Testing", String.class, null, false, 1.0, "obj1-uuid"));
 
 		PersonAttributeType type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
@@ -228,7 +248,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.personAttributeType("New name", "New desc", String.class, null, true, 2.0, "obj1-uuid");
+		deployService.installObject(personAttributeType("New name", "New desc", String.class, null, true, 2.0, "obj1-uuid"));
 
 		type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
@@ -239,16 +259,16 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#program(String, String, String, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void program() throws Exception {
+	public void installObject_shouldInstallProgram() throws Exception {
 		// Existing concepts in test data
 		final String HIV_PROGRAM_UUID = "0a9afe04-088b-44ca-9291-0a8c3b5c96fa";
 		final String MALARIA_PROGRAM_UUID = "f923524a-b90c-4870-a948-4125638606fd";
 
 		// Check creating new
-		installer.program("Test Program", "Testing", HIV_PROGRAM_UUID, "obj1-uuid");
+		deployService.installObject(program("Test Program", "Testing", HIV_PROGRAM_UUID, "obj1-uuid"));
 
 		Program created = Context.getProgramWorkflowService().getProgramByUuid("obj1-uuid");
 		Assert.assertThat(created.getName(), is("Test Program"));
@@ -259,7 +279,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.program("New name", "New desc", MALARIA_PROGRAM_UUID, "obj1-uuid");
+		deployService.installObject(program("New name", "New desc", MALARIA_PROGRAM_UUID, "obj1-uuid"));
 
 		Program updated = Context.getProgramWorkflowService().getProgramByUuid("obj1-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
@@ -270,7 +290,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check update existing when name conflicts
-		installer.program("New name", "Diff desc", MALARIA_PROGRAM_UUID, "obj2-uuid");
+		deployService.installObject(program("New name", "Diff desc", MALARIA_PROGRAM_UUID, "obj2-uuid"));
 		updated = Context.getProgramWorkflowService().getProgramByUuid("obj2-uuid");
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("Diff desc"));
@@ -280,12 +300,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#visitType(String, String, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void visitType() throws Exception {
+	public void installObject_shouldInstallVisitType() throws Exception {
 		// Check creating new
-		installer.visitType("Test Visit", "Testing", "obj1-uuid");
+		deployService.installObject(visitType("Test Visit", "Testing", "obj1-uuid"));
 
 		VisitType type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Visit"));
@@ -295,7 +315,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.visitType("New name", "New desc", "obj1-uuid");
+		deployService.installObject(visitType("New name", "New desc", "obj1-uuid"));
 
 		type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));
@@ -303,12 +323,12 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreMetadataInstaller#visitAttributeType(String, String, Class, String, int, int, String)
+	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void visitAttributeType() throws Exception {
+	public void installObject_shouldInstallVisitAttributeType() throws Exception {
 		// Check creating new
-		installer.visitAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid");
+		deployService.installObject(visitAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid"));
 
 		VisitAttributeType type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("Test Type"));
@@ -322,7 +342,7 @@ public class CoreMetadataInstallerTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 
 		// Check updating existing
-		installer.visitAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid");
+		deployService.installObject(visitAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid"));
 
 		type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
 		Assert.assertThat(type.getName(), is("New name"));

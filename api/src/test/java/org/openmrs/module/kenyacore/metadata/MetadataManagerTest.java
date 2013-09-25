@@ -17,7 +17,8 @@ package org.openmrs.module.kenyacore.metadata;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.kenyacore.metadata.installer.CoreMetadataInstaller;
+import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
+import org.openmrs.module.kenyacore.metadata.bundle.Requires;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
+import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
 
 /**
  * Tests for {@link org.openmrs.module.kenyacore.metadata.MetadataManager}
@@ -35,13 +37,13 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	private MetadataManager metadataManager;
 
 	@Autowired
-	private TestInstaller1 testInstaller1;
+	private TestBundle1 testBundle1;
 
 	@Autowired
-	private TestInstaller2 testInstaller2;
+	private TestBundle2 testBundle2;
 
 	@Autowired
-	private TestInstaller3 testInstaller3;
+	private TestBundle3 testBundle3;
 
 	/**
 	 * @see MetadataManager#ensurePackageInstalled(String, String, ClassLoader)
@@ -71,11 +73,11 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see MetadataManager#installMetadataProviders(java.util.List)
+	 * @see MetadataManager#installMetadataBundles(java.util.List)
 	 */
 	@Test
-	public void processInstallers() {
-		metadataManager.installMetadataProviders(Arrays.asList(testInstaller3, testInstaller2, testInstaller1));
+	public void installMetadataBundles() {
+		metadataManager.installMetadataBundles(Arrays.asList(testBundle3, testBundle2, testBundle1));
 
 		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid"), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid("form1-uuid"), is(notNullValue()));
@@ -83,53 +85,44 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see MetadataManager#installMetadataProviders(java.util.List)
+	 * @see MetadataManager#installMetadataBundles(java.util.List)
 	 */
 	@Test(expected = RuntimeException.class)
 	public void processInstallers_shouldThrowExceptionIfFindBrokenRequirement() {
-		metadataManager.installMetadataProviders(Arrays.asList(testInstaller1, new TestInstaller4()));
+		metadataManager.installMetadataBundles(Arrays.asList(testBundle1, new TestBundle4()));
 	}
 
-	@Component("test.installer.1")
-	public static class TestInstaller1 extends AbstractMetadataProvider {
-		@Autowired
-		private CoreMetadataInstaller installer;
-
+	@Component("test.bundle.1")
+	public static class TestBundle1 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			installer.encounterType("Test Encounter", "Testing", "enc-type-uuid");
+			install(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
 		}
 	}
 
 	@Component
-	@Requires({ "test.installer.1" })
-	public static class TestInstaller2 extends AbstractMetadataProvider {
-		@Autowired
-		private CoreMetadataInstaller installer;
-
+	@Requires({ "test.bundle.1" })
+	public static class TestBundle2 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			installer.form("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid");
+			install(form("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid"));
 		}
 	}
 
 	@Component
-	@Requires({ "test.installer.1" })
-	public static class TestInstaller3 extends AbstractMetadataProvider {
-		@Autowired
-		private CoreMetadataInstaller installer;
-
+	@Requires({ "test.bundle.1" })
+	public static class TestBundle3 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			installer.form("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid");
+			install(form("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid"));
 		}
 	}
 
 	/**
 	 * Has broken requirement
 	 */
-	@Requires({ "test.installer.xxx" })
-	public static class TestInstaller4 extends AbstractMetadataProvider {
+	@Requires({ "test.bundle.xxx" })
+	public static class TestBundle4 extends AbstractMetadataBundle {
 		@Override
 		public void install() { }
 	}

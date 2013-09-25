@@ -19,6 +19,8 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.kenyacore.ContentManager;
+import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
+import org.openmrs.module.kenyacore.metadata.bundle.Requires;
 import org.openmrs.module.metadatasharing.ImportConfig;
 import org.openmrs.module.metadatasharing.ImportMode;
 import org.openmrs.module.metadatasharing.ImportedPackage;
@@ -70,8 +72,8 @@ public class MetadataManager implements ContentManager {
 			}
 		}
 
-		// Install provider components
-		installMetadataProviders(Context.getRegisteredComponents(AbstractMetadataProvider.class));
+		// Install bundle components
+		installMetadataBundles(Context.getRegisteredComponents(AbstractMetadataBundle.class));
 	}
 
 	/**
@@ -146,51 +148,51 @@ public class MetadataManager implements ContentManager {
 	}
 
 	/**
-	 * Processes the given list of metadata providers
-	 * @param providers the providers
+	 * Processes the given list of metadata bundles
+	 * @param bundles the bundles
 	 */
-	protected void installMetadataProviders(List<AbstractMetadataProvider> providers) {
+	protected void installMetadataBundles(List<AbstractMetadataBundle> bundles) {
 		// Organize into map by id
-		Map<String, AbstractMetadataProvider> all = new HashMap<String, AbstractMetadataProvider>();
-		for (AbstractMetadataProvider provider : providers) {
-			all.put(provider.getId(), provider);
+		Map<String, AbstractMetadataBundle> all = new HashMap<String, AbstractMetadataBundle>();
+		for (AbstractMetadataBundle bundle : bundles) {
+			all.put(bundle.getId(), bundle);
 		}
 
 		// Begin recursive processing
-		Set<AbstractMetadataProvider> installed = new HashSet<AbstractMetadataProvider>();
-		for (AbstractMetadataProvider provider : providers) {
-			installMetadataProvider(provider, all, installed);
+		Set<AbstractMetadataBundle> installed = new HashSet<AbstractMetadataBundle>();
+		for (AbstractMetadataBundle bundle : bundles) {
+			installMetadataBundle(bundle, all, installed);
 		}
 	}
 
 	/**
-	 * Installs a metadata provider by recursively installing it's required providers
-	 * @param provider the provider
-	 * @param all the map of all providers and their ids
-	 * @param installed the set of previously installed providers
+	 * Installs a metadata bundle by recursively installing it's required bundles
+	 * @param bundle the bundle
+	 * @param all the map of all bundles and their ids
+	 * @param installed the set of previously installed bundles
 	 */
-	protected void installMetadataProvider(AbstractMetadataProvider provider, Map<String, AbstractMetadataProvider> all, Set<AbstractMetadataProvider> installed) {
-		// Return immediately if provider has already been installed
-		if (installed.contains(provider)) {
+	protected void installMetadataBundle(AbstractMetadataBundle bundle, Map<String, AbstractMetadataBundle> all, Set<AbstractMetadataBundle> installed) {
+		// Return immediately if bundle has already been installed
+		if (installed.contains(bundle)) {
 			return;
 		}
 
-		// Install required providers first
-		Requires requires = provider.getClass().getAnnotation(Requires.class);
+		// Install required bundles first
+		Requires requires = bundle.getClass().getAnnotation(Requires.class);
 		if (requires != null) {
 			for (String requiredId : requires.value()) {
-				AbstractMetadataProvider required = all.get(requiredId);
+				AbstractMetadataBundle required = all.get(requiredId);
 
 				if (required == null) {
-					throw new RuntimeException("Can't find required provider " + requiredId + " for " + provider.getId());
+					throw new RuntimeException("Can't find required bundle " + requiredId + " for " + bundle.getId());
 				}
 
-				installMetadataProvider(required, all, installed);
+				installMetadataBundle(required, all, installed);
 			}
 		}
 
-		provider.install();
-		installed.add(provider);
+		bundle.install();
+		installed.add(bundle);
 
 		Context.flushSession();
 	}
