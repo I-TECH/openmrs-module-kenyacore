@@ -63,7 +63,7 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 	 */
 	@Override
 	public boolean installObject(OpenmrsObject incoming) {
-		ObjectDeployHandler handler = getHandler(incoming);
+		ObjectDeployHandler handler = getHandler(incoming.getClass());
 
 		// Look for existing by UUID (i.e. exact match)
 		OpenmrsObject existing = handler.fetch(incoming.getUuid());
@@ -96,22 +96,32 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 	 */
 	@Override
 	public void uninstallObject(OpenmrsObject outgoing, String reason) {
-		ObjectDeployHandler handler = getHandler(outgoing);
+		ObjectDeployHandler handler = getHandler(outgoing.getClass());
 
 		handler.remove(outgoing, reason);
 	}
 
 	/**
-	 * Gets the handler for the given object
-	 * @param obj the object
-	 * @return the handler
+	 * @see MetadataDeployService#fetchObject(Class, String)
 	 */
-	protected ObjectDeployHandler getHandler(OpenmrsObject obj) throws RuntimeException {
-		ObjectDeployHandler handler = handlers.get(obj.getClass());
+	@Override
+	public <T extends OpenmrsObject> T fetchObject(Class<T> clazz, String uuid) {
+		ObjectDeployHandler handler = getHandler(clazz);
+		return (T) handler.fetch(uuid);
+	}
+
+	/**
+	 * Convenience method to get the handler for the given object class
+	 * @param clazz the object class
+	 * @return the handler
+	 * @throws RuntimeException if no suitable handler exists
+	 */
+	protected ObjectDeployHandler getHandler(Class<? extends OpenmrsObject> clazz) throws RuntimeException {
+		ObjectDeployHandler handler = handlers.get(clazz);
 		if (handler != null) {
 			return handler;
 		}
 
-		throw new RuntimeException("No handler class found for " + obj.getClass().getName());
+		throw new RuntimeException("No handler class found for " + clazz.getName());
 	}
 }

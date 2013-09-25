@@ -46,4 +46,13 @@ public abstract class AbstractMetadataBundle implements MetadataBundle {
 			deployService.uninstallObject(outgoing, reason);
 		}
 	}
+
+	/**
+	 * Fetches an existing object if it exists
+	 * @param clazz the object's class
+	 * @param uuid the object's UUID
+	 */
+	protected <T extends OpenmrsObject> T existing(Class<T> clazz, String uuid) {
+		return deployService.fetchObject(clazz, uuid);
+	}
 }

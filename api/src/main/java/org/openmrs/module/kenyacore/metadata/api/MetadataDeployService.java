@@ -36,4 +36,11 @@ public interface MetadataDeployService {
 	 * @param reason the reason for uninstallation
 	 */
 	void uninstallObject(OpenmrsObject outgoing, String reason);
+
+	/**
+	 * Fetches an existing object if it exists
+	 * @param clazz the object's class
+	 * @param uuid the object's UUID
+	 */
+	<T extends OpenmrsObject> T fetchObject(Class<T> clazz, String uuid);
 }
