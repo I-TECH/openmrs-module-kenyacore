@@ -20,6 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
+import org.openmrs.module.kenyacore.metadata.bundle.MetadataBundle;
 import org.openmrs.module.kenyacore.metadata.bundle.Requires;
 import org.openmrs.module.metadatasharing.ImportConfig;
 import org.openmrs.module.metadatasharing.ImportMode;
@@ -73,7 +74,7 @@ public class MetadataManager implements ContentManager {
 		}
 
 		// Install bundle components
-		installMetadataBundles(Context.getRegisteredComponents(AbstractMetadataBundle.class));
+		installMetadataBundles(Context.getRegisteredComponents(MetadataBundle.class));
 	}
 
 	/**
@@ -151,16 +152,16 @@ public class MetadataManager implements ContentManager {
 	 * Processes the given list of metadata bundles
 	 * @param bundles the bundles
 	 */
-	protected void installMetadataBundles(List<AbstractMetadataBundle> bundles) {
-		// Organize into map by id
-		Map<String, AbstractMetadataBundle> all = new HashMap<String, AbstractMetadataBundle>();
-		for (AbstractMetadataBundle bundle : bundles) {
-			all.put(bundle.getId(), bundle);
+	protected void installMetadataBundles(List<MetadataBundle> bundles) {
+		// Organize into map by class
+		Map<Class<? extends MetadataBundle>, MetadataBundle> all = new HashMap<Class<? extends MetadataBundle>, MetadataBundle>();
+		for (MetadataBundle bundle : bundles) {
+			all.put(bundle.getClass(), bundle);
 		}
 
 		// Begin recursive processing
-		Set<AbstractMetadataBundle> installed = new HashSet<AbstractMetadataBundle>();
-		for (AbstractMetadataBundle bundle : bundles) {
+		Set<MetadataBundle> installed = new HashSet<MetadataBundle>();
+		for (MetadataBundle bundle : bundles) {
 			installMetadataBundle(bundle, all, installed);
 		}
 	}
@@ -171,7 +172,7 @@ public class MetadataManager implements ContentManager {
 	 * @param all the map of all bundles and their ids
 	 * @param installed the set of previously installed bundles
 	 */
-	protected void installMetadataBundle(AbstractMetadataBundle bundle, Map<String, AbstractMetadataBundle> all, Set<AbstractMetadataBundle> installed) {
+	protected void installMetadataBundle(MetadataBundle bundle, Map<Class<? extends MetadataBundle>, MetadataBundle> all, Set<MetadataBundle> installed) {
 		// Return immediately if bundle has already been installed
 		if (installed.contains(bundle)) {
 			return;
@@ -180,11 +181,11 @@ public class MetadataManager implements ContentManager {
 		// Install required bundles first
 		Requires requires = bundle.getClass().getAnnotation(Requires.class);
 		if (requires != null) {
-			for (String requiredId : requires.value()) {
-				AbstractMetadataBundle required = all.get(requiredId);
+			for (Class<? extends MetadataBundle> requiredClass : requires.value()) {
+				MetadataBundle required = all.get(requiredClass);
 
 				if (required == null) {
-					throw new RuntimeException("Can't find required bundle " + requiredId + " for " + bundle.getId());
+					throw new RuntimeException("Can't find required bundle class " + requiredClass + " for " + bundle.getClass());
 				}
 
 				installMetadataBundle(required, all, installed);

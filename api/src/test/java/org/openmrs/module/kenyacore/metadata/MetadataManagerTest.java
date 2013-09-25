@@ -18,12 +18,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
+import org.openmrs.module.kenyacore.metadata.bundle.MetadataBundle;
 import org.openmrs.module.kenyacore.metadata.bundle.Requires;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
@@ -77,7 +80,10 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void installMetadataBundles() {
-		metadataManager.installMetadataBundles(Arrays.asList(testBundle3, testBundle2, testBundle1));
+		List<MetadataBundle> bundles = new ArrayList<MetadataBundle>();
+		bundles.addAll(Arrays.asList(testBundle3, testBundle2, testBundle1));
+
+		metadataManager.installMetadataBundles(bundles);
 
 		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid"), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid("form1-uuid"), is(notNullValue()));
@@ -89,10 +95,13 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = RuntimeException.class)
 	public void processInstallers_shouldThrowExceptionIfFindBrokenRequirement() {
-		metadataManager.installMetadataBundles(Arrays.asList(testBundle1, new TestBundle4()));
+		List<MetadataBundle> bundles = new ArrayList<MetadataBundle>();
+		bundles.addAll(Arrays.asList(testBundle1, new TestBundle4()));
+
+		metadataManager.installMetadataBundles(bundles);
 	}
 
-	@Component("test.bundle.1")
+	@Component
 	public static class TestBundle1 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
@@ -101,7 +110,7 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Component
-	@Requires({ "test.bundle.1" })
+	@Requires({ TestBundle1.class })
 	public static class TestBundle2 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
@@ -110,7 +119,7 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Component
-	@Requires({ "test.bundle.1" })
+	@Requires({ TestBundle1.class })
 	public static class TestBundle3 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
@@ -119,10 +128,15 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * Has broken requirement
+	 * Has broken requirement because TestBundle5 isn't instantiated as a component
 	 */
-	@Requires({ "test.bundle.xxx" })
+	@Requires({ TestBundle5.class })
 	public static class TestBundle4 extends AbstractMetadataBundle {
+		@Override
+		public void install() { }
+	}
+
+	public static class TestBundle5 extends AbstractMetadataBundle {
 		@Override
 		public void install() { }
 	}

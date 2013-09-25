@@ -15,14 +15,13 @@
 package org.openmrs.module.kenyacore.metadata.bundle;
 
 import org.openmrs.OpenmrsObject;
-import org.openmrs.module.kenyacore.AbstractDescriptor;
 import org.openmrs.module.kenyacore.metadata.api.MetadataDeployService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract base class for metadata bundle components
  */
-public abstract class AbstractMetadataBundle extends AbstractDescriptor implements MetadataBundle {
+public abstract class AbstractMetadataBundle implements MetadataBundle {
 
 	@Autowired
 	protected MetadataDeployService deployService;

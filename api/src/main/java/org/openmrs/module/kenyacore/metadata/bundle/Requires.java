@@ -20,14 +20,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for metadata installers
+ * Annotation for metadata bundles to specify a requires dependency relationship
  */
 @Target(value = {ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Requires {
 
 	/**
-	 * The required installers
+	 * The required bundles
 	 */
-	String[] value();
+	Class<? extends MetadataBundle>[] value();
 }
