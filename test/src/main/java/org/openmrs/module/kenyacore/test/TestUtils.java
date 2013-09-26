@@ -31,6 +31,8 @@ import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatype;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -324,6 +326,20 @@ public class TestUtils {
 
 		// Reset previous modifiers
 		modifiersField.setInt(field, existingModifiers);
+	}
+
+	/**
+	 * Gets the target of a proxy object
+	 * @param proxy the proxy
+	 * @param <T> the target type
+	 * @return the target of the proxy
+	 * @throws Exception
+	 */
+	public static <T> T getProxyTarget(Object proxy) throws Exception {
+		while ((AopUtils.isJdkDynamicProxy(proxy))) {
+			return getProxyTarget(((Advised) proxy).getTargetSource().getTarget());
+		}
+		return (T) proxy;
 	}
 
 	/**

@@ -24,7 +24,6 @@ import org.openmrs.Program;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.customdatatype.CustomDatatype;
-import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.patient.IdentifierValidator;
@@ -101,6 +100,7 @@ public class Constructors {
 		obj.setDatatypeConfig(datatypeConfig);
 		obj.setUuid(uuid);
 
+		// Global properties can't have null values
 		if (value != null) {
 			obj.setValue(value);
 		}

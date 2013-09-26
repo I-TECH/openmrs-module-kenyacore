@@ -20,21 +20,19 @@ import org.junit.Test;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.GlobalProperty;
-import org.openmrs.LocationAttributeType;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttributeType;
+import org.openmrs.Patient;
 import org.openmrs.Program;
-import org.openmrs.VisitAttributeType;
-import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.SerializingCustomDatatype;
-import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.api.MetadataDeployService;
-import org.openmrs.patient.IdentifierValidator;
-import org.openmrs.patient.UnallowedIdentifierException;
+import org.openmrs.module.kenyacore.metadata.handler.impl.ProgramDeployHandler;
+import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
@@ -58,9 +56,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(created.getName(), is("Test Encounter"));
 		Assert.assertThat(created.getDescription(), is("Testing"));
 
-		Context.flushSession();
-		Context.clearSession();
-
 		// Check updating existing
 		deployService.installObject(encounterType("New name", "New desc", "obj1-uuid"));
 
@@ -70,8 +65,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 
 		// Retire object
 		Context.getEncounterService().retireEncounterType(updated, "Testing");
-		Context.flushSession();
-		Context.clearSession();
 
 		// Check that re-install unretires
 		deployService.installObject(encounterType("Unretired name", "Unretired desc", "obj1-uuid"));
@@ -99,9 +92,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(created.getDescription(), is("Testing"));
 		Assert.assertThat(created.getEncounterType(), is(Context.getEncounterService().getEncounterTypeByUuid("enc-type1-uuid")));
 		Assert.assertThat(created.getVersion(), is("1.0"));
-
-		Context.flushSession();
-		Context.clearSession();
 
 		// Check updating existing
 		deployService.installObject(encounterType("Other Encounter", "Testing", "enc-type2-uuid"));
@@ -186,101 +176,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
 	 */
 	@Test
-	public void installObject_shouldInstallLocationAttributeType() throws Exception {
-		// Check creating new
-		deployService.installObject(locationAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid"));
-
-		LocationAttributeType type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("Test Type"));
-		Assert.assertThat(type.getDescription(), is("Testing"));
-		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
-		Assert.assertThat(type.getDatatypeConfig(), is("config1"));
-		Assert.assertThat(type.getMinOccurs(), is(0));
-		Assert.assertThat(type.getMaxOccurs(), is(1));
-
-		Context.flushSession();
-		Context.clearSession();
-
-		// Check updating existing
-		deployService.installObject(locationAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid"));
-
-		type = Context.getLocationService().getLocationAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("New name"));
-		Assert.assertThat(type.getDescription(), is("New desc"));
-		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
-		Assert.assertThat(type.getDatatypeConfig(), is("config2"));
-		Assert.assertThat(type.getMinOccurs(), is(1));
-		Assert.assertThat(type.getMaxOccurs(), is(2));
-	}
-
-	/**
-	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
-	 */
-	@Test
-	public void installObject_shouldInstallPatientIdentifierType() throws Exception {
-		// Check creating new
-		deployService.installObject(patientIdentifierType("Test Type", "Testing", "\\d+", "Format desc", TestingIdentifierValidator.class,
-				PatientIdentifierType.LocationBehavior.NOT_USED, false, "obj1-uuid"));
-
-		PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("Test Type"));
-		Assert.assertThat(type.getDescription(), is("Testing"));
-		Assert.assertThat(type.getFormat(), is("\\d+"));
-		Assert.assertThat(type.getFormatDescription(), is("Format desc"));
-		Assert.assertThat(type.getValidator(), is(TestingIdentifierValidator.class.getName()));
-		Assert.assertThat(type.getLocationBehavior(), is(PatientIdentifierType.LocationBehavior.NOT_USED));
-		Assert.assertThat(type.getRequired(), is(false));
-
-		Context.flushSession();
-		Context.clearSession();
-
-		// Check updating existing
-		deployService.installObject(patientIdentifierType("New name", "New desc", "\\d*", "New format desc", null,
-				PatientIdentifierType.LocationBehavior.REQUIRED, true, "obj1-uuid"));
-
-		type = Context.getPatientService().getPatientIdentifierTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("New name"));
-		Assert.assertThat(type.getDescription(), is("New desc"));
-		Assert.assertThat(type.getFormat(), is("\\d*"));
-		Assert.assertThat(type.getFormatDescription(), is("New format desc"));
-		Assert.assertThat(type.getValidator(), is(nullValue()));
-		Assert.assertThat(type.getLocationBehavior(), is(PatientIdentifierType.LocationBehavior.REQUIRED));
-		Assert.assertThat(type.getRequired(), is(true));
-	}
-
-	/**
-	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
-	 */
-	@Test
-	public void installObject_shouldInstallPersonAttributeType() throws Exception {
-		// Check creating new
-		deployService.installObject(personAttributeType("Test Type", "Testing", String.class, null, false, 1.0, "obj1-uuid"));
-
-		PersonAttributeType type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("Test Type"));
-		Assert.assertThat(type.getDescription(), is("Testing"));
-		Assert.assertThat(type.getFormat(), is(String.class.getName()));
-		Assert.assertThat(type.isSearchable(), is(false));
-		Assert.assertThat(type.getSortWeight(), is(1.0));
-
-		Context.flushSession();
-		Context.clearSession();
-
-		// Check updating existing
-		deployService.installObject(personAttributeType("New name", "New desc", String.class, null, true, 2.0, "obj1-uuid"));
-
-		type = Context.getPersonService().getPersonAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("New name"));
-		Assert.assertThat(type.getDescription(), is("New desc"));
-		Assert.assertThat(type.getFormat(), is(String.class.getName()));
-		Assert.assertThat(type.isSearchable(), is(true));
-		Assert.assertThat(type.getSortWeight(), is(2.0));
-	}
-
-	/**
-	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
-	 */
-	@Test
 	public void installObject_shouldInstallProgram() throws Exception {
 		// Existing concepts in test data
 		final String HIV_PROGRAM_UUID = "0a9afe04-088b-44ca-9291-0a8c3b5c96fa";
@@ -294,9 +189,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(created.getDescription(), is("Testing"));
 		Assert.assertThat(created.getConcept(), is(Context.getConceptService().getConceptByUuid(HIV_PROGRAM_UUID)));
 
-		Context.flushSession();
-		Context.clearSession();
-
 		// Check updating existing
 		deployService.installObject(program("New name", "New desc", MALARIA_PROGRAM_UUID, "obj1-uuid"));
 
@@ -304,9 +196,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(updated.getName(), is("New name"));
 		Assert.assertThat(updated.getDescription(), is("New desc"));
 		Assert.assertThat(updated.getConcept(), is(Context.getConceptService().getConceptByUuid(MALARIA_PROGRAM_UUID)));
-
-		Context.flushSession();
-		Context.clearSession();
 
 		// Check update existing when name conflicts
 		deployService.installObject(program("New name", "Diff desc", MALARIA_PROGRAM_UUID, "obj2-uuid"));
@@ -319,57 +208,23 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 	}
 
 	/**
-	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
+	 * @see MetadataDeployServiceImpl#getHandler(Class)
 	 */
 	@Test
-	public void installObject_shouldInstallVisitType() throws Exception {
-		// Check creating new
-		deployService.installObject(visitType("Test Visit", "Testing", "obj1-uuid"));
+	public void getHandler_shouldReturnHandlerForClass() throws Exception {
+		MetadataDeployServiceImpl impl = TestUtils.getProxyTarget(deployService);
 
-		VisitType type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("Test Visit"));
-		Assert.assertThat(type.getDescription(), is("Testing"));
-
-		Context.flushSession();
-		Context.clearSession();
-
-		// Check updating existing
-		deployService.installObject(visitType("New name", "New desc", "obj1-uuid"));
-
-		type = Context.getVisitService().getVisitTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("New name"));
-		Assert.assertThat(type.getDescription(), is("New desc"));
+		Assert.assertThat(impl.getHandler(Program.class), instanceOf(ProgramDeployHandler.class));
 	}
 
 	/**
-	 * @see MetadataDeployServiceImpl#installObject(org.openmrs.OpenmrsObject)
+	 * @see MetadataDeployServiceImpl#getHandler(Class)
 	 */
-	@Test
-	public void installObject_shouldInstallVisitAttributeType() throws Exception {
-		// Check creating new
-		deployService.installObject(visitAttributeType("Test Type", "Testing", TestingDatatype.class, "config1", 0, 1, "obj1-uuid"));
+	@Test(expected = RuntimeException.class)
+	public void getHandler_shouldThrowExceptionIfNoHandlerForClass() throws Exception {
+		MetadataDeployServiceImpl impl = TestUtils.getProxyTarget(deployService);
 
-		VisitAttributeType type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("Test Type"));
-		Assert.assertThat(type.getDescription(), is("Testing"));
-		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
-		Assert.assertThat(type.getDatatypeConfig(), is("config1"));
-		Assert.assertThat(type.getMinOccurs(), is(0));
-		Assert.assertThat(type.getMaxOccurs(), is(1));
-
-		Context.flushSession();
-		Context.clearSession();
-
-		// Check updating existing
-		deployService.installObject(visitAttributeType("New name", "New desc", TestingDatatype.class, "config2", 1, 2, "obj1-uuid"));
-
-		type = Context.getVisitService().getVisitAttributeTypeByUuid("obj1-uuid");
-		Assert.assertThat(type.getName(), is("New name"));
-		Assert.assertThat(type.getDescription(), is("New desc"));
-		Assert.assertThat(type.getDatatypeClassname(), is(TestingDatatype.class.getName()));
-		Assert.assertThat(type.getDatatypeConfig(), is("config2"));
-		Assert.assertThat(type.getMinOccurs(), is(1));
-		Assert.assertThat(type.getMaxOccurs(), is(2));
+		impl.getHandler(Patient.class);
 	}
 
 	/**
@@ -385,32 +240,6 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 		@Override
 		public EncounterType deserialize(String serializedValue) {
 			return StringUtils.isNotEmpty(serializedValue) ? Context.getEncounterService().getEncounterType(Integer.valueOf(serializedValue)) : null;
-		}
-	}
-
-	/**
-	 * Custom identifier validator for testing
-	 */
-	public static class TestingIdentifierValidator implements IdentifierValidator {
-
-		@Override
-		public String getName() {
-			return "Test validator";
-		}
-
-		@Override
-		public boolean isValid(String identifier) throws UnallowedIdentifierException {
-			return true;
-		}
-
-		@Override
-		public String getValidIdentifier(String undecoratedIdentifier) throws UnallowedIdentifierException {
-			return null;
-		}
-
-		@Override
-		public String getAllowedCharacters() {
-			return null;
 		}
 	}
 }
