@@ -28,6 +28,7 @@ import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.SerializingCustomDatatype;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.api.MetadataDeployService;
 import org.openmrs.patient.IdentifierValidator;
 import org.openmrs.patient.UnallowedIdentifierException;
@@ -119,45 +120,63 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void installObject_shouldInstallGlobalProperty() throws Exception {
 		// Check creating new
-		deployService.installObject(globalProperty("test.property", "Testing", null, null, "Value", "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "Testing", "Value", "gp1-uuid"));
 
 		GlobalProperty created = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(created.getDescription(), is("Testing"));
-		Assert.assertThat(created.getDatatypeClassname(), is(nullValue()));
 		Assert.assertThat(created.getValue(), is((Object) "Value"));
 
-		Context.flushSession();
-		Context.clearSession();
-
 		// Check updating existing
-		deployService.installObject(globalProperty("test.property", "New desc", null, null, "New value", "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "New desc", "New value", "gp1-uuid"));
 
 		GlobalProperty updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("New desc"));
-		Assert.assertThat(updated.getDatatypeClassname(), is(nullValue()));
 		Assert.assertThat(updated.getValue(), is((Object) "New value"));
 
-		Context.flushSession();
-		Context.clearSession();
+		// Check updating existing with null value should retain existing value
+		deployService.installObject(globalProperty("test.property", "Other desc", null, "gp1-uuid"));
+
+		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
+		Assert.assertThat(updated.getDescription(), is("Other desc"));
+		Assert.assertThat(updated.getValue(), is((Object) "New value"));
+
+		// Check updating existing with blank value should retain existing value
+		deployService.installObject(globalProperty("test.property", "Other desc", "", "gp1-uuid"));
+
+		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
+		Assert.assertThat(updated.getDescription(), is("Other desc"));
+		Assert.assertThat(updated.getValue(), is((Object) "New value"));
 
 		// Check updating existing by property name
-		deployService.installObject(globalProperty("test.property", "Diff desc", null, null, "Diff value", "gp2-uuid"));
+		deployService.installObject(globalProperty("test.property", "Diff desc", "Diff value", "gp2-uuid"));
+
 		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("Diff desc"));
-		Assert.assertThat(updated.getDatatypeClassname(), is(nullValue()));
 		Assert.assertThat(updated.getValue(), is((Object) "Diff value"));
 		Assert.assertThat(updated.getUuid(), is("gp2-uuid"));
 
 		// Check with custom data type and null value
 		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid"));
+
 		GlobalProperty custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is(nullValue()));
 
 		// Check with custom data type and non-null value
 		deployService.installObject(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
+
 		EncounterType encType = Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid");
+
 		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType, "gp3-uuid"));
+
+		custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
+		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
+		Assert.assertThat(custom.getValue(), is((Object) encType));
+
+		// Check update with custom data type and null value should retain existing value
+		deployService.installObject(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid"));
+
 		custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
 		Assert.assertThat(custom.getValue(), is((Object) encType));

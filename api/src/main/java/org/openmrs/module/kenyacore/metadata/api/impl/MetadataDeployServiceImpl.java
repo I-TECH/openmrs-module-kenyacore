@@ -22,6 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.kenyacore.metadata.api.MetadataDeployService;
 import org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler;
+import org.openmrs.module.kenyacore.metadata.handler.ObjectMergeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -73,14 +74,19 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 			existing = handler.findAlternateMatch(incoming);
 		}
 
-		// If existing exists, steal it's id and evict it so that it can replaced
 		if (existing != null) {
+			// Optionally perform merge operation
+			if (handler instanceof ObjectMergeHandler) {
+				((ObjectMergeHandler) handler).merge(existing, incoming);
+			}
+
 			// Global properties are special case as the property name is the id and the saveGlobalProperty method
 			// won't update the UUID. So easiest solution is to delete the existing property
 			if (existing instanceof GlobalProperty) {
 				adminService.purgeGlobalProperty((GlobalProperty) existing);
 			}
 			else {
+				// Steal existing object's id and evict it so that it can completely overwritten
 				incoming.setId(existing.getId());
 				Context.evictFromSession(existing);
 			}

@@ -14,10 +14,13 @@
 
 package org.openmrs.module.kenyacore.metadata.handler.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.GlobalProperty;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler;
+import org.openmrs.module.kenyacore.metadata.handler.ObjectMergeHandler;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -25,7 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * Deployment handler for global properties
  */
 @Handler(supports = { GlobalProperty.class })
-public class GlobalPropertyDeployHandler implements ObjectDeployHandler<GlobalProperty> {
+public class GlobalPropertyDeployHandler implements ObjectDeployHandler<GlobalProperty>, ObjectMergeHandler<GlobalProperty> {
 
 	@Autowired
 	@Qualifier("adminService")
@@ -62,5 +65,22 @@ public class GlobalPropertyDeployHandler implements ObjectDeployHandler<GlobalPr
 	@Override
 	public void remove(GlobalProperty obj, String reason) {
 		adminService.purgeGlobalProperty(obj);
+	}
+
+	/**
+	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectMergeHandler#merge(org.openmrs.OpenmrsObject, org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public void merge(GlobalProperty existing, GlobalProperty incoming) {
+		boolean datatypeMatches = OpenmrsUtil.nullSafeEquals(existing.getDatatypeClassname(), incoming.getDatatypeClassname());
+
+		// Global properties don't really distinguish between blank and null values since the UI doesn't let a user
+		// distinguish between the two
+		Object incomingValue = incoming.getValue();
+		boolean incomingHasNoValue = incomingValue == null || (incomingValue instanceof String && StringUtils.isEmpty((String) incomingValue));
+
+		if (existing.getValue() != null && incomingHasNoValue && datatypeMatches) {
+			incoming.setValue(existing.getValue());
+		}
 	}
 }

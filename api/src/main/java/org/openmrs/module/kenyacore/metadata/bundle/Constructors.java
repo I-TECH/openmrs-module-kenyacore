@@ -24,6 +24,8 @@ import org.openmrs.Program;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.customdatatype.CustomDatatype;
+import org.openmrs.customdatatype.CustomDatatypeUtil;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.patient.IdentifierValidator;
 
@@ -63,8 +65,18 @@ public class Constructors {
 		obj.setEncounterType(MetadataUtils.getEncounterType(encTypeUuid));
 		obj.setVersion(version);
 		obj.setUuid(uuid);
-
 		return obj;
+	}
+
+	/**
+	 * Constructs a global property
+	 * @param property the property
+	 * @param description the description
+	 * @param value the value (can be null)
+	 * @return the global property
+	 */
+	public static GlobalProperty globalProperty(String property, String description, String value, String uuid) {
+		return globalProperty(property, description, FreeTextDatatype.class, null, value, uuid);
 	}
 
 	/**
@@ -85,20 +97,13 @@ public class Constructors {
 		GlobalProperty obj = new GlobalProperty();
 		obj.setProperty(property);
 		obj.setDescription(description);
-
-		if (datatype != null) {
-			obj.setDatatypeClassname(datatype.getName());
-			obj.setDatatypeConfig(datatypeConfig);
-
-			if (value != null) {
-				obj.setValue(value);
-			}
-		}
-		else {
-			obj.setPropertyValue(String.valueOf(value));
-		}
-
+		obj.setDatatypeClassname(datatype.getName());
+		obj.setDatatypeConfig(datatypeConfig);
 		obj.setUuid(uuid);
+
+		if (value != null) {
+			obj.setValue(value);
+		}
 
 		return obj;
 	}
@@ -123,7 +128,6 @@ public class Constructors {
 		obj.setMinOccurs(minOccurs);
 		obj.setMaxOccurs(maxOccurs);
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 
@@ -153,7 +157,6 @@ public class Constructors {
 		obj.setLocationBehavior(locationBehavior);
 		obj.setRequired(required);
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 
@@ -184,7 +187,6 @@ public class Constructors {
 		obj.setSearchable(searchable);
 		obj.setSortWeight(sortWeight);
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 
@@ -202,7 +204,6 @@ public class Constructors {
 		obj.setDescription(description);
 		obj.setConcept(MetadataUtils.getConcept(concept));
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 
@@ -226,7 +227,6 @@ public class Constructors {
 		obj.setMinOccurs(minOccurs);
 		obj.setMaxOccurs(maxOccurs);
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 
@@ -242,7 +242,6 @@ public class Constructors {
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setUuid(uuid);
-
 		return obj;
 	}
 }
