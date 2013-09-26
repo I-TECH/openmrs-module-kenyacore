@@ -250,7 +250,9 @@ public class FormManager implements ContentManager {
 		Date activeOnDate = (visit.getStopDatetime() != null) ? visit.getStopDatetime() : new Date();
 
 		for (ProgramDescriptor activeProgram : programManager.getPatientActivePrograms(visit.getPatient(), activeOnDate)) {
-			forms.addAll(activeProgram.getVisitForms());
+			if (activeProgram.getVisitForms() != null) {
+				forms.addAll(activeProgram.getVisitForms());
+			}
 		}
 
 		return filterForms(forms, app, visit.getPatient());
