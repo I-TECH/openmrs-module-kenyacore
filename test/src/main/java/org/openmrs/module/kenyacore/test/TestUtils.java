@@ -21,12 +21,20 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.GlobalProperty;
+import org.openmrs.Location;
+import org.openmrs.LocationAttribute;
+import org.openmrs.LocationAttributeType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
+import org.openmrs.Person;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.Relationship;
+import org.openmrs.RelationshipType;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
@@ -160,25 +168,6 @@ public class TestUtils {
 	}
 
 	/**
-	 * Create and save a patient identifier
-	 * @param patient the patient
-	 * @param type the identifier type
-	 * @param value the identifier value
-	 * @return the saved encounter
-	 */
-	public static PatientIdentifier savePatientIdentifier(Patient patient, PatientIdentifierType type, String value) {
-		PatientIdentifier pid = new PatientIdentifier();
-		pid.setPatient(patient);
-		pid.setIdentifierType(type);
-		pid.setIdentifier(value);
-		pid.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
-
-		patient.addIdentifier(pid);
-
-		return Context.getPatientService().savePatientIdentifier(pid);
-	}
-
-	/**
 	 * Enroll a patient in a program
 	 * @param patient the patient
 	 * @param program the program
@@ -204,48 +193,6 @@ public class TestUtils {
 		pp.setDateEnrolled(start);
 		pp.setDateCompleted(completed);
 		return Context.getProgramWorkflowService().savePatientProgram(pp);
-	}
-
-	/**
-	 * Save a numeric obs
-	 * @param patient the patient
-	 * @param concept the concept
-	 * @param val the numeric value
-	 * @param date the date
-	 * @return the obs
-	 */
-	public static Obs saveObs(Patient patient, Concept concept, double val, Date date) {
-		Obs obs = new Obs(patient, concept, date, null);
-		obs.setValueNumeric(val);
-		return Context.getObsService().saveObs(obs, null);
-	}
-
-	/**
-	 * Save a datetime obs
-	 * @param patient the patient
-	 * @param concept the concept
-	 * @param val the datetime value
-	 * @param date the date
-	 * @return the obs
-	 */
-	public static Obs saveObs(Patient patient, Concept concept, Date val, Date date) {
-		Obs obs = new Obs(patient, concept, date, null);
-		obs.setValueDatetime(val);
-		return Context.getObsService().saveObs(obs, null);
-	}
-
-	/**
-	 * Save a coded obs
-	 * @param patient the patient
-	 * @param concept the concept
-	 * @param val the datetime value
-	 * @param date the date
-	 * @return the obs
-	 */
-	public static Obs saveObs(Patient patient, Concept concept, Concept val, Date date) {
-		Obs obs = new Obs(patient, concept, date, null);
-		obs.setValueCoded(val);
-		return Context.getObsService().saveObs(obs, null);
 	}
 
 	/**
@@ -301,6 +248,120 @@ public class TestUtils {
 		}
 		gp.setDatatypeClassname(datatypeClass.getName());
 		return Context.getAdministrationService().saveGlobalProperty(gp);
+	}
+
+	/**
+	 * Saves a location attribute
+	 * @param location the location
+	 * @param type the attribute type
+	 * @param value the attribute value
+	 * @return the location attribute
+	 */
+	public static LocationAttribute saveLocationAttribute(Location location, LocationAttributeType type, Object value) {
+		LocationAttribute attr = new LocationAttribute();
+		attr.setOwner(location);
+		attr.setAttributeType(type);
+		attr.setValue(value);
+
+		location.addAttribute(attr);
+
+		Context.getLocationService().saveLocation(location);
+		return attr;
+	}
+
+	/**
+	 * Saves a relationship
+	 * @param personA the person A
+	 * @param type the relationship type
+	 * @param personB the person B
+	 * @return the relationship
+	 */
+	public static Relationship saveRelationship(Person personA, RelationshipType type, Person personB) {
+		Relationship relationship = new Relationship();
+		relationship.setPersonA(personA);
+		relationship.setRelationshipType(type);
+		relationship.setPersonB(personB);
+		return Context.getPersonService().saveRelationship(relationship);
+	}
+
+	/**
+	 * Create and save a patient identifier
+	 * @param patient the patient
+	 * @param type the identifier type
+	 * @param value the identifier value
+	 * @return the patient identifier
+	 */
+	public static PatientIdentifier savePatientIdentifier(Patient patient, PatientIdentifierType type, String value) {
+		PatientIdentifier pid = new PatientIdentifier();
+		pid.setPatient(patient);
+		pid.setIdentifierType(type);
+		pid.setIdentifier(value);
+		pid.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
+
+		patient.addIdentifier(pid);
+
+		return Context.getPatientService().savePatientIdentifier(pid);
+	}
+
+	/**
+	 * Saves a person attribute
+	 * @param person the person
+	 * @param type the attribute type
+	 * @param value the attribute value
+	 * @return the person attribute
+	 */
+	public static PersonAttribute savePersonAttribute(Person person, PersonAttributeType type, Object value) {
+		PersonAttribute attr = new PersonAttribute();
+		attr.setPerson(person);
+		attr.setAttributeType(type);
+		attr.setValue(String.valueOf(value));
+
+		person.addAttribute(attr);
+
+		Context.getPersonService().savePerson(person);
+		return attr;
+	}
+
+	/**
+	 * Save a numeric obs
+	 * @param patient the patient
+	 * @param concept the concept
+	 * @param val the numeric value
+	 * @param date the date
+	 * @return the obs
+	 */
+	public static Obs saveObs(Patient patient, Concept concept, double val, Date date) {
+		Obs obs = new Obs(patient, concept, date, null);
+		obs.setValueNumeric(val);
+		return Context.getObsService().saveObs(obs, null);
+	}
+
+	/**
+	 * Save a datetime obs
+	 * @param patient the patient
+	 * @param concept the concept
+	 * @param val the datetime value
+	 * @param date the date
+	 * @return the obs
+	 */
+	public static Obs saveObs(Patient patient, Concept concept, Date val, Date date) {
+		Obs obs = new Obs(patient, concept, date, null);
+		obs.setValueDatetime(val);
+		return Context.getObsService().saveObs(obs, null);
+	}
+
+	/**
+	 * Save a coded obs
+	 * @param patient the patient
+	 * @param concept the concept
+	 * @param val the datetime value
+	 * @param date the date
+	 * @return the obs
+	 */
+	public static Obs saveObs(Patient patient, Concept concept, Concept val, Date date) {
+		Obs obs = new Obs(patient, concept, date, null);
+		obs.setValueCoded(val);
+		return Context.getObsService().saveObs(obs, null);
 	}
 
 	/**
