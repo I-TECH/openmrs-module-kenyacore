@@ -16,6 +16,7 @@ package org.openmrs.module.kenyacore.metadata;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
+import org.openmrs.Drug;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -23,6 +24,7 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.RelationshipType;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
@@ -36,7 +38,7 @@ public class MetadataUtils {
 	 * Gets the specified concept (by mapping or UUID)
 	 * @param identifier the mapping or UUID
 	 * @return the concept
-	 * @throws IllegalArgumentException if no such concept could be found
+	 * @throws IllegalArgumentException if no such concept exists
 	 */
 	public static Concept getConcept(String identifier) {
 		Concept concept;
@@ -67,6 +69,20 @@ public class MetadataUtils {
 	}
 
 	/**
+	 * Gets the specified drug
+	 * @param uuid the uuid
+	 * @return the drug
+	 * @throws IllegalArgumentException if no such drug exists
+	 */
+	public static Drug getDrug(String uuid) {
+		Drug ret = Context.getConceptService().getDrugByUuid(uuid);
+		if (ret == null) {
+			throw new IllegalArgumentException("No such drug with identifier " + uuid);
+		}
+		return ret;
+	}
+
+	/**
 	 * Gets the specified encounter type
 	 * @param uuid the uuid
 	 * @return the encounter type
@@ -84,6 +100,7 @@ public class MetadataUtils {
 	 * Gets the specified form
 	 * @param uuid the uuid
 	 * @return the form
+	 * @throws IllegalArgumentException if no such form exists
 	 */
 	public static Form getForm(String uuid) {
 		Form ret = Context.getFormService().getFormByUuid(uuid);
@@ -97,6 +114,7 @@ public class MetadataUtils {
 	 * Gets the specified location
 	 * @param uuid the identifier
 	 * @return the location
+	 * @throws IllegalArgumentException if no such location exists
 	 */
 	public static Location getLocation(String uuid) {
 		Location ret = Context.getLocationService().getLocationByUuid(uuid);
@@ -110,6 +128,7 @@ public class MetadataUtils {
 	 * Gets the specified location attribute type
 	 * @param uuid the uuid
 	 * @return the location attribute type
+	 * @throws IllegalArgumentException if no such location attribute type exists
 	 */
 	public static LocationAttributeType getLocationAttributeType(String uuid) {
 		LocationAttributeType ret = Context.getLocationService().getLocationAttributeTypeByUuid(uuid);
@@ -137,6 +156,7 @@ public class MetadataUtils {
 	 * Gets the specified person attribute type
 	 * @param uuid the uuid
 	 * @return the person attribute type
+	 * @throws IllegalArgumentException if no such person attribute type exists
 	 */
 	public static PersonAttributeType getPersonAttributeType(String uuid) {
 		PersonAttributeType ret = Context.getPersonService().getPersonAttributeTypeByUuid(uuid);
@@ -150,11 +170,26 @@ public class MetadataUtils {
 	 * Gets the specified program
 	 * @param uuid the uuid
 	 * @return the program
+	 * @throws IllegalArgumentException if no such program exists
 	 */
 	public static Program getProgram(String uuid) {
 		Program ret = Context.getProgramWorkflowService().getProgramByUuid(uuid);
 		if (ret == null) {
 			throw new IllegalArgumentException("No such program with identifier " + uuid);
+		}
+		return ret;
+	}
+
+	/**
+	 * Gets the specified relationship type
+	 * @param uuid the uuid
+	 * @return the relationship type
+	 * @throws IllegalArgumentException if no such relationship type exists
+	 */
+	public static RelationshipType getRelationshipType(String uuid) {
+		RelationshipType ret = Context.getPersonService().getRelationshipTypeByUuid(uuid);
+		if (ret == null) {
+			throw new IllegalArgumentException("No such relationship type with identifier " + uuid);
 		}
 		return ret;
 	}
