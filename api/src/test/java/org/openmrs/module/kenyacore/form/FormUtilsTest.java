@@ -14,7 +14,7 @@
 
 package org.openmrs.module.kenyacore.form;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Form;
 import org.openmrs.FormResource;
