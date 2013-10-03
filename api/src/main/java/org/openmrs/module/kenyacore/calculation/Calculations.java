@@ -24,6 +24,7 @@ import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.ProgramEnrollmentsForPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 
 import java.util.Collection;
@@ -34,6 +35,17 @@ import java.util.HashMap;
  * Utility class of common base calculations
  */
 public class Calculations {
+
+	/**
+	 * Evaluates genders of each patient
+	 * @param cohort the patient ids
+	 * @param calculationContext the calculation context
+	 * @return the genders in a calculation result map
+	 */
+	public static CalculationResultMap genders(Collection<Integer> cohort, PatientCalculationContext calculationContext) {
+		GenderDataDefinition def = new GenderDataDefinition();
+		return CalculationUtils.evaluateWithReporting(def, cohort, null, null, calculationContext);
+	}
 
 	/**
 	 * Evaluates ages of each patient
