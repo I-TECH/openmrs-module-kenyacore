@@ -14,6 +14,7 @@
 
 package org.openmrs.module.kenyacore.metadata;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -29,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
+import static org.openmrs.module.kenyacore.metadata.bundle.CoreConstructors.*;
 
 /**
  * Tests for {@link org.openmrs.module.kenyacore.metadata.MetadataManager}
@@ -85,9 +86,12 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 
 		metadataManager.installMetadataBundles(bundles);
 
-		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid"), is(notNullValue()));
-		Assert.assertThat(Context.getFormService().getFormByUuid("form1-uuid"), is(notNullValue()));
-		Assert.assertThat(Context.getFormService().getFormByUuid("form2-uuid"), is(notNullValue()));
+		Assert.assertThat(Context.getUserService().getPrivilegeByUuid(uuid("priv-uuid")), is(notNullValue()));
+		Assert.assertThat(Context.getUserService().getRoleByUuid(uuid("role1-uuid")), is(notNullValue()));
+		Assert.assertThat(Context.getUserService().getRoleByUuid(uuid("role2-uuid")), is(notNullValue()));
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(uuid("enc-type-uuid")), is(notNullValue()));
+		Assert.assertThat(Context.getFormService().getFormByUuid(uuid("form1-uuid")), is(notNullValue()));
+		Assert.assertThat(Context.getFormService().getFormByUuid(uuid("form2-uuid")), is(notNullValue()));
 	}
 
 	/**
@@ -105,7 +109,12 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle1 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			install(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
+			install(privilege("Test Privilege", "Testing", uuid("priv-uuid")));
+
+			install(role("Test Role 1", "Testing", null, idSet(uuid("priv-uuid")), uuid("role1-uuid")));
+			install(role("Test Role 2", "Inherits from role 1", idSet(uuid("role1-uuid")), null, uuid("role2-uuid")));
+
+			install(encounterType("Test Encounter", "Testing", uuid("enc-type-uuid")));
 		}
 	}
 
@@ -114,7 +123,7 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle2 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			install(form("Test Form #1", "Testing", "enc-type-uuid", "1", "form1-uuid"));
+			install(form("Test Form #1", "Testing", uuid("enc-type-uuid"), "1", uuid("form1-uuid")));
 		}
 	}
 
@@ -123,7 +132,7 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle3 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			install(form("Test Form #2", "Testing", "enc-type-uuid", "1", "form2-uuid"));
+			install(form("Test Form #2", "Testing", uuid("enc-type-uuid"), "1", uuid("form2-uuid")));
 		}
 	}
 
@@ -139,5 +148,13 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle5 extends AbstractMetadataBundle {
 		@Override
 		public void install() { }
+	}
+
+	/**
+	 * Converts a simple identifier to a valid UUID (at least by our standards)
+	 * @return the UUID
+	 */
+	protected static String uuid(String name) {
+		return StringUtils.rightPad(name, 36, 'x');
 	}
 }

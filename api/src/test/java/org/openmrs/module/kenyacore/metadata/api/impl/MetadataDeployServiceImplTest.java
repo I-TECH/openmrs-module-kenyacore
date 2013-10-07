@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.openmrs.module.kenyacore.metadata.bundle.Constructors.*;
+import static org.openmrs.module.kenyacore.metadata.bundle.CoreConstructors.*;
 
 /**
  * Tests for {@link MetadataDeployServiceImpl}

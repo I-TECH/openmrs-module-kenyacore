@@ -36,21 +36,21 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Tests for {@link Constructors}
+ * Tests for {@link CoreConstructors}
  */
-public class ConstructorsTest extends BaseModuleContextSensitiveTest {
+public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void integration() {
-		new Constructors();
+		new CoreConstructors();
 	}
 
 	/**
-	 * @see Constructors#encounterType(String, String, String)
+	 * @see CoreConstructors#encounterType(String, String, String)
 	 */
 	@Test
 	public void encounterType() {
-		EncounterType obj = Constructors.encounterType("name", "desc", "obj-uuid");
+		EncounterType obj = CoreConstructors.encounterType("name", "desc", "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -58,14 +58,14 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#form(String, String, String, String, String)
+	 * @see CoreConstructors#form(String, String, String, String, String)
 	 */
 	@Test
 	public void form() {
-		EncounterType encType = Constructors.encounterType("name", "desc", "enctype-uuid");
+		EncounterType encType = CoreConstructors.encounterType("name", "desc", "enctype-uuid");
 		Context.getEncounterService().saveEncounterType(encType);
 
-		Form obj = Constructors.form("name", "desc", "enctype-uuid", "1", "obj-uuid");
+		Form obj = CoreConstructors.form("name", "desc", "enctype-uuid", "1", "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -75,12 +75,12 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#globalProperty(String, String, String, String)
+	 * @see CoreConstructors#globalProperty(String, String, String, String)
 	 */
 	@Test
 	public void globalProperty_withoutCustomDatatype() {
 		// Check with non-null value
-		GlobalProperty obj = Constructors.globalProperty("property", "desc", "value", "obj-uuid");
+		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", "value", "obj-uuid");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -91,7 +91,7 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
 
 		// Check with empty string value
-		obj = Constructors.globalProperty("property", "desc", "", "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", "", "obj-uuid");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -102,7 +102,7 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
 
 		// Check with null value
-		obj = Constructors.globalProperty("property", "desc", null, "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", null, "obj-uuid");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -114,12 +114,12 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#globalProperty(String, String, Class, String, Object, String)
+	 * @see CoreConstructors#globalProperty(String, String, Class, String, Object, String)
 	 */
 	@Test
 	public void globalProperty_withCustomDatatype() {
 		// Check with non-null value
-		GlobalProperty obj = Constructors.globalProperty("property", "desc", TestingDatatype.class, "config", 123, "obj-uuid");
+		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", 123, "obj-uuid");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -130,7 +130,7 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
 
 		// Check with null value
-		obj = Constructors.globalProperty("property", "desc", TestingDatatype.class, "config", null, "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", null, "obj-uuid");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -142,11 +142,11 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#locationAttributeType(String, String, Class, String, int, int, String)
+	 * @see CoreConstructors#locationAttributeType(String, String, Class, String, int, int, String)
 	 */
 	@Test
 	public void locationAttributeType() {
-		LocationAttributeType obj = Constructors.locationAttributeType("name", "desc", TestingDatatype.class, "config", 0, 1, "obj-uuid");
+		LocationAttributeType obj = CoreConstructors.locationAttributeType("name", "desc", TestingDatatype.class, "config", 0, 1, "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -158,11 +158,11 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#patientIdentifierType(String, String, String, String, Class, org.openmrs.PatientIdentifierType.LocationBehavior, boolean, String)
+	 * @see CoreConstructors#patientIdentifierType(String, String, String, String, Class, org.openmrs.PatientIdentifierType.LocationBehavior, boolean, String)
 	 */
 	@Test
 	public void patientIdentifierType() {
-		PatientIdentifierType obj = Constructors.patientIdentifierType("name", "desc", "\\d+", "format-desc", TestingIdentifierValidator.class,
+		PatientIdentifierType obj = CoreConstructors.patientIdentifierType("name", "desc", "\\d+", "format-desc", TestingIdentifierValidator.class,
 				PatientIdentifierType.LocationBehavior.NOT_USED, false, "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
@@ -176,11 +176,11 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#personAttributeType(String, String, Class, Integer, boolean, double, String)
+	 * @see CoreConstructors#personAttributeType(String, String, Class, Integer, boolean, double, String)
 	 */
 	@Test
 	public void personAttributeType() {
-		PersonAttributeType obj = Constructors.personAttributeType("name", "desc", String.class, null, false, 1.0, "obj-uuid");
+		PersonAttributeType obj = CoreConstructors.personAttributeType("name", "desc", String.class, null, false, 1.0, "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -191,14 +191,14 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#program(String, String, String, String)
+	 * @see CoreConstructors#program(String, String, String, String)
 	 */
 	@Test
 	public void program() {
 		// Existing concepts in test data
 		final String HIV_PROGRAM_UUID = "0a9afe04-088b-44ca-9291-0a8c3b5c96fa";
 
-		Program obj = Constructors.program("name", "desc", HIV_PROGRAM_UUID, "obj-uuid");
+		Program obj = CoreConstructors.program("name", "desc", HIV_PROGRAM_UUID, "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -207,11 +207,11 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#visitType(String, String, String)
+	 * @see org.openmrs.module.kenyacore.metadata.bundle.CoreConstructors#visitType(String, String, String)
 	 */
 	@Test
 	public void visitType() throws Exception {
-		VisitType obj = Constructors.visitType("name", "desc", "obj-uuid");
+		VisitType obj = CoreConstructors.visitType("name", "desc", "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -219,11 +219,11 @@ public class ConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Constructors#visitAttributeType(String, String, Class, String, int, int, String)
+	 * @see CoreConstructors#visitAttributeType(String, String, Class, String, int, int, String)
 	 */
 	@Test
 	public void visitAttributeType() {
-		VisitAttributeType obj = Constructors.visitAttributeType("name", "desc", TestingDatatype.class, "config", 0, 1, "obj-uuid");
+		VisitAttributeType obj = CoreConstructors.visitAttributeType("name", "desc", TestingDatatype.class, "config", 0, 1, "obj-uuid");
 
 		Assert.assertThat(obj.getName(), is("name"));
 		Assert.assertThat(obj.getDescription(), is("desc"));

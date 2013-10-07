@@ -25,6 +25,8 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
+import org.openmrs.RelationshipType;
+import org.openmrs.Role;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -37,7 +39,7 @@ import static org.hamcrest.Matchers.is;
  */
 public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 
-	private static final String INVALID_UUID = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+	private static final String NONEXISTENT_UUID = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"; // Valid syntactically
 
 	@Test
 	public void integration() {
@@ -82,7 +84,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getConcept_shouldThrowExceptionForNonExistentUuid() {
-		MetadataUtils.getConcept(INVALID_UUID);
+		MetadataUtils.getConcept(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -107,7 +109,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getEncounterType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getEncounterType(INVALID_UUID);
+		MetadataUtils.getEncounterType(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getForm_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getForm(INVALID_UUID);
+		MetadataUtils.getForm(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -141,7 +143,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getLocation_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getLocation(INVALID_UUID);
+		MetadataUtils.getLocation(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -166,7 +168,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getLocationAttributeType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getLocationAttributeType(INVALID_UUID);
+		MetadataUtils.getLocationAttributeType(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -183,7 +185,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getPatientIdentifierType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getPatientIdentifierType(INVALID_UUID);
+		MetadataUtils.getPatientIdentifierType(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -200,7 +202,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getPersonAttributeType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getPersonAttributeType(INVALID_UUID);
+		MetadataUtils.getPersonAttributeType(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -217,7 +219,42 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getProgram_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getProgram(INVALID_UUID);
+		MetadataUtils.getProgram(NONEXISTENT_UUID);
+	}
+
+	/**
+	 * @see MetadataUtils#getRelationshipType(String)
+	 */
+	@Test
+	public void getRelationshipType_shouldFetchByUuid() {
+		RelationshipType patdoc = Context.getPersonService().getRelationshipType(1);
+		Assert.assertThat(MetadataUtils.getRelationshipType("6d9002ea-a96b-4889-af78-82d48c57a110"), is(patdoc));
+	}
+
+	/**
+	 * @see MetadataUtils#getRelationshipType(String)
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void getRelationshipType_shouldThrowExceptionForNonExistent() {
+		MetadataUtils.getRelationshipType(NONEXISTENT_UUID);
+	}
+
+	/**
+	 * @see MetadataUtils#getRole(String)
+	 */
+	@Test
+	public void getRole_shouldFetchByNameOrUuid() {
+		Role provider = Context.getUserService().getRole("Provider");
+		Assert.assertThat(MetadataUtils.getRole("Provider"), is(provider));
+		Assert.assertThat(MetadataUtils.getRole("3480cb6d-c291-46c8-8d3a-96dc33d199fb"), is(provider));
+	}
+
+	/**
+	 * @see MetadataUtils#getRole(String)
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void getRole_shouldThrowExceptionForNonExistent() {
+		MetadataUtils.getRole(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -234,7 +271,7 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getVisitAttributeType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getVisitAttributeType(INVALID_UUID);
+		MetadataUtils.getVisitAttributeType(NONEXISTENT_UUID);
 	}
 
 	/**
@@ -250,6 +287,19 @@ public class MetadataUtilsTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void getVisitType_shouldThrowExceptionForNonExistent() {
-		MetadataUtils.getVisitType(INVALID_UUID);
+		MetadataUtils.getVisitType(NONEXISTENT_UUID);
+	}
+
+	/**
+	 * @see MetadataUtils#isValidUuid(String)
+	 */
+	@Test
+	public void isValidUuid_shouldCheckForValidUuids() {
+		Assert.assertThat(MetadataUtils.isValidUuid(null), is(false));
+		Assert.assertThat(MetadataUtils.isValidUuid(""), is(false));
+		Assert.assertThat(MetadataUtils.isValidUuid("xxxx-xxxxx"), is(false));
+
+		Assert.assertThat(MetadataUtils.isValidUuid(NONEXISTENT_UUID), is(true));
+		Assert.assertThat(MetadataUtils.isValidUuid("c0c579b0-8e59-401d-8a4a-976a0b183519"), is(true));
 	}
 }

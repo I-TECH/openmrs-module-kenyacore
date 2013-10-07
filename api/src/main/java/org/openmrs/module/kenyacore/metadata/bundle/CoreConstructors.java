@@ -14,13 +14,17 @@
 
 package org.openmrs.module.kenyacore.metadata.bundle;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.GlobalProperty;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Privilege;
 import org.openmrs.Program;
+import org.openmrs.Role;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.customdatatype.CustomDatatype;
@@ -28,10 +32,15 @@ import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.patient.IdentifierValidator;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
- * Constructors for different metadata classes
+ * Constructors for different core metadata classes
  */
-public class Constructors {
+public class CoreConstructors {
 
 	/**
 	 * Constructs an encounter type
@@ -191,6 +200,21 @@ public class Constructors {
 	}
 
 	/**
+	 * Constructs a privilege
+	 * @param privilege the privilege
+	 * @param description the description
+	 * @param uuid the UUID
+	 * @return the privilege
+	 */
+	public static Privilege privilege(String privilege, String description, String uuid) {
+		Privilege obj = new Privilege();
+		obj.setPrivilege(privilege);
+		obj.setDescription(description);
+		obj.setUuid(uuid);
+		return obj;
+	}
+
+	/**
 	 * Constructs a program
 	 * @param name the name
 	 * @param description the description
@@ -203,6 +227,41 @@ public class Constructors {
 		obj.setName(name);
 		obj.setDescription(description);
 		obj.setConcept(MetadataUtils.getConcept(concept));
+		obj.setUuid(uuid);
+		return obj;
+	}
+
+	/**
+	 * Constructs a role
+	 * @param role the role
+	 * @param description the description
+	 * @param inherited the inherited roles
+	 * @param privileges the privileges
+	 * @param uuid the UUID
+	 * @return the program
+	 */
+	public static Role role(String role, String description, Set<String> inherited, Set<String> privileges, String uuid) {
+		Role obj = new Role();
+		obj.setRole(role);
+		obj.setDescription(description);
+
+		if (CollectionUtils.isNotEmpty(inherited)) {
+			obj.setInheritedRoles((Set) CollectionUtils.collect(inherited, new Transformer() {
+				@Override
+				public Object transform(Object o) {
+					return MetadataUtils.getRole((String) o);
+				}
+			}, new HashSet()));
+		}
+		if (CollectionUtils.isNotEmpty(privileges)) {
+			obj.setPrivileges((Set) CollectionUtils.collect(privileges, new Transformer() {
+				@Override
+				public Object transform(Object o) {
+					return MetadataUtils.getPrivilege((String) o);
+				}
+			}, new HashSet()));
+		}
+
 		obj.setUuid(uuid);
 		return obj;
 	}
@@ -243,5 +302,18 @@ public class Constructors {
 		obj.setDescription(description);
 		obj.setUuid(uuid);
 		return obj;
+	}
+
+	/**
+	 * Convenience method to construct a set of identifiers
+	 * @param identifiers the identifiers
+	 * @return the set of identifiers
+	 */
+	public static Set<String> idSet(String... identifiers) {
+		Set<String> set = new LinkedHashSet<String>();
+		for (String identifier : identifiers) {
+			set.add(identifier);
+		}
+		return set;
 	}
 }

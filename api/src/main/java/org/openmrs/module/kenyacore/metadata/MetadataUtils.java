@@ -23,11 +23,17 @@ import org.openmrs.Location;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Privilege;
 import org.openmrs.Program;
 import org.openmrs.RelationshipType;
+import org.openmrs.Role;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Utility methods for fail-fast fetching of metadata
@@ -167,6 +173,27 @@ public class MetadataUtils {
 	}
 
 	/**
+	 * Gets the specified privilege
+	 * @param identifier the name or uuid
+	 * @return the privilege
+	 * @throws IllegalArgumentException if no such privilege exists
+	 */
+	public static Privilege getPrivilege(String identifier) {
+		Privilege ret = null;
+
+		if (isValidUuid(identifier)) {
+			ret = Context.getUserService().getPrivilegeByUuid(identifier);
+		}
+		if (ret == null) {
+			ret = Context.getUserService().getPrivilege(identifier);
+		}
+		if (ret == null) {
+			throw new IllegalArgumentException("No such privilege with identifier " + identifier);
+		}
+		return ret;
+	}
+
+	/**
 	 * Gets the specified program
 	 * @param uuid the uuid
 	 * @return the program
@@ -190,6 +217,27 @@ public class MetadataUtils {
 		RelationshipType ret = Context.getPersonService().getRelationshipTypeByUuid(uuid);
 		if (ret == null) {
 			throw new IllegalArgumentException("No such relationship type with identifier " + uuid);
+		}
+		return ret;
+	}
+
+	/**
+	 * Gets the specified role
+	 * @param identifier the name or uuid
+	 * @return the role
+	 * @throws IllegalArgumentException if no such role exists
+	 */
+	public static Role getRole(String identifier) {
+		Role ret = null;
+
+		if (isValidUuid(identifier)) {
+			ret = Context.getUserService().getRoleByUuid(identifier);
+		}
+		if (ret == null) {
+			ret = Context.getUserService().getRole(identifier);
+		}
+		if (ret == null) {
+			throw new IllegalArgumentException("No such role with identifier " + identifier);
 		}
 		return ret;
 	}
@@ -220,5 +268,15 @@ public class MetadataUtils {
 			throw new IllegalArgumentException("No such visit type with identifier " + uuid);
 		}
 		return ret;
+	}
+
+	/**
+	 * Determines if the passed string is in valid UUID format By OpenMRS standards, a UUID must be
+	 * 36 characters in length and not contain whitespace, but we do not enforce that a uuid be in
+	 * the "canonical" form, with alphanumerics separated by dashes, since the MVP dictionary does
+	 * not use this format.
+	 */
+	protected static boolean isValidUuid(String uuid) {
+		return uuid != null && uuid.length() == 36 && !uuid.contains(" ");
 	}
 }
