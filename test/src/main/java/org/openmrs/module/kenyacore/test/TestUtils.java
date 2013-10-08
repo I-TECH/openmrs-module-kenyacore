@@ -32,6 +32,7 @@ import org.openmrs.PatientProgram;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Privilege;
 import org.openmrs.Program;
 import org.openmrs.Relationship;
 import org.openmrs.RelationshipType;
@@ -98,29 +99,6 @@ public class TestUtils {
 	}
 
 	/**
-	 * Create and save a visit
-	 * @param patient the patient
-	 * @param type the visit type
-	 * @param start the start date
-	 * @param stop the stop date
-	 * @return the aved visit
-	 */
-	public static Visit saveVisit(Patient patient, VisitType type, Date start, Date stop, Encounter... encounters) {
-		Visit visit = new Visit();
-		visit.setPatient(patient);
-		visit.setVisitType(type);
-		visit.setStartDatetime(start);
-		visit.setStopDatetime(stop);
-		Context.getVisitService().saveVisit(visit);
-
-		for (Encounter encounter : encounters) {
-			visit.addEncounter(encounter);
-		}
-
-		return Context.getVisitService().saveVisit(visit);
-	}
-
-	/**
 	 * Create and save an encounter
 	 * @param patient the patient
 	 * @param type the encounter type
@@ -165,6 +143,29 @@ public class TestUtils {
 		}
 
 		return Context.getEncounterService().saveEncounter(encounter);
+	}
+
+	/**
+	 * Create and save a visit
+	 * @param patient the patient
+	 * @param type the visit type
+	 * @param start the start date
+	 * @param stop the stop date
+	 * @return the aved visit
+	 */
+	public static Visit saveVisit(Patient patient, VisitType type, Date start, Date stop, Encounter... encounters) {
+		Visit visit = new Visit();
+		visit.setPatient(patient);
+		visit.setVisitType(type);
+		visit.setStartDatetime(start);
+		visit.setStopDatetime(stop);
+		Context.getVisitService().saveVisit(visit);
+
+		for (Encounter encounter : encounters) {
+			visit.addEncounter(encounter);
+		}
+
+		return Context.getVisitService().saveVisit(visit);
 	}
 
 	/**
@@ -362,6 +363,17 @@ public class TestUtils {
 		Obs obs = new Obs(patient, concept, date, null);
 		obs.setValueCoded(val);
 		return Context.getObsService().saveObs(obs, null);
+	}
+
+	/**
+	 * Save a privilege
+	 * @param privilege the privilege
+	 * @param description the description
+	 * @return the privilege
+	 */
+	public static Privilege savePrivilege(String privilege, String description) {
+		Privilege obj = new Privilege(privilege, description);
+		return Context.getUserService().savePrivilege(obj);
 	}
 
 	/**
