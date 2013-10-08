@@ -14,10 +14,7 @@
 
 package org.openmrs.module.kenyacore.metadata.api.impl;
 
-import org.openmrs.GlobalProperty;
 import org.openmrs.OpenmrsObject;
-import org.openmrs.Privilege;
-import org.openmrs.Role;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -83,14 +80,12 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 			}
 
 			if (usesId(existing)) {
-				// Steal existing object's id and evict it so that it can completely overwritten
+				// Steal existing object's id
 				incoming.setId(existing.getId());
-				Context.evictFromSession(existing);
 			}
-			else {
-				// Some objects (e.g. privileges) don't use ids so we have to remove existing objects
-				handler.remove(existing, null);
-			}
+
+			// Evict existing so that it can completely overwritten
+			Context.evictFromSession(existing);
 		}
 
 		handler.save(incoming);

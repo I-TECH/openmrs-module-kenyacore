@@ -130,6 +130,7 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle2 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
+			install(privilege("Test Privilege 1", "New description"));
 			install(privilege("Test Privilege 2", "Testing"));
 
 			install(role("Test Role 2", "Inherits from role 1", idSet("Test Role 1"), idSet("Test Privilege 1", "Test Privilege 2")));
