@@ -32,6 +32,14 @@ public class FormDeployHandler implements ObjectDeployHandler<Form> {
 	private FormService formService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(Form obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override

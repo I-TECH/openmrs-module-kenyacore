@@ -35,11 +35,19 @@ public class GlobalPropertyDeployHandler implements ObjectDeployHandler<GlobalPr
 	private AdministrationService adminService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(GlobalProperty obj) {
+		return obj.getProperty();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override
-	public GlobalProperty fetch(String uuid) {
-		return adminService.getGlobalPropertyByUuid(uuid);
+	public GlobalProperty fetch(String identifier) {
+		return adminService.getGlobalPropertyObject(identifier);
 	}
 
 	/**
@@ -55,7 +63,7 @@ public class GlobalPropertyDeployHandler implements ObjectDeployHandler<GlobalPr
 	 */
 	@Override
 	public GlobalProperty findAlternateMatch(GlobalProperty incoming) {
-		return adminService.getGlobalPropertyObject(incoming.getProperty());
+		return adminService.getGlobalPropertyByUuid(incoming.getUuid());
 	}
 
 	/**

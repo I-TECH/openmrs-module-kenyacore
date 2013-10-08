@@ -32,11 +32,19 @@ public class LocationAttributeTypeDeployHandler implements ObjectDeployHandler<L
 	private LocationService locationService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(LocationAttributeType obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override
-	public LocationAttributeType fetch(String uuid) {
-		return locationService.getLocationAttributeTypeByUuid(uuid);
+	public LocationAttributeType fetch(String identifier) {
+		return locationService.getLocationAttributeTypeByUuid(identifier);
 	}
 
 	/**

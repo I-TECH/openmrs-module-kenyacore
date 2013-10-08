@@ -32,6 +32,14 @@ public class VisitAttributeTypeDeployHandler implements ObjectDeployHandler<Visi
 	private VisitService visitService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(VisitAttributeType obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override

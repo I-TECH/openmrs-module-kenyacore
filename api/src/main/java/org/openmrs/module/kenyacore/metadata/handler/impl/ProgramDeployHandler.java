@@ -32,6 +32,14 @@ public class ProgramDeployHandler implements ObjectDeployHandler<Program> {
 	private ProgramWorkflowService programService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(Program obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override

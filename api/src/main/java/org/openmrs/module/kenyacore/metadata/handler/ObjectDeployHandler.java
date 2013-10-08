@@ -22,14 +22,21 @@ import org.openmrs.OpenmrsObject;
 public interface ObjectDeployHandler<T extends OpenmrsObject> {
 
 	/**
-	 * Fetches an object by UUID
-	 * @param uuid the UUID
-	 * @return the object or null
+	 * Gets an object's primary identifier (usually the UUID)
+	 * @param obj the object
+	 * @return the identifier
 	 */
-	T fetch(String uuid);
+	String getIdentifier(T obj);
 
 	/**
-	 * Finds an alternative existing object (i.e. other than a UUID match) which should be merged with the incoming object
+	 * Fetches an object by primary identifier
+	 * @param identifier the identifier
+	 * @return the object or null
+	 */
+	T fetch(String identifier);
+
+	/**
+	 * Finds an alternative existing object (i.e. not on the primary identifier) which should be merged with the incoming object
 	 * @param obj the incoming object
 	 * @return the existing object or null
 	 */

@@ -15,6 +15,7 @@
 package org.openmrs.module.kenyacore.metadata.handler.impl;
 
 import org.openmrs.EncounterType;
+import org.openmrs.Privilege;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler;
@@ -30,6 +31,14 @@ public class EncounterTypeDeployHandler implements ObjectDeployHandler<Encounter
 	@Autowired
 	@Qualifier("encounterService")
 	private EncounterService encounterService;
+
+	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(EncounterType obj) {
+		return obj.getUuid();
+	}
 
 	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)

@@ -16,6 +16,8 @@ package org.openmrs.module.kenyacore.metadata.api.impl;
 
 import org.openmrs.GlobalProperty;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.Privilege;
+import org.openmrs.Role;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -66,8 +68,8 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 	public boolean installObject(OpenmrsObject incoming) {
 		ObjectDeployHandler handler = getHandler(incoming.getClass());
 
-		// Look for existing by UUID (i.e. exact match)
-		OpenmrsObject existing = handler.fetch(incoming.getUuid());
+		// Look for existing by primary identifier (i.e. exact match)
+		OpenmrsObject existing = handler.fetch(handler.getIdentifier(incoming));
 
 		// If no exact match, look for another existing item that should be replaced
 		if (existing == null) {
@@ -80,15 +82,14 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 				((ObjectMergeHandler) handler).merge(existing, incoming);
 			}
 
-			// Global properties are special case as the property name is the id and the saveGlobalProperty method
-			// won't update the UUID. So easiest solution is to delete the existing property
-			if (existing instanceof GlobalProperty) {
-				adminService.purgeGlobalProperty((GlobalProperty) existing);
-			}
-			else {
+			if (usesId(existing)) {
 				// Steal existing object's id and evict it so that it can completely overwritten
 				incoming.setId(existing.getId());
 				Context.evictFromSession(existing);
+			}
+			else {
+				// Some objects (e.g. privileges) don't use ids so we have to remove existing objects
+				handler.remove(existing, null);
 			}
 		}
 
@@ -129,5 +130,20 @@ public class MetadataDeployServiceImpl extends BaseOpenmrsService implements Met
 		}
 
 		throw new RuntimeException("No handler class found for " + clazz.getName());
+	}
+
+	/**
+	 * Checks if an object uses the the standard id property
+	 * @param obj the object
+	 * @return true if it uses id
+	 */
+	protected boolean usesId(OpenmrsObject obj) {
+		try {
+			obj.getId();
+			return true;
+		}
+		catch (UnsupportedOperationException ex) {
+			return false;
+		}
 	}
 }

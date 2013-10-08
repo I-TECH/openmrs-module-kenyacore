@@ -75,12 +75,12 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see CoreConstructors#globalProperty(String, String, String, String)
+	 * @see CoreConstructors#globalProperty(String, String, String)
 	 */
 	@Test
 	public void globalProperty_withoutCustomDatatype() {
 		// Check with non-null value
-		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", "value", "obj-uuid");
+		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", "value");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -88,10 +88,10 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getDatatypeConfig(), is(nullValue()));
 		Assert.assertThat(obj.getPropertyValue(), is(""));
 		Assert.assertThat(obj.getValue(), is((Object) "value"));
-		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
+		Assert.assertThat(obj.getUuid(), is(notNullValue()));
 
 		// Check with empty string value
-		obj = CoreConstructors.globalProperty("property", "desc", "", "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", "");
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -99,10 +99,10 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getDatatypeConfig(), is(nullValue()));
 		Assert.assertThat(obj.getPropertyValue(), is(""));
 		Assert.assertThat(obj.getValue(), is((Object) ""));
-		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
+		Assert.assertThat(obj.getUuid(), is(notNullValue()));
 
 		// Check with null value
-		obj = CoreConstructors.globalProperty("property", "desc", null, "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", null);
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -110,16 +110,16 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getDatatypeConfig(), is(nullValue()));
 		Assert.assertThat(obj.getPropertyValue(), is(""));
 		Assert.assertThat(obj.getValue(), is((Object) "")); // You'd think this would be null...
-		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
+		Assert.assertThat(obj.getUuid(), is(notNullValue()));
 	}
 
 	/**
-	 * @see CoreConstructors#globalProperty(String, String, Class, String, Object, String)
+	 * @see CoreConstructors#globalProperty(String, String, Class, String, Object)
 	 */
 	@Test
 	public void globalProperty_withCustomDatatype() {
 		// Check with non-null value
-		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", 123, "obj-uuid");
+		GlobalProperty obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", 123);
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -127,10 +127,10 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getDatatypeConfig(), is("config"));
 		Assert.assertThat(obj.getPropertyValue(), is(""));
 		Assert.assertThat(obj.getValue(), is((Object) new Integer(123)));
-		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
+		Assert.assertThat(obj.getUuid(), is(notNullValue()));
 
 		// Check with null value
-		obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", null, "obj-uuid");
+		obj = CoreConstructors.globalProperty("property", "desc", TestingDatatype.class, "config", null);
 
 		Assert.assertThat(obj.getProperty(), is("property"));
 		Assert.assertThat(obj.getDescription(), is("desc"));
@@ -138,7 +138,7 @@ public class CoreConstructorsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(obj.getDatatypeConfig(), is("config"));
 		Assert.assertThat(obj.getPropertyValue(), is(""));
 		Assert.assertThat(obj.getValue(), is(nullValue()));
-		Assert.assertThat(obj.getUuid(), is("obj-uuid"));
+		Assert.assertThat(obj.getUuid(), is(notNullValue()));
 	}
 
 	/**

@@ -32,11 +32,19 @@ public class PrivilegeDeployHandler implements ObjectDeployHandler<Privilege> {
 	private UserService userService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(Privilege obj) {
+		return obj.getPrivilege();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override
-	public Privilege fetch(String uuid) {
-		return userService.getPrivilegeByUuid(uuid);
+	public Privilege fetch(String identifier) {
+		return userService.getPrivilege(identifier);
 	}
 
 	/**
@@ -52,7 +60,7 @@ public class PrivilegeDeployHandler implements ObjectDeployHandler<Privilege> {
 	 */
 	@Override
 	public Privilege findAlternateMatch(Privilege incoming) {
-		return userService.getPrivilege(incoming.getPrivilege());
+		return userService.getPrivilegeByUuid(incoming.getUuid());
 	}
 
 	/**

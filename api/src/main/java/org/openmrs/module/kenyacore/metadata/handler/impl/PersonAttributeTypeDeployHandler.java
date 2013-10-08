@@ -36,6 +36,14 @@ public class PersonAttributeTypeDeployHandler implements ObjectDeployHandler<Per
 	private SessionFactory sessionFactory;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(PersonAttributeType obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override

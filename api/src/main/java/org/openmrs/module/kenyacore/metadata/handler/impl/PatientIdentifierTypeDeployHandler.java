@@ -32,6 +32,14 @@ public class PatientIdentifierTypeDeployHandler implements ObjectDeployHandler<P
 	private PatientService patientService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(PatientIdentifierType obj) {
+		return obj.getUuid();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override

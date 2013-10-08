@@ -32,11 +32,19 @@ public class RoleDeployHandler implements ObjectDeployHandler<Role> {
 	private UserService userService;
 
 	/**
+	 * @see ObjectDeployHandler#getIdentifier(org.openmrs.OpenmrsObject)
+	 */
+	@Override
+	public String getIdentifier(Role obj) {
+		return obj.getRole();
+	}
+
+	/**
 	 * @see org.openmrs.module.kenyacore.metadata.handler.ObjectDeployHandler#fetch(String)
 	 */
 	@Override
-	public Role fetch(String uuid) {
-		return userService.getRoleByUuid(uuid);
+	public Role fetch(String identifier) {
+		return userService.getRole(identifier);
 	}
 
 	/**
@@ -52,7 +60,7 @@ public class RoleDeployHandler implements ObjectDeployHandler<Role> {
 	 */
 	@Override
 	public Role findAlternateMatch(Role incoming) {
-		return userService.getRole(incoming.getRole());
+		return userService.getRoleByUuid(incoming.getUuid());
 	}
 
 	/**

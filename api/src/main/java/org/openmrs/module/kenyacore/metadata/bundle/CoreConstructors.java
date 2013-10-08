@@ -32,10 +32,10 @@ import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.patient.IdentifierValidator;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Constructors for different core metadata classes
@@ -83,8 +83,8 @@ public class CoreConstructors {
 	 * @param value the value (can be null)
 	 * @return the global property
 	 */
-	public static GlobalProperty globalProperty(String property, String description, String value, String uuid) {
-		return globalProperty(property, description, FreeTextDatatype.class, null, value, uuid);
+	public static GlobalProperty globalProperty(String property, String description, String value) {
+		return globalProperty(property, description, FreeTextDatatype.class, null, value);
 	}
 
 	/**
@@ -100,14 +100,13 @@ public class CoreConstructors {
 																		  String description,
 																		  Class<H> datatype,
 																		  String datatypeConfig,
-																		  T value,
-																		  String uuid) {
+																		  T value) {
 		GlobalProperty obj = new GlobalProperty();
 		obj.setProperty(property);
 		obj.setDescription(description);
 		obj.setDatatypeClassname(datatype.getName());
 		obj.setDatatypeConfig(datatypeConfig);
-		obj.setUuid(uuid);
+		obj.setUuid(UUID.randomUUID().toString());
 
 		// Global properties can't have null values
 		if (value != null) {
@@ -203,14 +202,13 @@ public class CoreConstructors {
 	 * Constructs a privilege
 	 * @param privilege the privilege
 	 * @param description the description
-	 * @param uuid the UUID
 	 * @return the privilege
 	 */
-	public static Privilege privilege(String privilege, String description, String uuid) {
+	public static Privilege privilege(String privilege, String description) {
 		Privilege obj = new Privilege();
 		obj.setPrivilege(privilege);
 		obj.setDescription(description);
-		obj.setUuid(uuid);
+		obj.setUuid(UUID.randomUUID().toString());
 		return obj;
 	}
 
@@ -237,10 +235,9 @@ public class CoreConstructors {
 	 * @param description the description
 	 * @param inherited the inherited roles
 	 * @param privileges the privileges
-	 * @param uuid the UUID
 	 * @return the program
 	 */
-	public static Role role(String role, String description, Set<String> inherited, Set<String> privileges, String uuid) {
+	public static Role role(String role, String description, Set<String> inherited, Set<String> privileges) {
 		Role obj = new Role();
 		obj.setRole(role);
 		obj.setDescription(description);
@@ -262,7 +259,7 @@ public class CoreConstructors {
 			}, new HashSet()));
 		}
 
-		obj.setUuid(uuid);
+		obj.setUuid(UUID.randomUUID().toString());
 		return obj;
 	}
 
@@ -316,4 +313,5 @@ public class CoreConstructors {
 		}
 		return set;
 	}
+
 }

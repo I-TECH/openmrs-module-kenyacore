@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore.metadata;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.Privilege;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
 import org.openmrs.module.kenyacore.metadata.bundle.MetadataBundle;
@@ -86,9 +87,15 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 
 		metadataManager.installMetadataBundles(bundles);
 
-		Assert.assertThat(Context.getUserService().getPrivilegeByUuid(uuid("priv-uuid")), is(notNullValue()));
-		Assert.assertThat(Context.getUserService().getRoleByUuid(uuid("role1-uuid")), is(notNullValue()));
-		Assert.assertThat(Context.getUserService().getRoleByUuid(uuid("role2-uuid")), is(notNullValue()));
+		Privilege privilege1 = Context.getUserService().getPrivilege("Test Privilege 1");
+		Privilege privilege2 = Context.getUserService().getPrivilege("Test Privilege 2");
+
+		Assert.assertThat(privilege1, is(notNullValue()));
+		Assert.assertThat(privilege2, is(notNullValue()));
+		Assert.assertThat(Context.getUserService().getRole("Test Role 1"), is(notNullValue()));
+		Assert.assertThat(Context.getUserService().getRole("Test Role 2"), is(notNullValue()));
+		//Assert.assertThat(Context.getUserService().getRole("Test Role 2").getPrivileges(), contains(privilege1, privilege2));
+
 		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(uuid("enc-type-uuid")), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid(uuid("form1-uuid")), is(notNullValue()));
 		Assert.assertThat(Context.getFormService().getFormByUuid(uuid("form2-uuid")), is(notNullValue()));
@@ -109,10 +116,10 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle1 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
-			install(privilege("Test Privilege", "Testing", uuid("priv-uuid")));
+			install(privilege("Test Privilege 1", "Testing"));
 
-			install(role("Test Role 1", "Testing", null, idSet(uuid("priv-uuid")), uuid("role1-uuid")));
-			install(role("Test Role 2", "Inherits from role 1", idSet(uuid("role1-uuid")), null, uuid("role2-uuid")));
+			install(role("Test Role 1", "Testing", null, idSet("Test Privilege 1")));
+			install(role("Test Role 2", "Inherits from role 1", idSet("Test Role 1"), null));
 
 			install(encounterType("Test Encounter", "Testing", uuid("enc-type-uuid")));
 		}
@@ -123,6 +130,10 @@ public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestBundle2 extends AbstractMetadataBundle {
 		@Override
 		public void install() {
+			install(privilege("Test Privilege 2", "Testing"));
+
+			install(role("Test Role 2", "Inherits from role 1", idSet("Test Role 1"), idSet("Test Privilege 1", "Test Privilege 2")));
+
 			install(form("Test Form #1", "Testing", uuid("enc-type-uuid"), "1", uuid("form1-uuid")));
 		}
 	}

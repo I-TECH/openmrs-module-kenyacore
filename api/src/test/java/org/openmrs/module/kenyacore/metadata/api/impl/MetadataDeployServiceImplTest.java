@@ -110,43 +110,35 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void installObject_shouldInstallGlobalProperty() throws Exception {
 		// Check creating new
-		deployService.installObject(globalProperty("test.property", "Testing", "Value", "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "Testing", "Value"));
 
 		GlobalProperty created = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(created.getDescription(), is("Testing"));
 		Assert.assertThat(created.getValue(), is((Object) "Value"));
 
 		// Check updating existing
-		deployService.installObject(globalProperty("test.property", "New desc", "New value", "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "New desc", "New value"));
 
 		GlobalProperty updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("New desc"));
 		Assert.assertThat(updated.getValue(), is((Object) "New value"));
 
 		// Check updating existing with null value should retain existing value
-		deployService.installObject(globalProperty("test.property", "Other desc", null, "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "Other desc", null));
 
 		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("Other desc"));
 		Assert.assertThat(updated.getValue(), is((Object) "New value"));
 
 		// Check updating existing with blank value should retain existing value
-		deployService.installObject(globalProperty("test.property", "Other desc", "", "gp1-uuid"));
+		deployService.installObject(globalProperty("test.property", "Other desc", ""));
 
 		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
 		Assert.assertThat(updated.getDescription(), is("Other desc"));
 		Assert.assertThat(updated.getValue(), is((Object) "New value"));
 
-		// Check updating existing by property name
-		deployService.installObject(globalProperty("test.property", "Diff desc", "Diff value", "gp2-uuid"));
-
-		updated = Context.getAdministrationService().getGlobalPropertyObject("test.property");
-		Assert.assertThat(updated.getDescription(), is("Diff desc"));
-		Assert.assertThat(updated.getValue(), is((Object) "Diff value"));
-		Assert.assertThat(updated.getUuid(), is("gp2-uuid"));
-
 		// Check with custom data type and null value
-		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid"));
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null));
 
 		GlobalProperty custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
@@ -157,7 +149,7 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 
 		EncounterType encType = Context.getEncounterService().getEncounterTypeByUuid("enc-type-uuid");
 
-		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType, "gp3-uuid"));
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", encType));
 
 		custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
@@ -165,7 +157,7 @@ public class MetadataDeployServiceImplTest extends BaseModuleContextSensitiveTes
 
 		// Check update with custom data type and null value should retain existing value
 		deployService.installObject(encounterType("Test Encounter", "Testing", "enc-type-uuid"));
-		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null, "gp3-uuid"));
+		deployService.installObject(globalProperty("test.property2", "Testing", TestingDatatype.class, "config", null));
 
 		custom = Context.getAdministrationService().getGlobalPropertyObject("test.property2");
 		Assert.assertThat(custom.getDatatypeClassname(), is(TestingDatatype.class.getName()));
