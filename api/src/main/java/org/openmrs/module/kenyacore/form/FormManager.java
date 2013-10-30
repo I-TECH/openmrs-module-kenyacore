@@ -110,35 +110,28 @@ public class FormManager implements ContentManager {
 		// Process form configuration beans
 		for (FormConfiguration configuration : Context.getRegisteredComponents(FormConfiguration.class)) {
 			// Register general per-patient forms
-			if (configuration.getCommonPatientForms() != null) {
-				commonPatientForms.addAll(configuration.getCommonPatientForms());
-			}
+			commonPatientForms.addAll(configuration.getCommonPatientForms());
 
 			// Register general per-visit forms
-			if (configuration.getCommonVisitForms() != null) {
-				commonVisitForms.addAll(configuration.getCommonVisitForms());
-			}
+			commonVisitForms.addAll(configuration.getCommonVisitForms());
 
 			// Register additional program specific per-patient forms
-			if (configuration.getProgramPatientForms() != null) {
-				Map<ProgramDescriptor, Set<FormDescriptor>> programPatientForms = configuration.getProgramPatientForms();
-
-				for (ProgramDescriptor programDescriptor : programPatientForms.keySet()) {
-					for (FormDescriptor form : programPatientForms.get(programDescriptor)) {
-						programDescriptor.addPatientForm(form);
-					}
+			for (ProgramDescriptor programDescriptor : configuration.getProgramPatientForms().keySet()) {
+				for (FormDescriptor form : configuration.getProgramPatientForms().get(programDescriptor)) {
+					programDescriptor.addPatientForm(form);
 				}
 			}
 
 			// Register additional program specific per-visit forms
-			if (configuration.getProgramVisitForms() != null) {
-				Map<ProgramDescriptor, Set<FormDescriptor>> programVisitForms = configuration.getProgramVisitForms();
-
-				for (ProgramDescriptor programDescriptor : programVisitForms.keySet()) {
-					for (FormDescriptor form : programVisitForms.get(programDescriptor)) {
-						programDescriptor.addVisitForm(form);
-					}
+			for (ProgramDescriptor programDescriptor : configuration.getProgramVisitForms().keySet()) {
+				for (FormDescriptor form : configuration.getProgramVisitForms().get(programDescriptor)) {
+					programDescriptor.addVisitForm(form);
 				}
+			}
+
+			// Disable forms which should be disabled
+			for (FormDescriptor descriptor : configuration.getDisabledForms()) {
+				descriptor.setEnabled(false);
 			}
 		}
 
@@ -219,9 +212,11 @@ public class FormManager implements ContentManager {
 		Set<Form> completedForms = new HashSet<Form>();
 
 		// Gather up all completed forms
-		for (Encounter encounter : visit.getEncounters()) {
-			if (encounter.getForm() != null) {
-				completedForms.add(encounter.getForm());
+		if (visit.getEncounters() != null) {
+			for (Encounter encounter : visit.getEncounters()) {
+				if (encounter.getForm() != null) {
+					completedForms.add(encounter.getForm());
+				}
 			}
 		}
 
@@ -282,7 +277,7 @@ public class FormManager implements ContentManager {
 	}
 
 	/**
-	 * Filters the given collection of forms to those applicable for the given application and patient
+	 * Filters the given collection of enabled forms to those applicable for the given application and patient
 	 * @param app the application
 	 * @param patient the patient
 	 * @return the filtered forms
@@ -290,6 +285,10 @@ public class FormManager implements ContentManager {
 	protected List<FormDescriptor> filterForms(Collection<FormDescriptor> descriptors, AppDescriptor app, Patient patient) {
 		List<FormDescriptor> filtered = new ArrayList<FormDescriptor>();
 		for (FormDescriptor descriptor : descriptors) {
+			if (!descriptor.isEnabled()) {
+				continue;
+			}
+
 			// Filter by app id
 			if (app != null && !descriptor.getApps().contains(app)) {
 				continue;

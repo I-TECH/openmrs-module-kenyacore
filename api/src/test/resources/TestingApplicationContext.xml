@@ -11,33 +11,69 @@
 		<property name="label" value="Test"/>
 	</bean>
 
+	<!-- ==================== Forms ======================== -->
+
+	<bean id="test.config.form" class="org.openmrs.module.kenyacore.form.FormConfiguration">
+		<property name="commonVisitForms">
+			<set>
+				<ref bean="test.form.progressnote" />
+				<ref bean="test.form.labresults" />
+			</set>
+		</property>
+		<property name="commonPatientForms">
+			<set>
+				<ref bean="test.form.registration" />
+			</set>
+		</property>
+	</bean>
+
+	<bean id="test.form.registration" class="org.openmrs.module.kenyacore.form.FormDescriptor">
+		<property name="targetUuid" value="80469953-D3EE-47CC-B178-A2B90C5CF64D" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="order" value="100" />
+	</bean>
+
+	<bean id="test.form.hivconsultation" class="org.openmrs.module.kenyacore.form.FormDescriptor">
+		<property name="targetUuid" value="6B33F0C3-4DBF-40F2-A32D-93E788592301" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="order" value="100" />
+	</bean>
+
+	<bean id="test.form.progressnote" class="org.openmrs.module.kenyacore.form.FormDescriptor">
+		<property name="targetUuid" value="4F163D44-7A65-4492-8A9C-C91F478A5D02" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="order" value="100" />
+	</bean>
+
+	<bean id="test.form.labresults" class="org.openmrs.module.kenyacore.form.FormDescriptor">
+		<property name="targetUuid" value="51647632-D496-4AE8-9FDA-64BC62B9089E" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
+		<property name="enabled" value="false" /> <!-- DISABLED -->
+	</bean>
+
 	<!-- ==================== Programs ======================== -->
 
 	<bean id="test.program.hiv" class="org.openmrs.module.kenyacore.program.ProgramDescriptor">
 		<property name="targetUuid" value="da4a0391-ba62-4fad-ad66-1e3722d16380" />
 		<property name="visitForms">
 			<set>
-				<ref bean="test.form.basic" />
-			</set>
-		</property>
-		<property name="order" value="100" />
-	</bean>
-
-	<!-- ==================== Forms ======================== -->
-
-	<bean id="test.config.form" class="org.openmrs.module.kenyacore.form.FormConfiguration">
-		<property name="commonPatientForms">
-			<set>
-				<ref bean="test.form.basic" />
-			</set>
-		</property>
-	</bean>
-
-	<bean id="test.form.basic" class="org.openmrs.module.kenyacore.form.FormDescriptor">
-		<property name="targetUuid" value="d9218f76-6c39-45f4-8efa-4c5c6c199f50" />
-		<property name="apps">
-			<set>
-				<ref bean="test.app.app1" />
+				<ref bean="test.form.hivconsultation" />
 			</set>
 		</property>
 		<property name="order" value="100" />

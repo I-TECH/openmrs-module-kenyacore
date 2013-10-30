@@ -29,6 +29,9 @@ import static org.hamcrest.Matchers.*;
 public class CoreContextTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
+	private TestMetadata testMetadata;
+
+	@Autowired
 	private CoreContext core;
 
 	@Autowired
@@ -39,6 +42,8 @@ public class CoreContextTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Before
 	public void setup() {
+		testMetadata.install();
+
 		core.refresh();
 	}
 

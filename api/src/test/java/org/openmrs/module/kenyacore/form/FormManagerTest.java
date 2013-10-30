@@ -18,7 +18,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.VisitType;
 import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.kenyacore.TestMetadata;
+import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 import org.openmrs.module.kenyacore.program.ProgramManager;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -33,6 +37,9 @@ import static org.hamcrest.Matchers.*;
 public class FormManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
+	private TestMetadata testMetadata;
+
+	@Autowired
 	@Qualifier("test.app.app1")
 	private AppDescriptor testApp1;
 
@@ -43,14 +50,20 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 	private ProgramManager programManager;
 
 	@Autowired
-	@Qualifier("test.form.basic")
-	private FormDescriptor basicForm;
+	@Qualifier("test.form.registration")
+	private FormDescriptor registrationForm;
+
+	@Autowired
+	@Qualifier("test.form.progressnote")
+	private FormDescriptor progressNoteForm;
 
 	/**
 	 * Setup each test
 	 */
 	@Before
 	public void setup() throws Exception {
+		testMetadata.install();
+
 		programManager.refresh();
 		formManager.refresh();
 	}
@@ -64,6 +77,20 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 
 		Patient patient = TestUtils.getPatient(7);
 
-		Assert.assertThat(formManager.getCommonFormsForPatient(testApp1, patient), contains(basicForm));
+		Assert.assertThat(formManager.getCommonFormsForPatient(testApp1, patient), contains(registrationForm));
+	}
+
+	/**
+	 * @see FormManager#getAllUncompletedFormsForVisit(org.openmrs.module.appframework.AppDescriptor, org.openmrs.Visit)
+	 */
+	@Test
+	public void getAllUncompletedFormsForVisit() {
+		Assert.assertNotNull(testApp1);
+
+		Patient patient = TestUtils.getPatient(7);
+		VisitType initialHiv = MetadataUtils.getVisitType("c0c579b0-8e59-401d-8a4a-976a0b183519");
+		Visit visit = TestUtils.saveVisit(patient, initialHiv, TestUtils.date(2012, 1, 1, 9, 0, 0), TestUtils.date(2012, 1, 1, 11, 0, 0));
+
+		Assert.assertThat(formManager.getAllUncompletedFormsForVisit(testApp1, visit), contains(progressNoteForm));
 	}
 }
