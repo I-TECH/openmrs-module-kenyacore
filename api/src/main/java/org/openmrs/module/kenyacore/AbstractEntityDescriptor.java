@@ -25,8 +25,6 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends 
 
 	protected String targetUuid;
 
-	protected boolean enabled = true;
-
 	/**
 	 * Gets the target object UUID
 	 * @return the target object UUID
@@ -48,22 +46,6 @@ public abstract class AbstractEntityDescriptor<T extends OpenmrsObject> extends 
 	 * @return the target object
 	 */
 	public abstract T getTarget();
-
-	/**
-	 * Gets whether enabled
-	 * @return true if enabled
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	/**
-	 * Sets whether enabled
-	 * @param enabled true if enabled
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
 
 	/**
 	 * @see Object#toString()

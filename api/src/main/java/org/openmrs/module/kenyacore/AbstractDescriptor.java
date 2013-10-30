@@ -25,6 +25,8 @@ public abstract class AbstractDescriptor implements BeanNameAware {
 
 	protected String id;
 
+	protected boolean enabled = true;
+
 	/**
 	 * Gets the descriptor id
 	 * @return the id
@@ -39,6 +41,22 @@ public abstract class AbstractDescriptor implements BeanNameAware {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * Gets whether enabled
+	 * @return true if enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets whether enabled
+	 * @param enabled true if enabled
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	/**
@@ -75,6 +93,6 @@ public abstract class AbstractDescriptor implements BeanNameAware {
 	 */
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("id", id).toString();
+		return new ToStringBuilder(this).append("id", id).append("enabled", enabled).toString();
 	}
 }

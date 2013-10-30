@@ -109,12 +109,29 @@ public class ProgramManager implements ContentManager {
 		ProgramWorkflowService pws = Context.getProgramWorkflowService();
 		for (PatientProgram pp : pws.getPatientPrograms(patient, null, null, null, null, null, false)) {
 			ProgramDescriptor descriptor = getProgramDescriptor(pp.getProgram());
-			if (descriptor != null) {
+			if (descriptor != null && descriptor.isEnabled()) {
 				everIn.add(descriptor);
 			}
 		}
 
 		return everIn;
+	}
+
+	/**
+	 * Gets program descriptors for all programs which the given patient is eligible for
+	 * @param patient the patient
+	 * @return the program descriptors
+	 */
+	public Collection<ProgramDescriptor> getPatientEligiblePrograms(Patient patient) {
+		List<ProgramDescriptor> eligibleFor = new ArrayList<ProgramDescriptor>();
+
+		for (ProgramDescriptor descriptor : programs.values()) {
+			if (descriptor.isEnabled() && isPatientEligibleFor(patient, descriptor.getTarget())) {
+				eligibleFor.add(descriptor);
+			}
+		}
+
+		return eligibleFor;
 	}
 
 	/**
@@ -132,23 +149,6 @@ public class ProgramManager implements ContentManager {
 
 		CalculationResult result = Context.getService(PatientCalculationService.class).evaluate(patient.getId(), calculation);
 		return ResultUtil.isTrue(result);
-	}
-
-	/**
-	 * Gets program descriptors for all programs which the given patient is eligible for
-	 * @param patient the patient
-	 * @return the program descriptors
-	 */
-	public Collection<ProgramDescriptor> getPatientEligiblePrograms(Patient patient) {
-		List<ProgramDescriptor> eligibleFor = new ArrayList<ProgramDescriptor>();
-
-		for (ProgramDescriptor descriptor : programs.values()) {
-			if (isPatientEligibleFor(patient, descriptor.getTarget())) {
-				eligibleFor.add(descriptor);
-			}
-		}
-
-		return eligibleFor;
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class ProgramManager implements ContentManager {
 		for (PatientProgram pp : pws.getPatientPrograms(patient, null, null, null, null, null, false)) {
 			if (pp.getActive(onDate)) {
 				ProgramDescriptor descriptor = getProgramDescriptor(pp.getProgram());
-				if (descriptor != null) {
+				if (descriptor != null && descriptor.isEnabled()) {
 					activeIn.add(descriptor);
 				}
 			}
