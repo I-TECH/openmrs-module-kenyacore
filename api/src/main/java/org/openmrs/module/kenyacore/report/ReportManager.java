@@ -27,7 +27,6 @@ import org.openmrs.module.kenyacore.report.builder.CalculationReportBuilder;
 import org.openmrs.module.kenyacore.report.builder.ReportBuilder;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.module.reporting.report.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -114,7 +113,7 @@ public class ReportManager implements ContentManager {
 		// Build report definitions, save them, and record definition id
 		for (ReportDescriptor report : getAllReportDescriptors()) {
 			ReportBuilder builder = getReportBuilder(report);
-			ReportDefinition definition = builder.getDefinition(report);
+			ReportDefinition definition = builder.build(report);
 
 			Integer definitionId = Context.getService(ReportDefinitionService.class).saveDefinition(definition).getId();
 			definitionIds.put(report, definitionId);

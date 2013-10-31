@@ -23,9 +23,9 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 public interface ReportBuilder {
 
 	/**
-	 * Gets a report definition for the given report
+	 * Builds a report definition for the given report
 	 * @param report the report
 	 * @return the report definition
 	 */
-	ReportDefinition getDefinition(ReportDescriptor report);
+	ReportDefinition build(ReportDescriptor report);
 }

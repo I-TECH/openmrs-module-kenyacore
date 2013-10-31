@@ -35,8 +35,11 @@ import org.springframework.stereotype.Component;
 @Component("kenyacore.genericCalcReportBuilder")
 public class CalculationReportBuilder implements ReportBuilder {
 
+	/**
+	 * @see ReportBuilder#build(org.openmrs.module.kenyacore.report.ReportDescriptor)
+	 */
 	@Override
-	public ReportDefinition getDefinition(ReportDescriptor report) {
+	public ReportDefinition build(ReportDescriptor report) {
 		ReportDefinition rd = new ReportDefinition();
 		rd.setName(report.getName());
 		rd.setDescription(report.getDescription());
