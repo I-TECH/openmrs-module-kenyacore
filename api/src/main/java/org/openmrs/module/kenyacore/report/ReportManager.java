@@ -53,6 +53,8 @@ public class ReportManager implements ContentManager {
 	@Qualifier("kenyacore.genericCalcReportBuilder")
 	private CalculationReportBuilder calculationReportBuilder;
 
+	private Map<ReportDescriptor, ReportDefinition> definitionCache = new HashMap<ReportDescriptor, ReportDefinition>();
+
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
 	 */
@@ -146,6 +148,10 @@ public class ReportManager implements ContentManager {
 	 * @return the report definition
 	 */
 	public ReportDefinition getReportDefinition(ReportDescriptor report) {
+		if (definitionCache.containsKey(report)) {
+			return definitionCache.get(report);
+		}
+
 		// Look for specific builder
 		ReportBuilder builder = builders.get(report.getId());
 
@@ -158,7 +164,9 @@ public class ReportManager implements ContentManager {
 			throw new RuntimeException("No suitable report builder component found");
 		}
 
-		return builder.getDefinition(report);
+		ReportDefinition definition = builder.getDefinition(report);
+		definitionCache.put(report, definition);
+		return definition;
 	}
 
 	/**
