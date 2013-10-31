@@ -26,6 +26,8 @@ import org.openmrs.module.kenyacore.report.builder.Builds;
 import org.openmrs.module.kenyacore.report.builder.CalculationReportBuilder;
 import org.openmrs.module.kenyacore.report.builder.ReportBuilder;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.reporting.report.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -46,14 +48,14 @@ public class ReportManager implements ContentManager {
 
 	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
 
+	private Map<ReportDescriptor, Integer> definitionIds = new HashMap<ReportDescriptor, Integer>();
+
 	@Autowired
 	private ProgramManager programManager;
 
 	@Autowired
 	@Qualifier("kenyacore.genericCalcReportBuilder")
 	private CalculationReportBuilder calculationReportBuilder;
-
-	private Map<ReportDescriptor, ReportDefinition> definitionCache = new HashMap<ReportDescriptor, ReportDefinition>();
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
@@ -103,6 +105,20 @@ public class ReportManager implements ContentManager {
 				builders.put(builds.value(), builder);
 			}
 		}
+
+		// Clear all existing report definitions
+		for (ReportDefinition definition : Context.getService(ReportDefinitionService.class).getAllDefinitions(true)) {
+			Context.getService(ReportDefinitionService.class).purgeDefinition(definition);
+		}
+
+		// Build report definitions, save them, and record definition id
+		for (ReportDescriptor report : getAllReportDescriptors()) {
+			ReportBuilder builder = getReportBuilder(report);
+			ReportDefinition definition = builder.getDefinition(report);
+
+			Integer definitionId = Context.getService(ReportDefinitionService.class).saveDefinition(definition).getId();
+			definitionIds.put(report, definitionId);
+		}
 	}
 
 	/**
@@ -148,10 +164,16 @@ public class ReportManager implements ContentManager {
 	 * @return the report definition
 	 */
 	public ReportDefinition getReportDefinition(ReportDescriptor report) {
-		if (definitionCache.containsKey(report)) {
-			return definitionCache.get(report);
-		}
+		Integer definitionId = definitionIds.get(report);
+		return Context.getService(ReportDefinitionService.class).getDefinition(definitionId);
+	}
 
+	/**
+	 * Gets a report builder for the given report
+	 * @param report the report
+	 * @return the report builder
+	 */
+	protected ReportBuilder getReportBuilder(ReportDescriptor report) {
 		// Look for specific builder
 		ReportBuilder builder = builders.get(report.getId());
 
@@ -164,9 +186,7 @@ public class ReportManager implements ContentManager {
 			throw new RuntimeException("No suitable report builder component found");
 		}
 
-		ReportDefinition definition = builder.getDefinition(report);
-		definitionCache.put(report, definition);
-		return definition;
+		return builder;
 	}
 
 	/**
