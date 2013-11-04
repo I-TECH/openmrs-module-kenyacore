@@ -158,13 +158,27 @@ public class ReportManager implements ContentManager {
 	}
 
 	/**
-	 * Gets a report definition for the given report
+	 * Gets the report definition for the given report
 	 * @param report the report
 	 * @return the report definition
 	 */
 	public ReportDefinition getReportDefinition(ReportDescriptor report) {
 		Integer definitionId = definitionIds.get(report);
 		return Context.getService(ReportDefinitionService.class).getDefinition(definitionId);
+	}
+
+	/**
+	 * Gets the report for the given report definition
+	 * @param definition the report definition
+	 * @return the report descriptor
+	 */
+	public ReportDescriptor getReportByDefinition(ReportDefinition definition) {
+		for (Map.Entry<ReportDescriptor, Integer> entry : definitionIds.entrySet()) {
+			if (entry.getValue().equals(definition.getId())) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 
 	/**
