@@ -14,43 +14,91 @@
 
 package org.openmrs.module.kenyacore.report;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 import org.openmrs.module.reporting.definition.DefinitionSummary;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.reporting.report.service.ReportService;
 
 import java.util.Set;
 
 /**
  * Describes a report
  */
-public interface ReportDescriptor {
+public class ReportDescriptor extends AbstractEntityDescriptor<ReportDefinition> {
+
+	protected String name;
+
+	protected String description;
+
+	protected Set<AppDescriptor> apps;
 
 	/**
-	 * Gets the report id
-	 * @return the id
+	 * @see org.openmrs.module.kenyacore.AbstractEntityDescriptor#getTarget()
 	 */
-	public String getId();
+	@Override
+	public ReportDefinition getTarget() {
+		return Context.getService(ReportDefinitionService.class).getDefinitionByUuid(targetUuid);
+	}
 
 	/**
-	 * Gets the report name
+	 * Gets the name
 	 * @return the name
 	 */
-	public String getName();
+	public String getName() {
+		return name;
+	}
 
 	/**
-	 * Gets the report description
+	 * Sets the name
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Gets the description
 	 * @return the description
 	 */
-	public String getDescription();
+	public String getDescription() {
+		return description;
+	}
 
 	/**
-	 * Gets the apps
+	 * Sets the description
+	 * @param description the description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Gets the allowed apps
 	 * @return the apps
 	 */
-	public Set<AppDescriptor> getApps();
+	public Set<AppDescriptor> getApps() {
+		return apps;
+	}
+
+	/**
+	 * Sets the allowed apps
+	 * @param apps the apps
+	 */
+	public void setApps(Set<AppDescriptor> apps) {
+		this.apps = apps;
+	}
 
 	/**
 	 * Gets a definition summary
-	 * @return the definition summary
 	 */
-	public DefinitionSummary getDefinitionSummary();
+	public DefinitionSummary getDefinitionSummary() {
+		DefinitionSummary ret = new DefinitionSummary();
+		ret.setName(getName());
+		ret.setDescription(getDescription());
+		ret.setUuid(id);
+		return ret;
+	}
 }

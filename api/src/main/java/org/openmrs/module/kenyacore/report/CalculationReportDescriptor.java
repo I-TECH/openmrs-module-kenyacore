@@ -20,7 +20,7 @@ import org.openmrs.module.kenyacore.identifier.IdentifierDescriptor;
 /**
  * A calculation based patient list report which can be instantiated as a component
  */
-public class CalculationReportDescriptor extends AbstractReportDescriptor {
+public class CalculationReportDescriptor extends ReportDescriptor {
 
 	protected Class<? extends PatientCalculation> calculation;
 

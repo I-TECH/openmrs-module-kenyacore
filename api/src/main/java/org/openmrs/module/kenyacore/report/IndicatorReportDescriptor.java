@@ -19,7 +19,7 @@ import org.openmrs.module.kenyacore.UiResource;
 /**
  * A indicator report which may have an associated template
  */
-public class IndicatorReportDescriptor extends AbstractReportDescriptor {
+public class IndicatorReportDescriptor extends ReportDescriptor {
 
 	protected UiResource template;
 

@@ -47,8 +47,6 @@ public class ReportManager implements ContentManager {
 
 	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
 
-	private Map<ReportDescriptor, Integer> definitionIds = new HashMap<ReportDescriptor, Integer>();
-
 	@Autowired
 	private ProgramManager programManager;
 
@@ -73,7 +71,11 @@ public class ReportManager implements ContentManager {
 
 		// Process report descriptor components
 		for (ReportDescriptor descriptor : Context.getRegisteredComponents(ReportDescriptor.class)) {
-			reports.put(descriptor.getId(), descriptor);
+			if (reports.containsKey(descriptor.getTargetUuid())) {
+				throw new RuntimeException("Report " + descriptor.getTargetUuid() + " already registered");
+			}
+
+			reports.put(descriptor.getTargetUuid(), descriptor);
 
 			log.debug("Registered report descriptor: " + descriptor.getId());
 		}
@@ -105,28 +107,35 @@ public class ReportManager implements ContentManager {
 			}
 		}
 
-		// Clear all existing report definitions
-		for (ReportDefinition definition : Context.getService(ReportDefinitionService.class).getAllDefinitions(true)) {
-			Context.getService(ReportDefinitionService.class).purgeDefinition(definition);
-		}
-
-		// Build report definitions, save them, and record definition id
+		// Build definitions if builder available
 		for (ReportDescriptor report : getAllReportDescriptors()) {
+			ReportDefinition existingDefinition = report.getTarget();
 			ReportBuilder builder = getReportBuilder(report);
-			ReportDefinition definition = builder.build(report);
 
-			Integer definitionId = Context.getService(ReportDefinitionService.class).saveDefinition(definition).getId();
-			definitionIds.put(report, definitionId);
+			if (builder != null) {
+				// Purge existing if exists
+				if (existingDefinition != null) {
+					Context.getService(ReportDefinitionService.class).purgeDefinition(existingDefinition);
+				}
+
+				ReportDefinition definition = builder.build(report);
+				definition.setUuid(report.getTargetUuid());
+
+				Context.getService(ReportDefinitionService.class).saveDefinition(definition);
+			}
+			else if (existingDefinition == null) {
+				throw new RuntimeException("Report " + report.getId() + " has no builder or existing definition");
+			}
 		}
 	}
 
 	/**
-	 * Gets a report descriptor by id
-	 * @param id the descriptor id
+	 * Gets a report descriptor for the given report definition
+	 * @param definition the report definition
 	 * @return the report descriptor
 	 */
-	public ReportDescriptor getReportDescriptor(String id) {
-		return reports.get(id);
+	public ReportDescriptor getReportDescriptor(ReportDefinition definition) {
+		return reports.get(definition.getUuid());
 	}
 
 	/**
@@ -158,30 +167,6 @@ public class ReportManager implements ContentManager {
 	}
 
 	/**
-	 * Gets the report definition for the given report
-	 * @param report the report
-	 * @return the report definition
-	 */
-	public ReportDefinition getReportDefinition(ReportDescriptor report) {
-		Integer definitionId = definitionIds.get(report);
-		return Context.getService(ReportDefinitionService.class).getDefinition(definitionId);
-	}
-
-	/**
-	 * Gets the report for the given report definition
-	 * @param definition the report definition
-	 * @return the report descriptor
-	 */
-	public ReportDescriptor getReportByDefinition(ReportDefinition definition) {
-		for (Map.Entry<ReportDescriptor, Integer> entry : definitionIds.entrySet()) {
-			if (entry.getValue().equals(definition.getId())) {
-				return entry.getKey();
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Gets a report builder for the given report
 	 * @param report the report
 	 * @return the report builder
@@ -193,10 +178,6 @@ public class ReportManager implements ContentManager {
 		// Can we use the generic calculation report builder?
 		if (builder == null && report instanceof CalculationReportDescriptor) {
 			builder = calculationReportBuilder;
-		}
-
-		if (builder == null) {
-			throw new RuntimeException("No suitable report builder component found");
 		}
 
 		return builder;

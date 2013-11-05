@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
 	private ReportManager reportManager;
+
+	@Autowired
+	@Qualifier("test.report.test1")
+	private ReportDescriptor report1;
 
 	/**
 	 * Setup each test
@@ -55,21 +60,14 @@ public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see ReportManager#getReportDescriptor(String)
+	 * @see ReportManager#getReportDescriptor(org.openmrs.module.reporting.report.definition.ReportDefinition)
 	 */
 	@Test
 	public void getReportDescriptor() {
-		ReportDescriptor descriptor = reportManager.getReportDescriptor("test.report.test1");
-		Assert.assertThat(descriptor, is(instanceOf(CalculationReportDescriptor.class)));
-	}
+		ReportDefinition definition = new ReportDefinition();
+		definition.setUuid("4FAE55A5-E144-471F-9142-7E776A4E19E0");
 
-	/**
-	 * @see ReportManager#getReportDefinition(ReportDescriptor)
-	 */
-	@Test
-	public void getReportDefinition() {
-		ReportDescriptor descriptor = reportManager.getReportDescriptor("test.report.test1");
-		ReportDefinition definition = reportManager.getReportDefinition(descriptor);
-		Assert.assertThat(definition, is(notNullValue()));
+		ReportDescriptor descriptor = reportManager.getReportDescriptor(definition);
+		Assert.assertThat(descriptor, is(report1));
 	}
 }
