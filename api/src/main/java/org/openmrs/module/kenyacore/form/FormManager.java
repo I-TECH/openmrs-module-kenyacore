@@ -214,7 +214,7 @@ public class FormManager implements ContentManager {
 		// Gather up all completed forms
 		if (visit.getEncounters() != null) {
 			for (Encounter encounter : visit.getEncounters()) {
-				if (encounter.getForm() != null) {
+				if (encounter.getForm() != null && !encounter.isVoided()) {
 					completedForms.add(encounter.getForm());
 				}
 			}
