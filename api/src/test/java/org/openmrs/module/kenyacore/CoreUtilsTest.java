@@ -16,6 +16,8 @@ package org.openmrs.module.kenyacore;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.SimpleAppDescriptor;
 import org.openmrs.module.kenyacore.test.TestUtils;
 
 import java.util.Arrays;
@@ -46,7 +48,7 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#earliest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#earliest(java.util.Date, java.util.Date)
 	 * @verifies return null if both dates are null
 	 */
 	@Test
@@ -55,7 +57,7 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#earliest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#earliest(java.util.Date, java.util.Date)
 	 * @verifies return non-null date if one date is null
 	 */
 	@Test
@@ -66,7 +68,7 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#earliest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#earliest(java.util.Date, java.util.Date)
 	 * @verifies return earliest date of two non-null dates
 	 */
 	@Test
@@ -78,7 +80,7 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#latest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#latest(java.util.Date, java.util.Date)
 	 * @verifies return null if both dates are null
 	 */
 	@Test
@@ -86,7 +88,7 @@ public class CoreUtilsTest {
 		Assert.assertThat(CoreUtils.latest(null, null), is(nullValue()));
 	}
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#latest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#latest(java.util.Date, java.util.Date)
 	 * @verifies return non-null date if one date is null
 	 */
 	@Test
@@ -96,7 +98,7 @@ public class CoreUtilsTest {
 		Assert.assertThat(CoreUtils.latest(date, null), is(date));
 	}
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#latest(java.util.Date, java.util.Date)
+	 * @see CoreUtils#latest(java.util.Date, java.util.Date)
 	 * @verifies return latest date of two non-null dates
 	 */
 	@Test
@@ -108,7 +110,7 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.CoreUtils#dateAddDays(java.util.Date, int)
+	 * @see CoreUtils#dateAddDays(java.util.Date, int)
 	 * @verifies shift the date by the number of days
 	 */
 	@Test

@@ -14,6 +14,8 @@
 
 package org.openmrs.module.kenyacore;
 
+import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.util.ArrayList;
@@ -85,5 +87,17 @@ public class CoreUtils {
 		cal.setTime(date);
 		cal.add(Calendar.DATE, days);
 		return cal.getTime();
+	}
+
+	/**
+	 * Checks access to the given entity from the given app
+	 * @param entity the entity
+	 * @param app the app
+	 * @throws APIAuthenticationException if access is not allowed
+	 */
+	public static void checkAccess(AppRestrictedDescriptor entity, AppDescriptor app) {
+		if (entity.getApps() != null && !entity.getApps().contains(app)) {
+			throw new APIAuthenticationException("Entity " + entity.getId() + " cannot be accessed from " + app.getLabel());
+		}
 	}
 }

@@ -191,8 +191,9 @@ public class ReportManager implements ContentManager {
 	protected List<ReportDescriptor> filterReports(Collection<ReportDescriptor> descriptors, AppDescriptor app) {
 		List<ReportDescriptor> filtered = new ArrayList<ReportDescriptor>();
 		for (ReportDescriptor descriptor : descriptors) {
+
 			// Filter by app id
-			if (app != null && !descriptor.getApps().contains(app)) {
+			if (app != null && descriptor.getApps() != null && !descriptor.getApps().contains(app)) {
 				continue;
 			}
 

@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore.form;
 import org.openmrs.Form;
 import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
+import org.openmrs.module.kenyacore.AppRestrictedDescriptor;
 import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.kenyacore.metadata.MetadataUtils;
 
@@ -26,7 +27,7 @@ import java.util.Set;
  * Describes how a form can be used in the EMR. Each form should have a component of this type in the application
  * context.
  */
-public class FormDescriptor extends AbstractEntityDescriptor<Form> {
+public class FormDescriptor extends AbstractEntityDescriptor<Form> implements AppRestrictedDescriptor {
 
 	/**
 	 * Possible gender usages for a form
@@ -54,17 +55,17 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> {
 	}
 
 	/**
-	 * Gets the apps
-	 * @return the apps descriptors
+	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#getApps()
 	 */
+	@Override
 	public Set<AppDescriptor> getApps() {
 		return apps;
 	}
 
 	/**
-	 * Sets the apps
-	 * @param apps the app descriptors
+	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#setApps(java.util.Set)
 	 */
+	@Override
 	public void setApps(Set<AppDescriptor> apps) {
 		this.apps = apps;
 	}

@@ -21,16 +21,16 @@ import org.springframework.beans.factory.BeanNameAware;
  * Abstract base class for all descriptors that are instantiated as beans and can be identified via their component
  * name.
  */
-public abstract class AbstractDescriptor implements BeanNameAware {
+public abstract class AbstractDescriptor implements BeanNameAware, Descriptor {
 
 	protected String id;
 
 	protected boolean enabled = true;
 
 	/**
-	 * Gets the descriptor id
-	 * @return the id
+	 * @see org.openmrs.module.kenyacore.Descriptor#getId()
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}

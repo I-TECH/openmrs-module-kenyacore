@@ -12,22 +12,16 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.identifier;
-
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.module.kenyacore.metadata.MetadataUtils;
-import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
+package org.openmrs.module.kenyacore;
 
 /**
- * Describes how an identifier type can be used in the EMR
+ * Top-level interface for all descriptors
  */
-public class IdentifierDescriptor extends AbstractEntityDescriptor<PatientIdentifierType> {
+public interface Descriptor {
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AbstractEntityDescriptor#getTarget()
+	 * Gets the id
+	 * @return the id
 	 */
-	@Override
-	public PatientIdentifierType getTarget() {
-		return MetadataUtils.getPatientIdentifierType(targetUuid);
-	}
+	String getId();
 }

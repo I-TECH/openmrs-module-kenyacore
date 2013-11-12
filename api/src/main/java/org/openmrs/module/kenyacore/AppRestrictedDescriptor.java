@@ -12,22 +12,26 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.identifier;
+package org.openmrs.module.kenyacore;
 
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.module.kenyacore.metadata.MetadataUtils;
-import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
+import org.openmrs.module.appframework.AppDescriptor;
+
+import java.util.Set;
 
 /**
- * Describes how an identifier type can be used in the EMR
+ * Describes entities which access to is restricted by app
  */
-public class IdentifierDescriptor extends AbstractEntityDescriptor<PatientIdentifierType> {
+public interface AppRestrictedDescriptor extends Descriptor {
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AbstractEntityDescriptor#getTarget()
+	 * Gets the apps allowed to access this
+	 * @return the apps descriptors
 	 */
-	@Override
-	public PatientIdentifierType getTarget() {
-		return MetadataUtils.getPatientIdentifierType(targetUuid);
-	}
+	Set<AppDescriptor> getApps();
+
+	/**
+	 * Sets the apps allowed to access this
+	 * @param apps the app descriptors
+	 */
+	void setApps(Set<AppDescriptor> apps);
 }

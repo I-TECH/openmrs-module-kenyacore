@@ -290,7 +290,7 @@ public class FormManager implements ContentManager {
 			}
 
 			// Filter by app id
-			if (app != null && !descriptor.getApps().contains(app)) {
+			if (app != null && descriptor.getApps() != null && !descriptor.getApps().contains(app)) {
 				continue;
 			}
 

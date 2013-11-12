@@ -7,8 +7,13 @@
 	<!-- ==================== Apps ======================== -->
 
 	<bean id="test.app.app1" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-		<property name="id" value="test.test"/>
-		<property name="label" value="Test"/>
+		<property name="id" value="test.test1"/>
+		<property name="label" value="App #1"/>
+	</bean>
+
+	<bean id="test.app.app2" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+		<property name="id" value="test.test2"/>
+		<property name="label" value="App #2"/>
 	</bean>
 
 	<!-- ==================== Forms ======================== -->
@@ -29,11 +34,7 @@
 
 	<bean id="test.form.registration" class="org.openmrs.module.kenyacore.form.FormDescriptor">
 		<property name="targetUuid" value="80469953-D3EE-47CC-B178-A2B90C5CF64D" />
-		<property name="apps">
-			<set>
-				<ref bean="test.app.app1" />
-			</set>
-		</property>
+		<!-- No set of allowed apps -->
 		<property name="order" value="100" />
 	</bean>
 
