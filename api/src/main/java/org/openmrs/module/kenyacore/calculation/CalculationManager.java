@@ -78,6 +78,14 @@ public class CalculationManager implements ContentManager, CalculationProvider {
 	}
 
 	/**
+	 * Gets all of the registered calculation classes
+	 * @return the calculation classes
+	 */
+	public Collection<Class<? extends PatientCalculation>> getAllCalculationClasses() {
+		return calculationClasses.values();
+	}
+
+	/**
 	 * Gets new instances of all patient flag calculations in this module
 	 * @return list of flag calculation instances
 	 */
