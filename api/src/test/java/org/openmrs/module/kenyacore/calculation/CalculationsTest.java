@@ -23,12 +23,14 @@ import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.patient.PatientCalculationService;
 import org.openmrs.calculation.result.CalculationResultMap;
+import org.openmrs.module.kenyacore.test.OpenmrsMatchers;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -102,9 +104,12 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		// Get last encounter
 		CalculationResultMap resultMap = Calculations.lastEncounter(null, cohort, context);
 
+		Date d1 = ((Encounter) resultMap.get(7).getValue()).getEncounterDatetime();
+		Date d2 = TestUtils.date(2008, 8, 19);
+
 		Assert.assertThat(resultMap.get(6), is(nullValue())); // patient #6 has no encounters
 		Assert.assertThat(resultMap.get(7), is(notNullValue())); // patient #7 has an encounter
-		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getEncounterDatetime(), is(TestUtils.date(2008, 8, 19)));
+		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getEncounterDatetime(), OpenmrsMatchers.isDate(TestUtils.date(2008, 8, 19)));
 
 		// Get last 'Emergency' encounter
 		EncounterType emergencyEncType = Context.getEncounterService().getEncounterType("Emergency");
@@ -112,6 +117,6 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 
 		Assert.assertThat(resultMap.get(6), is(nullValue())); // patient #6 has no encounters
 		Assert.assertThat(resultMap.get(7), is(notNullValue())); // patient #7 has an emergency encounter on 1-Aug-2008
-		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getEncounterDatetime(), is(TestUtils.date(2008, 8, 1)));
+		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getEncounterDatetime(), OpenmrsMatchers.isDate(TestUtils.date(2008, 8, 1)));
 	}
 }

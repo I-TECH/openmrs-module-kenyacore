@@ -73,6 +73,9 @@ public class TestUtilsTest extends BaseModuleContextSensitiveTest {
 		TestUtils.getPatient(777);
 	}
 
+	/**
+	 * @see TestUtils#saveVisit(org.openmrs.Patient, org.openmrs.VisitType, java.util.Date, java.util.Date, org.openmrs.Encounter...)
+	 */
 	@Test
 	public void saveVisit() {
 		Patient patient = TestUtils.getPatient(7);
@@ -85,6 +88,9 @@ public class TestUtilsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(visit.getUuid(), is(notNullValue()));
 	}
 
+	/**
+	 * @see TestUtils#modifyConstant(Class, String, Object)
+	 */
 	@Test
 	public void modifyConstant() throws Exception {
 		Assert.assertThat(TestConstants.CONSTANT, is("XXX"));
@@ -92,6 +98,9 @@ public class TestUtilsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(TestConstants.CONSTANT, is("YYY"));
 	}
 
+	/**
+	 * For testing modifyConstant
+	 */
 	protected static class TestConstants {
 		// Value needs to be an expression or it will be inlined by the compiler and impossible to modify later
 		private static final String CONSTANT = (null != null) ? "": "XXX";

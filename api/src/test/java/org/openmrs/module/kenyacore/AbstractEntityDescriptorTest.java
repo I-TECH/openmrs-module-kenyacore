@@ -39,7 +39,7 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 	public void setup() {
 		descriptor1 = new TestLocationDescriptor();
 		descriptor1.setId("test.location.1");
-		descriptor1.setTargetUuid("dc5c1fcc-0459-4201-bf70-0b90535ba362"); // Unknown location
+		descriptor1.setTargetUuid("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown location
 		descriptor1.setOrder(100);
 
 		descriptor2 = new TestLocationDescriptor();
@@ -65,7 +65,7 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 
 	@Test
 	public void getTargetUuid() throws Exception {
-		Assert.assertThat(descriptor1.getTargetUuid(), is("dc5c1fcc-0459-4201-bf70-0b90535ba362"));
+		Assert.assertThat(descriptor1.getTargetUuid(), is("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"));
 		Assert.assertThat(descriptor2.getTargetUuid(), is("9356400c-a5a2-4532-8f2b-2361b3446eb8"));
 	}
 
