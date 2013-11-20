@@ -38,6 +38,7 @@ import org.openmrs.Relationship;
 import org.openmrs.RelationshipType;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.CustomDatatype;
 import org.springframework.aop.framework.Advised;
@@ -96,6 +97,16 @@ public class TestUtils {
 			throw new IllegalArgumentException("No such patient with id " + id);
 		}
 		return patient;
+	}
+
+	/**
+	 * create and save a patient
+	 * @param @param patient the patient
+	 * @return the saved patient
+	 */
+	public static Patient savePatient(Patient patient) {
+		PatientService patientService = Context.getPatientService();
+		return patientService.savePatient(patient);
 	}
 
 	/**
