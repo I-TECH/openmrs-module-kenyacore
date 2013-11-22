@@ -15,10 +15,10 @@
 package org.openmrs.module.kenyacore;
 
 import org.junit.Ignore;
-import org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle;
+import org.openmrs.module.metadatadeploy.bundle.AbstractMetadataBundle;
 import org.springframework.stereotype.Component;
 
-import static org.openmrs.module.kenyacore.metadata.bundle.CoreConstructors.*;
+import static org.openmrs.module.metadatadeploy.bundle.CoreConstructors.*;
 
 /**
  * Metadata for unit tests
@@ -41,7 +41,7 @@ public class TestMetadata extends AbstractMetadataBundle {
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.metadata.bundle.AbstractMetadataBundle#install()
+	 * @see org.openmrs.module.metadatadeploy.bundle.AbstractMetadataBundle#install()
 	 */
 	@Override
 	public void install() {

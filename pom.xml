@@ -42,6 +42,7 @@
 		<htmlformentryVersion>2.2</htmlformentryVersion>
 		<htmlwidgetsVersion>1.6.5</htmlwidgetsVersion>
 		<idgenVersion>2.6</idgenVersion>
+		<metadatadeployVersion>0.1</metadatadeployVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
 		<reportingVersion>0.8</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
@@ -87,6 +88,13 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>idgen-api</artifactId>
 				<version>${idgenVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatadeploy-api</artifactId>
+				<version>${metadatadeployVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 

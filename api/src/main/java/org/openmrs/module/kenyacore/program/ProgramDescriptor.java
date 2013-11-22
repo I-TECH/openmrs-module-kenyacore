@@ -18,7 +18,7 @@ import org.openmrs.Program;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
-import org.openmrs.module.kenyacore.metadata.MetadataUtils;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 import org.openmrs.module.kenyacore.report.ReportDescriptor;
 

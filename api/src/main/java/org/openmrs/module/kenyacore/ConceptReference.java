@@ -15,7 +15,7 @@
 package org.openmrs.module.kenyacore;
 
 import org.openmrs.Concept;
-import org.openmrs.module.kenyacore.metadata.MetadataUtils;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 
 /**
  * Represents a reference to a concept

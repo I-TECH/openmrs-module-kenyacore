@@ -37,7 +37,10 @@ import java.util.Set;
 
 /**
  * Utility methods for fail-fast fetching of metadata
+ *
+ * @deprecated use {@link org.openmrs.module.metadatadeploy.MetadataUtils} instead
  */
+@Deprecated
 public class MetadataUtils {
 
 	/**
