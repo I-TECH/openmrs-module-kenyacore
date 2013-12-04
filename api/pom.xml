@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>kenyacore</artifactId>
-		<version>0.15-SNAPSHOT</version>
+		<version>0.17-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>kenyacore-api</artifactId>
@@ -46,6 +46,11 @@
 			<artifactId>${project.parent.artifactId}-test</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatadeploy-api</artifactId>
 		</dependency>
 
 		<dependency>

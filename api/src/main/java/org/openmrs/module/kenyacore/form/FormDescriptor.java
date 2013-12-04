@@ -19,7 +19,7 @@ import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
 import org.openmrs.module.kenyacore.AppRestrictedDescriptor;
 import org.openmrs.module.kenyacore.UiResource;
-import org.openmrs.module.kenyacore.metadata.MetadataUtils;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 
 import java.util.Set;
 

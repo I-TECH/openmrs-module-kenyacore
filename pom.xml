@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>kenyacore</artifactId>
-	<version>0.15-SNAPSHOT</version>
+	<version>0.17-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 	<name>KenyaCore</name>
@@ -39,13 +39,14 @@
 		<!-- Module dependencies -->
 		<appframeworkVersion>1.5</appframeworkVersion>
 		<calculationVersion>1.0</calculationVersion>
-		<htmlformentryVersion>2.2</htmlformentryVersion>
+		<htmlformentryVersion>2.2.1</htmlformentryVersion>
 		<htmlwidgetsVersion>1.6.5</htmlwidgetsVersion>
 		<idgenVersion>2.6</idgenVersion>
+		<metadatadeployVersion>0.1</metadatadeployVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
 		<reportingVersion>0.8</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
-		<uiframeworkVersion>3.0</uiframeworkVersion>
+		<uiframeworkVersion>3.1</uiframeworkVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -87,6 +88,13 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>idgen-api</artifactId>
 				<version>${idgenVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatadeploy-api</artifactId>
+				<version>${metadatadeployVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 

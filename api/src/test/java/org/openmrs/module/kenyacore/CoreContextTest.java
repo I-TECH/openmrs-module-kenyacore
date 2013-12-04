@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Tests for {@link org.openmrs.module.kenyacore.CoreContext}
+ * Tests for {@link CoreContext}
  */
 public class CoreContextTest extends BaseModuleContextSensitiveTest {
 

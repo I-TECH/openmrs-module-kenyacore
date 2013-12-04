@@ -154,6 +154,23 @@ public class Calculations {
 	}
 
 	/**
+	 * Evaluates the first encounter of a given type of each patient
+	 * @param encounterType the encounter type
+	 * @param cohort the patient ids
+	 * @param calculationContext the calculation context
+	 * @return the encounters in a calculation result map
+	 */
+	public static CalculationResultMap firstEncounter(EncounterType encounterType, Collection<Integer> cohort, PatientCalculationContext calculationContext) {
+		EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+		if (encounterType != null) {
+			def.addType(encounterType);
+		}
+		def.setWhich(TimeQualifier.FIRST);
+		def.setOnOrBefore(calculationContext.getNow());
+		return CalculationUtils.evaluateWithReporting(def, cohort, null, null, calculationContext);
+	}
+
+	/**
 	 * Evaluates the last encounter of a given type of each patient
 	 * @param encounterType the encounter type
 	 * @param cohort the patient ids
