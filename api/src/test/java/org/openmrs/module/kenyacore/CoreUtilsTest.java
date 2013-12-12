@@ -16,11 +16,14 @@ package org.openmrs.module.kenyacore;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.appframework.SimpleAppDescriptor;
+import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyacore.test.TestUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -118,5 +121,41 @@ public class CoreUtilsTest {
 		Assert.assertThat(CoreUtils.dateAddDays(TestUtils.date(2012, 1, 1), 1), is(TestUtils.date(2012, 1, 2)));
 		Assert.assertThat(CoreUtils.dateAddDays(TestUtils.date(2012, 1, 1), 31), is(TestUtils.date(2012, 2, 1)));
 		Assert.assertThat(CoreUtils.dateAddDays(TestUtils.date(2012, 1, 1), -1), is(TestUtils.date(2011, 12, 31)));
+	}
+
+	/**
+	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 */
+	@Test
+	public void checkAccess_shouldDoNothingIfEntityHasNoApps() {
+		AppDescriptor app = new SimpleAppDescriptor();
+		FormDescriptor form = new FormDescriptor();
+
+		CoreUtils.checkAccess(form, app);
+	}
+
+	/**
+	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 */
+	@Test
+	public void checkAccess_shouldDoNothingIfEntityIncludesApp() {
+		AppDescriptor app = new SimpleAppDescriptor();
+		FormDescriptor form = new FormDescriptor();
+		form.setApps(Collections.singleton(app));
+
+		CoreUtils.checkAccess(form, app);
+	}
+
+	/**
+	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 */
+	@Test(expected = APIAuthenticationException.class)
+	public void checkAccess_shouldThrowExceptionIfEntityDoesNotIncludeApp() {
+		AppDescriptor app1 = new SimpleAppDescriptor();
+		AppDescriptor app2 = new SimpleAppDescriptor();
+		FormDescriptor form = new FormDescriptor();
+		form.setApps(Collections.singleton(app1));
+
+		CoreUtils.checkAccess(form, app2);
 	}
 }
