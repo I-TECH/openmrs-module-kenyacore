@@ -54,7 +54,27 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see Calculations#ages(java.util.Collection, org.openmrs.calculation.patient.PatientCalculationContext)
+	 * @see Calculations#alive(java.util.Collection, org.openmrs.calculation.patient.PatientCalculationContext)
+	 */
+	@Test
+	public void alive() {
+		// Patient #6 dies before calculation date
+		TestUtils.getPatient(6).setDead(true);
+		TestUtils.getPatient(6).setDeathDate(TestUtils.date(2012, 1, 1));
+
+		// Patient #8 dies after calculation date
+		TestUtils.getPatient(6).setDead(true);
+		TestUtils.getPatient(6).setDeathDate(TestUtils.date(2012, 1, 1));
+
+		CalculationResultMap results = Calculations.alive(cohort, context);
+
+		Assert.assertThat(((Boolean) results.get(6).getValue()), is(false));
+		Assert.assertThat(((Boolean) results.get(7).getValue()), is(true));
+		Assert.assertThat(((Boolean) results.get(8).getValue()), is(true));
+	}
+
+	/**
+	 * @see Calculations#genders(java.util.Collection, org.openmrs.calculation.patient.PatientCalculationContext)
 	 */
 	@Test
 	public void genders() {
