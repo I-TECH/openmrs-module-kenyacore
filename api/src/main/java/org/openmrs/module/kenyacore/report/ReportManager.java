@@ -109,16 +109,19 @@ public class ReportManager implements ContentManager {
 
 		// Build definitions if builder available
 		for (ReportDescriptor report : getAllReportDescriptors()) {
-			ReportDefinition existingDefinition = report.getTarget();
+			// We don't use usual load mechanism because we don't want to de-serialise the definition
+			ReportDefinition existingDefinition = getReportDefinitionStub(report.getTargetUuid());
+
 			ReportBuilder builder = getReportBuilder(report);
 
 			if (builder != null) {
-				// Purge existing if exists
+				ReportDefinition definition = builder.build(report);
+
+				// Steal id of existing definition
 				if (existingDefinition != null) {
-					Context.getService(ReportDefinitionService.class).purgeDefinition(existingDefinition);
+					definition.setId(existingDefinition.getId());
 				}
 
-				ReportDefinition definition = builder.build(report);
 				definition.setUuid(report.getTargetUuid());
 
 				Context.getService(ReportDefinitionService.class).saveDefinition(definition);
@@ -201,5 +204,22 @@ public class ReportManager implements ContentManager {
 		}
 
 		return filtered;
+	}
+
+	/**
+	 * Gets a "stub" of a report definition from its UUID. We use this to avoid unnecessarily de-serializing definitions
+	 * @param uuid the UUID
+	 * @return the stub
+	 */
+	protected ReportDefinition getReportDefinitionStub(String uuid) {
+		String query = "SELECT serialized_object_id, uuid FROM serialized_object WHERE uuid = '" + uuid + "'";
+		List<List<Object>> result = Context.getAdministrationService().executeSQL(query, true);
+		if (result.size() > 0) {
+			ReportDefinition rd = new ReportDefinition();
+			rd.setId((Integer) result.get(0).get(0));
+			rd.setUuid((String) result.get(0).get(1));
+			return rd;
+		}
+		return null;
 	}
 }
