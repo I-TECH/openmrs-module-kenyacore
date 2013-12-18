@@ -22,9 +22,9 @@ import org.openmrs.calculation.parameter.ParameterDefinitionSet;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
-import org.openmrs.module.kenyacore.CoreUtils;
+import org.openmrs.calculation.result.ListResult;
+import org.openmrs.calculation.result.SimpleResult;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +61,26 @@ public class CalculationUtilsTest {
 	@Test(expected = RuntimeException.class)
 	public void instantiateCalculation_shouldThrowExceptionIfClassCantBeInstantiated() {
 		CalculationUtils.instantiateCalculation(FaultyCalculation.class, null);
+	}
+
+	/**
+	 * @see CalculationUtils#extractResultValues(org.openmrs.calculation.result.ListResult)
+	 */
+	@Test
+	public void extractResultValues_shouldExtractListResultValues() {
+		ListResult ints = new ListResult();
+		ints.add(new SimpleResult(100, null));
+		ints.add(new SimpleResult(200, null));
+
+		List<Integer> intValues = CalculationUtils.extractResultValues(ints);
+		Assert.assertThat(intValues, contains(100, 200));
+
+		ListResult strings = new ListResult();
+		strings.add(new SimpleResult("a", null));
+		strings.add(new SimpleResult("b", null));
+
+		List<String> stringValues = CalculationUtils.extractResultValues(strings);
+		Assert.assertThat(stringValues, contains("a", "b"));
 	}
 
 	/**
