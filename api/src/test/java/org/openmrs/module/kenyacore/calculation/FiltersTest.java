@@ -48,6 +48,11 @@ public class FiltersTest extends BaseModuleContextSensitiveTest {
 		context.setNow(TestUtils.date(2012, 6, 1));
 	}
 
+	@Test
+	public void integration() {
+		new Filters();
+	}
+
 	/**
 	 * @see Filters#alive(java.util.Collection, org.openmrs.calculation.patient.PatientCalculationContext)
 	 */
