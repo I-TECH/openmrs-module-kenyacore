@@ -26,13 +26,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.patient.PatientCalculationService;
 import org.openmrs.calculation.result.CalculationResultMap;
+import org.openmrs.calculation.result.ListResult;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -113,8 +113,8 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		Concept weight = Context.getConceptService().getConcept(5089);
 		CalculationResultMap resultMap = Calculations.allObs(weight, cohort, context);
 
-		Assert.assertThat((Collection) resultMap.get(6).getValue(), hasSize(0));
-		Assert.assertThat((Collection) resultMap.get(7).getValue(), hasSize(3));
+		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0));
+		Assert.assertThat(((ListResult) resultMap.get(7)).getValues(), hasSize(3));
 	}
 
 	/**
@@ -190,15 +190,15 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		// Get any encounters
 		CalculationResultMap resultMap = Calculations.allEncounters(null, cohort, context);
 
-		Assert.assertThat((Collection) resultMap.get(6).getValue(), hasSize(0)); // patient #6 has no encounters
-		Assert.assertThat((Collection) resultMap.get(7).getValue(), hasSize(3)); // patient #7 has 3 encounters
+		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0)); // patient #6 has no encounters
+		Assert.assertThat(((ListResult) resultMap.get(7)).getValues(), hasSize(3)); // patient #7 has 3 encounters
 
 		// Get 'Scheduled' encounters
 		EncounterType scheduledEncType = Context.getEncounterService().getEncounterType("Scheduled");
 		resultMap = Calculations.allEncounters(scheduledEncType, cohort, context);
 
-		Assert.assertThat((Collection) resultMap.get(6).getValue(), hasSize(0)); // patient #6 has no encounters of type 'Scheduled'
-		Assert.assertThat((Collection) resultMap.get(7).getValue(), hasSize(2)); // patient #7 has 2 encounters of type 'Scheduled'
+		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0)); // patient #6 has no encounters of type 'Scheduled'
+		Assert.assertThat(((ListResult) resultMap.get(7)).getValues(), hasSize(2)); // patient #7 has 2 encounters of type 'Scheduled'
 	}
 
 	/**
@@ -248,8 +248,8 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		Program hivProgram = MetadataUtils.getProgram("da4a0391-ba62-4fad-ad66-1e3722d16380");
 		CalculationResultMap resultMap = Calculations.allEnrollments(hivProgram, cohort, context);
 
-		Assert.assertThat((Collection) resultMap.get(2).getValue(), hasSize(1));
-		Assert.assertThat((Collection) resultMap.get(6).getValue(), hasSize(0));
-		Assert.assertThat((Collection) resultMap.get(7).getValue(), hasSize(0));
+		Assert.assertThat(((ListResult) resultMap.get(2)).getValues(), hasSize(1));
+		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0));
+		Assert.assertThat(((ListResult) resultMap.get(7)).getValues(), hasSize(0));
 	}
 }
