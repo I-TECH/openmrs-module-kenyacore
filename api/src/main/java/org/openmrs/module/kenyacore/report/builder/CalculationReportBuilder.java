@@ -20,9 +20,14 @@ import org.openmrs.module.kenyacore.calculation.CalculationUtils;
 import org.openmrs.module.kenyacore.report.CalculationReportDescriptor;
 import org.openmrs.module.kenyacore.report.ReportDescriptor;
 import org.openmrs.module.kenyacore.report.ReportUtils;
+import org.openmrs.module.reporting.data.DataDefinition;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.ConvertedPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -75,14 +80,21 @@ public class CalculationReportBuilder implements ReportBuilder {
 	 * @param dsd the data set definition
 	 */
 	protected void addStandardColumns(CalculationReportDescriptor report, PatientDataSetDefinition dsd) {
+		DataConverter nameFormatter = new ObjectFormatter("{familyName}, {givenName}");
+		DataDefinition nameDef = new ConvertedPersonDataDefinition("name", new PreferredNameDataDefinition(), nameFormatter);
+
 		dsd.addColumn("id", new PatientIdDataDefinition(), "");
-		dsd.addColumn("Name", new PreferredNameDataDefinition(), "");
+		dsd.addColumn("Name", nameDef, "");
 		dsd.addColumn("Age", new AgeDataDefinition(), "");
 		dsd.addColumn("Sex", new GenderDataDefinition(), "");
 
 		if (report.getDisplayIdentifier() != null) {
 			PatientIdentifierType idType = report.getDisplayIdentifier().getTarget();
-			dsd.addColumn(idType.getName(), new PatientIdentifierDataDefinition(idType.getName(), idType), "");
+
+			DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
+			DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(idType.getName(), idType), identifierFormatter);
+
+			dsd.addColumn(idType.getName(), identifierDef, "");
 		}
 	}
 }
