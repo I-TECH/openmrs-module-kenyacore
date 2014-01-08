@@ -14,12 +14,10 @@
 
 package org.openmrs.module.kenyacore.wrapper;
 
-import org.openmrs.OpenmrsObject;
-
 /**
  * Abstract base class for wrappers
  */
-public abstract class AbstractWrapper<T extends OpenmrsObject> implements Wrapper<T> {
+public abstract class AbstractWrapper<T> implements Wrapper<T> {
 
 	protected T target;
 

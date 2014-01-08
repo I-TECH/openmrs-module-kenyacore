@@ -14,16 +14,16 @@
 
 package org.openmrs.module.kenyacore.wrapper;
 
-import org.openmrs.BaseCustomizableMetadata;
 import org.openmrs.attribute.Attribute;
 import org.openmrs.customdatatype.CustomValueDescriptor;
+import org.openmrs.customdatatype.Customizable;
 
 import java.util.List;
 
 /**
  * Abstract base class for wrappers of customizable (i.e. have attributes) objects
  */
-public abstract class AbstractCustomizableWrapper<T extends BaseCustomizableMetadata> extends AbstractWrapper<T> {
+public abstract class AbstractCustomizableWrapper<T extends Customizable> extends AbstractWrapper<T> {
 
 	/**
 	 * Creates a new wrapper
