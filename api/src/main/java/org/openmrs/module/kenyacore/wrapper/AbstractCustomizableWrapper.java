@@ -14,16 +14,15 @@
 
 package org.openmrs.module.kenyacore.wrapper;
 
+import org.openmrs.OpenmrsObject;
 import org.openmrs.attribute.Attribute;
-import org.openmrs.customdatatype.CustomValueDescriptor;
+import org.openmrs.attribute.AttributeType;
 import org.openmrs.customdatatype.Customizable;
-
-import java.util.List;
 
 /**
  * Abstract base class for wrappers of customizable (i.e. have attributes) objects
  */
-public abstract class AbstractCustomizableWrapper<T extends Customizable> extends AbstractWrapper<T> {
+public abstract class AbstractCustomizableWrapper<T extends OpenmrsObject & Customizable<A>, A extends Attribute> extends AbstractWrapper<T> {
 
 	/**
 	 * Creates a new wrapper
@@ -36,10 +35,35 @@ public abstract class AbstractCustomizableWrapper<T extends Customizable> extend
 	/**
 	 * Gets the value of the first active attribute of the given type
 	 * @param attrType the attribute type
-	 * @return the value
+	 * @return the value or null
 	 */
-	protected Object getAttributeValue(CustomValueDescriptor attrType) {
-		List<Attribute> attrs = target.getActiveAttributes(attrType);
-		return attrs.size() > 0 ? attrs.get(0).getValue() : null;
+	protected A getFirstAttribute(AttributeType<T> attrType) {
+		return getFirstAttribute(attrType.getUuid());
+	}
+
+	/**
+	 * Gets the value of the first active attribute of the given type. By using the UUID of the attribute type this
+	 * avoids forcing us to keep re-fetching attribute types via service methods which can be slow.
+	 * @param attrTypeUuid the attribute type UUID
+	 * @return the value or null
+	 */
+	protected A getFirstAttribute(String attrTypeUuid) {
+		if (target.getAttributes() != null) {
+			for (A attr : target.getAttributes())
+				if (attr.getAttributeType().getUuid().equals(attrTypeUuid) && !attr.isVoided()) {
+					return attr;
+				}
+		}
+		return null;
+	}
+
+	/**
+	 * Convenience method to get the value of the first attribute of the given type
+	 * @param attrTypeUuid the attribute type UUID
+	 * @return the value or null
+	 */
+	protected Object getFirstAttributeValue(String attrTypeUuid) {
+		A attr = getFirstAttribute(attrTypeUuid);
+		return attr != null ? attr.getValue() : null;
 	}
 }

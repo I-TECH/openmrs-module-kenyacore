@@ -14,10 +14,12 @@
 
 package org.openmrs.module.kenyacore.wrapper;
 
+import org.openmrs.OpenmrsObject;
+
 /**
  * Interface for wrapper classes
  */
-public interface Wrapper<T> {
+public interface Wrapper<T extends OpenmrsObject> {
 
 	/**
 	 * Gets the wrapped object
