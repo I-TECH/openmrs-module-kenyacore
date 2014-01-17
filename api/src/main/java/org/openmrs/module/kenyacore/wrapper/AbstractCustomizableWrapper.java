@@ -22,7 +22,7 @@ import org.openmrs.customdatatype.Customizable;
 /**
  * Abstract base class for wrappers of customizable (i.e. have attributes) objects
  */
-public abstract class AbstractCustomizableWrapper<T extends OpenmrsObject & Customizable<A>, A extends Attribute> extends AbstractWrapper<T> {
+public abstract class AbstractCustomizableWrapper<T extends OpenmrsObject & Customizable<A>, A extends Attribute> extends AbstractObjectWrapper<T> {
 
 	/**
 	 * Creates a new wrapper

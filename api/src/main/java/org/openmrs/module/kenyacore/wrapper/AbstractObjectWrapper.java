@@ -17,9 +17,9 @@ package org.openmrs.module.kenyacore.wrapper;
 import org.openmrs.OpenmrsObject;
 
 /**
- * Abstract base class for wrappers
+ * Abstract base class for wrappers of OpenmmrsObject subclasses
  */
-public abstract class AbstractWrapper<T extends OpenmrsObject> implements Wrapper<T> {
+public abstract class AbstractObjectWrapper<T extends OpenmrsObject> implements Wrapper<T> {
 
 	protected T target;
 
@@ -27,7 +27,7 @@ public abstract class AbstractWrapper<T extends OpenmrsObject> implements Wrappe
 	 * Creates a new wrapper
 	 * @param target the target object
 	 */
-	public AbstractWrapper(T target) {
+	public AbstractObjectWrapper(T target) {
 		this.target = target;
 	}
 
@@ -37,5 +37,21 @@ public abstract class AbstractWrapper<T extends OpenmrsObject> implements Wrappe
 	@Override
 	public T getTarget() {
 		return target;
+	}
+
+	/**
+	 * Gets the target object id
+	 * @return the id
+	 */
+	public Integer getId() {
+		return target.getId();
+	}
+
+	/**
+	 * Gets the target object UUID
+	 * @return the UUID
+	 */
+	public String getUuid() {
+		return target.getUuid();
 	}
 }
