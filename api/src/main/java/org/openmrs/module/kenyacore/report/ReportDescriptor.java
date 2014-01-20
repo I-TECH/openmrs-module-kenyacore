@@ -15,13 +15,12 @@
 package org.openmrs.module.kenyacore.report;
 
 import org.openmrs.api.context.Context;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
-import org.openmrs.module.kenyacore.AppRestrictedDescriptor;
+import org.openmrs.module.kenyacore.app.AppRestrictedDescriptor;
 import org.openmrs.module.reporting.definition.DefinitionSummary;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.module.reporting.report.service.ReportService;
 
 import java.util.Set;
 
@@ -77,7 +76,7 @@ public class ReportDescriptor extends AbstractEntityDescriptor<ReportDefinition>
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#getApps()
+	 * @see org.openmrs.module.kenyacore.app.AppRestrictedDescriptor#getApps()
 	 */
 	@Override
 	public Set<AppDescriptor> getApps() {
@@ -85,7 +84,7 @@ public class ReportDescriptor extends AbstractEntityDescriptor<ReportDefinition>
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#setApps(java.util.Set)
+	 * @see org.openmrs.module.kenyacore.app.AppRestrictedDescriptor#setApps(java.util.Set)
 	 */
 	@Override
 	public void setApps(Set<AppDescriptor> apps) {

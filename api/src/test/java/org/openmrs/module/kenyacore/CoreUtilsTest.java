@@ -17,8 +17,7 @@ package org.openmrs.module.kenyacore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.module.appframework.AppDescriptor;
-import org.openmrs.module.appframework.SimpleAppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyacore.test.TestUtils;
 
@@ -124,22 +123,22 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 * @see CoreUtils#checkAccess(org.openmrs.module.kenyacore.app.AppRestrictedDescriptor, org.openmrs.module.appframework.domain.AppDescriptor)
 	 */
 	@Test
 	public void checkAccess_shouldDoNothingIfEntityHasNoApps() {
-		AppDescriptor app = new SimpleAppDescriptor();
+		AppDescriptor app = new AppDescriptor("test.app1", "", "Test App #1", null, null, null, 0);
 		FormDescriptor form = new FormDescriptor();
 
 		CoreUtils.checkAccess(form, app);
 	}
 
 	/**
-	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 * @see CoreUtils#checkAccess(org.openmrs.module.kenyacore.app.AppRestrictedDescriptor, org.openmrs.module.appframework.domain.AppDescriptor)
 	 */
 	@Test
 	public void checkAccess_shouldDoNothingIfEntityIncludesApp() {
-		AppDescriptor app = new SimpleAppDescriptor();
+		AppDescriptor app = new AppDescriptor("test.app1", "", "Test App #1", null, null, null, 0);
 		FormDescriptor form = new FormDescriptor();
 		form.setApps(Collections.singleton(app));
 
@@ -147,12 +146,12 @@ public class CoreUtilsTest {
 	}
 
 	/**
-	 * @see CoreUtils#checkAccess(AppRestrictedDescriptor, org.openmrs.module.appframework.AppDescriptor)
+	 * @see CoreUtils#checkAccess(org.openmrs.module.kenyacore.app.AppRestrictedDescriptor, org.openmrs.module.appframework.domain.AppDescriptor)
 	 */
 	@Test(expected = APIAuthenticationException.class)
 	public void checkAccess_shouldThrowExceptionIfEntityDoesNotIncludeApp() {
-		AppDescriptor app1 = new SimpleAppDescriptor();
-		AppDescriptor app2 = new SimpleAppDescriptor();
+		AppDescriptor app1 = new AppDescriptor("test.app1", "", "Test App #1", null, null, null, 0);
+		AppDescriptor app2 = new AppDescriptor("test.app2", "", "Test App #2", null, null, null, 0);
 		FormDescriptor form = new FormDescriptor();
 		form.setApps(Collections.singleton(app1));
 

@@ -15,7 +15,8 @@
 package org.openmrs.module.kenyacore;
 
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.kenyacore.app.AppRestrictedDescriptor;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.util.ArrayList;

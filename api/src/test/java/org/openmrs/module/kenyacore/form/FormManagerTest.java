@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.TestMetadata;
 import org.openmrs.module.kenyacore.program.ProgramManager;
 import org.openmrs.module.kenyacore.test.TestUtils;
@@ -69,7 +69,7 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see FormManager#getCommonFormsForPatient(org.openmrs.module.appframework.AppDescriptor, org.openmrs.Patient)
+	 * @see FormManager#getCommonFormsForPatient(org.openmrs.module.appframework.domain.AppDescriptor, org.openmrs.Patient)
 	 */
 	@Test
 	public void getCommonFormsForPatient() {
@@ -81,7 +81,7 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
-	 * @see FormManager#getAllUncompletedFormsForVisit(org.openmrs.module.appframework.AppDescriptor, org.openmrs.Visit)
+	 * @see FormManager#getAllUncompletedFormsForVisit(org.openmrs.module.appframework.domain.AppDescriptor, org.openmrs.Visit)
 	 */
 	@Test
 	public void getAllUncompletedFormsForVisit() {

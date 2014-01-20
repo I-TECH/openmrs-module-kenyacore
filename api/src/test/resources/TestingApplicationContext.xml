@@ -6,14 +6,24 @@
 
 	<!-- ==================== Apps ======================== -->
 
-	<bean id="test.app.app1" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-		<property name="id" value="test.test1"/>
-		<property name="label" value="App #1"/>
+	<bean id="test.app.app1" class="org.openmrs.module.appframework.domain.AppDescriptor">
+		<constructor-arg name="id" value="test.test1" />
+		<constructor-arg name="description" value="" />
+		<constructor-arg name="label" value="App #1" />
+		<constructor-arg name="url" value="" />
+		<constructor-arg name="icon" value="" />
+		<constructor-arg name="tinyIcon" value="" />
+		<constructor-arg name="order" value="100" />
 	</bean>
 
-	<bean id="test.app.app2" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-		<property name="id" value="test.test2"/>
-		<property name="label" value="App #2"/>
+	<bean id="test.app.app2" class="org.openmrs.module.appframework.domain.AppDescriptor">
+		<constructor-arg name="id" value="test.test2" />
+		<constructor-arg name="description" value="" />
+		<constructor-arg name="label" value="App #2" />
+		<constructor-arg name="url" value="" />
+		<constructor-arg name="icon" value="" />
+		<constructor-arg name="tinyIcon" value="" />
+		<constructor-arg name="order" value="200" />
 	</bean>
 
 	<!-- ==================== Forms ======================== -->

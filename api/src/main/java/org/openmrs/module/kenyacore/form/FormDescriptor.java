@@ -15,9 +15,9 @@
 package org.openmrs.module.kenyacore.form;
 
 import org.openmrs.Form;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.AbstractEntityDescriptor;
-import org.openmrs.module.kenyacore.AppRestrictedDescriptor;
+import org.openmrs.module.kenyacore.app.AppRestrictedDescriptor;
 import org.openmrs.module.kenyacore.UiResource;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 
@@ -55,7 +55,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> implements Ap
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#getApps()
+	 * @see org.openmrs.module.kenyacore.app.AppRestrictedDescriptor#getApps()
 	 */
 	@Override
 	public Set<AppDescriptor> getApps() {
@@ -63,7 +63,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> implements Ap
 	}
 
 	/**
-	 * @see org.openmrs.module.kenyacore.AppRestrictedDescriptor#setApps(java.util.Set)
+	 * @see org.openmrs.module.kenyacore.app.AppRestrictedDescriptor#setApps(java.util.Set)
 	 */
 	@Override
 	public void setApps(Set<AppDescriptor> apps) {

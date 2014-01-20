@@ -12,9 +12,10 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore;
+package org.openmrs.module.kenyacore.app;
 
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.kenyacore.Descriptor;
 
 import java.util.Set;
 
