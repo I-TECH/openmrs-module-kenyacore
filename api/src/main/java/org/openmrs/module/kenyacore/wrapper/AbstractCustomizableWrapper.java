@@ -33,12 +33,13 @@ public abstract class AbstractCustomizableWrapper<T extends OpenmrsObject & Cust
 	}
 
 	/**
-	 * Gets the value of the first active attribute of the given type
-	 * @param attrType the attribute type
+	 * Convenience method to get the value of the first attribute of the given type
+	 * @param attrTypeUuid the attribute type UUID
 	 * @return the value or null
 	 */
-	protected A getFirstAttribute(AttributeType<T> attrType) {
-		return getFirstAttribute(attrType.getUuid());
+	protected Object getAsAttribute(String attrTypeUuid) {
+		A attr = findFirstAttribute(attrTypeUuid);
+		return attr != null ? attr.getValue() : null;
 	}
 
 	/**
@@ -47,23 +48,14 @@ public abstract class AbstractCustomizableWrapper<T extends OpenmrsObject & Cust
 	 * @param attrTypeUuid the attribute type UUID
 	 * @return the value or null
 	 */
-	protected A getFirstAttribute(String attrTypeUuid) {
+	protected A findFirstAttribute(String attrTypeUuid) {
 		if (target.getAttributes() != null) {
-			for (A attr : target.getAttributes())
+			for (A attr : target.getAttributes()) {
 				if (attr.getAttributeType().getUuid().equals(attrTypeUuid) && !attr.isVoided()) {
 					return attr;
 				}
+			}
 		}
 		return null;
-	}
-
-	/**
-	 * Convenience method to get the value of the first attribute of the given type
-	 * @param attrTypeUuid the attribute type UUID
-	 * @return the value or null
-	 */
-	protected Object getFirstAttributeValue(String attrTypeUuid) {
-		A attr = getFirstAttribute(attrTypeUuid);
-		return attr != null ? attr.getValue() : null;
 	}
 }

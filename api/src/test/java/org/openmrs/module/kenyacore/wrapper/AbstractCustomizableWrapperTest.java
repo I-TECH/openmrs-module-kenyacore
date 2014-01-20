@@ -43,7 +43,7 @@ public class AbstractCustomizableWrapperTest extends BaseModuleContextSensitiveT
 	}
 
 	@Test
-	public void getFirstAttributeValue_shouldReturnNullIfNoSuchAttribute() {
+	public void getAsAttribute_shouldReturnNullIfNoSuchAttribute() {
 		Location unknown = MetadataUtils.getLocation("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown Location
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
@@ -60,7 +60,7 @@ public class AbstractCustomizableWrapperTest extends BaseModuleContextSensitiveT
 		}
 
 		public String getTelephone() {
-			return (String) getFirstAttributeValue(TELEPHONE_ATTRTYPE_UUID);
+			return (String) getAsAttribute(TELEPHONE_ATTRTYPE_UUID);
 		}
 	}
 }
