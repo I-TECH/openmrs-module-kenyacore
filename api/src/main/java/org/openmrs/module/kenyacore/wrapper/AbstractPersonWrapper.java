@@ -58,11 +58,12 @@ public abstract class AbstractPersonWrapper extends AbstractObjectWrapper<Person
 			if (attr == null) {
 				attr = new PersonAttribute();
 				attr.setAttributeType(MetadataUtils.getPersonAttributeType(attrTypeUuid));
-				attr.setPerson(target);
+				attr.setValue(value);
 				target.addAttribute(attr);
 			}
-
-			attr.setValue(value);
+			else {
+				attr.setValue(value);
+			}
 		}
 		else if (attr != null) {
 			attr.setVoided(true);

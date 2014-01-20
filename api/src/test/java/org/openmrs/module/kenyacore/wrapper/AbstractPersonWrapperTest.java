@@ -73,16 +73,48 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	 * @see AbstractPersonWrapper#setAsAttribute(String, String)
 	 */
 	@Test
-	public void setAsAttribute_shouldSaveOrUpdateAttribute() {
+	public void setAsAttribute_shouldUpdateExistingAttribute() {
 		Person person = personService.getPerson(7);
-		PersonWrapper wrapperFor7 = new PersonWrapper(person);
+		PersonWrapper wrapper = new PersonWrapper(person);
 
-		wrapperFor7.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "Nairobi");
+		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "Nairobi");
 
 		personService.savePerson(person);
 
-		Assert.assertThat(wrapperFor7.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("Nairobi"));
+		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("Nairobi"));
 		Assert.assertThat(person.getAttributes(2), hasSize(1));
+	}
+
+	/**
+	 * @see AbstractPersonWrapper#setAsAttribute(String, String)
+	 */
+	@Test
+	public void setAsAttribute_shouldCreateNewAttributeWhenNonExists() {
+		Person person = personService.getPerson(1);
+		PersonWrapper wrapper = new PersonWrapper(person);
+
+		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "Nairobi");
+
+		personService.savePerson(person);
+
+		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("Nairobi"));
+		Assert.assertThat(person.getAttributes(2), hasSize(1));
+	}
+
+	/**
+	 * @see AbstractPersonWrapper#setAsAttribute(String, String)
+	 */
+	@Test
+	public void setAsAttribute_shouldVoidIfAttributeValueIsBlank() {
+		Person person = personService.getPerson(1);
+		PersonWrapper wrapper = new PersonWrapper(person);
+
+		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "");
+
+		personService.savePerson(person);
+
+		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), nullValue());
+		Assert.assertThat(person.getAttributes(2), hasSize(0));
 	}
 
 	/**
