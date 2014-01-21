@@ -37,7 +37,7 @@
 		<openMRSVersion>1.9.7</openMRSVersion>
 
 		<!-- Module dependencies -->
-		<appframeworkVersion>2.1-SNAPSHOT</appframeworkVersion>
+		<appframeworkVersion>2.1</appframeworkVersion>
 		<calculationVersion>1.0</calculationVersion>
 		<htmlformentryVersion>2.2.1</htmlformentryVersion>
 		<htmlwidgetsVersion>1.6.5</htmlwidgetsVersion>
