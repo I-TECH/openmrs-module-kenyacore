@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.LocationAttribute;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -33,7 +34,7 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getId_shouldReturnTargetObjectId() {
-		Location unknown = MetadataUtils.getLocation("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown Location
+		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapper.getId(), is(unknown.getId()));
@@ -44,10 +45,10 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getUuid_shouldReturnTargetObjectId() {
-		Location unknown = MetadataUtils.getLocation("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown Location
+		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
-		Assert.assertThat(wrapper.getUuid(), is("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"));
+		Assert.assertThat(wrapper.getUuid(), is(StandardTestData._Location.UNKNOWN));
 	}
 
 	/**

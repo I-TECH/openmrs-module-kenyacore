@@ -21,6 +21,7 @@ import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.patient.PatientCalculationService;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -77,7 +78,7 @@ public class FiltersTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void inProgram() {
-		Program hiv = MetadataUtils.getProgram("71779c39-d289-4dfe-91b5-e7cfaa27c78b");
+		Program hiv = MetadataUtils.getProgram(StandardTestData._Program.HIV);
 
 		// Patient #2 is enrolled in standardTesDataset.xml, we enroll #6 and #7 here...
 		TestUtils.enrollInProgram(TestUtils.getPatient(6), hiv, TestUtils.date(2012, 1, 1), TestUtils.date(2012, 5, 1));

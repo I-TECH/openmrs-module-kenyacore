@@ -15,25 +15,42 @@
 package org.openmrs.module.kenyacore.wrapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
- * Abstract base class for persons. We can't use {@link org.openmrs.module.kenyacore.wrapper.AbstractCustomizableWrapper}
+ * Abstract wrapper class for persons or person subclasses. We can't use {@link org.openmrs.module.kenyacore.wrapper.AbstractCustomizableWrapper}
  * for persons as they are not Customizable despite having attributes. See TRUNK-4231.
  */
-public abstract class AbstractPersonWrapper extends AbstractObjectWrapper<Person> {
+public abstract class AbstractPersonWrapper<T extends Person> extends AbstractObjectWrapper<T> {
 
 	/**
 	 * Creates a new person wrapper
 	 * @param target the target
 	 */
-	public AbstractPersonWrapper(Person target) {
+	public AbstractPersonWrapper(T target) {
 		super(target);
+	}
+
+	/**
+	 * Finds the last obs with the given concept
+	 * @param concept the concept
+	 * @return the obs
+	 */
+	public Obs lastObs(Concept concept) {
+		List<Obs> obss = Context.getObsService().getObservationsByPersonAndConcept(target, concept);
+		return obss.size() > 0 ? obss.get(0) : null;
 	}
 
 	/**

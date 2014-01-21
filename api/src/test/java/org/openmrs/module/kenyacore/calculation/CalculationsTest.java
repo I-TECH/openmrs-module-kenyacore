@@ -27,6 +27,7 @@ import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.patient.PatientCalculationService;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.ListResult;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.Age;
@@ -110,7 +111,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void allObs_shouldReturnAllObsForPatients() throws Exception {
 		// Get all 'WEIGHT' obss
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.allObs(weight, cohort, context);
 
 		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0));
@@ -123,7 +124,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void firstObs_shouldReturnFirstObsForPatients() throws Exception {
 		// Get first 'WEIGHT' obss
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.firstObs(weight, cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -136,7 +137,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void firstObsOnOrAfter_shouldReturnFirstObsForPatientsOnOrAfterDate() throws Exception {
 		// Get first 'WEIGHT' obss after 2008-08-15
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.firstObsOnOrAfter(weight, TestUtils.date(2008, 8, 15), cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -149,7 +150,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void lastObs_shouldReturnLastObsForPatients() throws Exception {
 		// Get last 'WEIGHT' obss
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.lastObs(weight, cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -162,7 +163,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void lastObsOnOrBefore_shouldReturnLastObsForPatientsBeforeOrOnDate() throws Exception {
 		// Get last 'WEIGHT' obss before 2008-08-15
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.lastObsOnOrBefore(weight, TestUtils.date(2008, 8, 15), cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -175,7 +176,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void lastObsAtLeastDaysAgo_shouldReturnLastObsForPatients() throws Exception {
 		// Get last 'WEIGHT' obs at least 1400 days ago
-		Concept weight = Context.getConceptService().getConcept(5089);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
 		CalculationResultMap resultMap = Calculations.lastObsAtLeastDaysAgo(weight, 1400, cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -194,7 +195,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(((ListResult) resultMap.get(7)).getValues(), hasSize(3)); // patient #7 has 3 encounters
 
 		// Get 'Scheduled' encounters
-		EncounterType scheduledEncType = Context.getEncounterService().getEncounterType("Scheduled");
+		EncounterType scheduledEncType = MetadataUtils.getEncounterType(StandardTestData._EncounterType.SCHEDULED);
 		resultMap = Calculations.allEncounters(scheduledEncType, cohort, context);
 
 		Assert.assertThat(((ListResult) resultMap.get(6)).getValues(), hasSize(0)); // patient #6 has no encounters of type 'Scheduled'
@@ -213,7 +214,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getId(), is(3));
 
 		// Get first 'Scheduled' encounter
-		EncounterType scheduledEncType = Context.getEncounterService().getEncounterType("Scheduled");
+		EncounterType scheduledEncType = MetadataUtils.getEncounterType(StandardTestData._EncounterType.SCHEDULED);
 		resultMap = Calculations.firstEncounter(scheduledEncType, cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -232,7 +233,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(((Encounter) resultMap.get(7).getValue()).getId(), is(5));
 
 		// Get last 'Emergency' encounter
-		EncounterType emergencyEncType = Context.getEncounterService().getEncounterType("Emergency");
+		EncounterType emergencyEncType = MetadataUtils.getEncounterType(StandardTestData._EncounterType.EMERGENCY);
 		resultMap = Calculations.lastEncounter(emergencyEncType, cohort, context);
 
 		Assert.assertThat(resultMap.get(6), nullValue());
@@ -245,7 +246,7 @@ public class CalculationsTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void allEnrollments_shouldReturnAllEnrollmentsForPatients() throws Exception {
 		// Get 'HIV' enrollments
-		Program hivProgram = MetadataUtils.getProgram("da4a0391-ba62-4fad-ad66-1e3722d16380");
+		Program hivProgram = MetadataUtils.getProgram(StandardTestData._Program.HIV);
 		CalculationResultMap resultMap = Calculations.allEnrollments(hivProgram, cohort, context);
 
 		Assert.assertThat(((ListResult) resultMap.get(2)).getValues(), hasSize(1));

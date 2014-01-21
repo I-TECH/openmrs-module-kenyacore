@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import static org.hamcrest.Matchers.*;
@@ -28,7 +29,8 @@ public class ConceptReferenceTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void getTarget_shouldReturnConceptIfReferenceIsValid() throws Exception {
-		ConceptReference reference = new ConceptReference("c607c80f-1ea9-4da3-bb88-6276ce8868dd"); // WEIGHT (KG)
+		ConceptReference reference = new ConceptReference(StandardTestData._Concept.WEIGHT_KG);
+
 		Assert.assertThat(reference.getTarget(), is(Context.getConceptService().getConcept(5089)));
 	}
 

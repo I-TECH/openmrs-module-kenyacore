@@ -16,8 +16,14 @@ package org.openmrs.module.kenyacore.wrapper;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.PersonService;
+import org.openmrs.module.kenyacore.test.StandardTestData;
+import org.openmrs.module.kenyacore.test.TestUtils;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,10 +34,28 @@ import static org.hamcrest.Matchers.*;
  */
 public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 
-	private static final String BIRTHPLACE_ATTRTYPE_UUID = "54fc8400-1683-4d71-a1ac-98d40836ff7c";
-
 	@Autowired
 	private PersonService personService;
+
+	/**
+	 * @see AbstractPatientWrapper#lastObs(org.openmrs.Concept)
+	 */
+	@Test
+	public void lastObs_shouldFindLastObsWithConcept() {
+		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(7));
+
+		Concept cd4 = MetadataUtils.getConcept(StandardTestData._Concept.CD4_COUNT);
+		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
+
+		Patient patient = TestUtils.getPatient(7);
+
+		TestUtils.saveObs(patient, cd4, 123.0, TestUtils.date(2012, 1, 1));
+		TestUtils.saveObs(patient, cd4, 234.0, TestUtils.date(2012, 1, 2));
+		Obs obs = TestUtils.saveObs(patient, cd4, 345.0, TestUtils.date(2012, 1, 3));
+		TestUtils.saveObs(patient, weight, 50.0, TestUtils.date(2012, 1, 31)); // Wrong concept
+
+		Assert.assertThat(wrapper.lastObs(cd4), is(obs));
+	}
 
 	/**
 	 * @see AbstractPersonWrapper#findFirstAttribute(String)
@@ -39,7 +63,7 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void findFirstAttribute() {
 		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(7));
-		Assert.assertThat(wrapper.findFirstAttribute(BIRTHPLACE_ATTRTYPE_UUID).getValue(), is("NULL"));
+		Assert.assertThat(wrapper.findFirstAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE).getValue(), is("NULL"));
 	}
 
 	/**
@@ -48,7 +72,7 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void findFirstAttribute_shouldReturnNullIfNoAttribute() {
 		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(1));
-		Assert.assertThat(wrapper.findFirstAttribute(BIRTHPLACE_ATTRTYPE_UUID), nullValue());
+		Assert.assertThat(wrapper.findFirstAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), nullValue());
 	}
 
 	/**
@@ -57,7 +81,7 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAsAttribute() {
 		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(7));
-		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("NULL"));
+		Assert.assertThat(wrapper.getAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), is("NULL"));
 	}
 
 	/**
@@ -66,7 +90,7 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAsAttribute_shouldReturnNullIfNoAttribute() {
 		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(1));
-		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), nullValue());
+		Assert.assertThat(wrapper.getAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), nullValue());
 	}
 
 	/**
@@ -77,11 +101,11 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 		Person person = personService.getPerson(7);
 		PersonWrapper wrapper = new PersonWrapper(person);
 
-		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "Nairobi");
+		wrapper.setAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE, "Nairobi");
 
 		personService.savePerson(person);
 
-		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("Nairobi"));
+		Assert.assertThat(wrapper.getAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), is("Nairobi"));
 		Assert.assertThat(person.getAttributes(2), hasSize(1));
 	}
 
@@ -93,11 +117,11 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 		Person person = personService.getPerson(1);
 		PersonWrapper wrapper = new PersonWrapper(person);
 
-		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "Nairobi");
+		wrapper.setAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE, "Nairobi");
 
 		personService.savePerson(person);
 
-		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), is("Nairobi"));
+		Assert.assertThat(wrapper.getAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), is("Nairobi"));
 		Assert.assertThat(person.getAttributes(2), hasSize(1));
 	}
 
@@ -109,11 +133,11 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 		Person person = personService.getPerson(1);
 		PersonWrapper wrapper = new PersonWrapper(person);
 
-		wrapper.setAsAttribute(BIRTHPLACE_ATTRTYPE_UUID, "");
+		wrapper.setAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE, "");
 
 		personService.savePerson(person);
 
-		Assert.assertThat(wrapper.getAsAttribute(BIRTHPLACE_ATTRTYPE_UUID), nullValue());
+		Assert.assertThat(wrapper.getAsAttribute(StandardTestData._PersonAttributeType.BIRTHPLACE), nullValue());
 		Assert.assertThat(person.getAttributes(2), hasSize(0));
 	}
 

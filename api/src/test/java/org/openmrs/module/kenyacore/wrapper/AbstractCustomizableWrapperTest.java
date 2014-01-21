@@ -22,6 +22,7 @@ import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.metadatadeploy.bundle.CoreConstructors;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -44,7 +45,7 @@ public class AbstractCustomizableWrapperTest extends BaseModuleContextSensitiveT
 
 	@Test
 	public void getAsAttribute_shouldReturnNullIfNoSuchAttribute() {
-		Location unknown = MetadataUtils.getLocation("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown Location
+		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapper.getTelephone(), nullValue());

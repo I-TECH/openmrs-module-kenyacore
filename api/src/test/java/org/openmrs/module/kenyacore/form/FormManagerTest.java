@@ -21,8 +21,9 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.module.appframework.domain.AppDescriptor;
-import org.openmrs.module.kenyacore.TestMetadata;
+import org.openmrs.module.kenyacore.test.TestMetadata;
 import org.openmrs.module.kenyacore.program.ProgramManager;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -88,7 +89,7 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertNotNull(testApp1);
 
 		Patient patient = TestUtils.getPatient(7);
-		VisitType initialHiv = MetadataUtils.getVisitType("c0c579b0-8e59-401d-8a4a-976a0b183519");
+		VisitType initialHiv = MetadataUtils.getVisitType(StandardTestData._VisitType.INITIAL_HIV);
 		Visit visit = TestUtils.saveVisit(patient, initialHiv, TestUtils.date(2012, 1, 1, 9, 0, 0), TestUtils.date(2012, 1, 1, 11, 0, 0));
 
 		Assert.assertThat(formManager.getAllUncompletedFormsForVisit(testApp1, visit), contains(progressNoteForm));

@@ -21,6 +21,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class IdentifierManagerTest extends BaseModuleContextSensitiveTest {
 		// Give patient a single "old identification number"
 		PatientIdentifier pidOld = new PatientIdentifier();
 		pidOld.setPatient(patient);
-		pidOld.setIdentifierType(MetadataUtils.getPatientIdentifierType("2f470aa8-1d73-43b7-81b5-01f0c0dfa53c"));
+		pidOld.setIdentifierType(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD));
 		pidOld.setIdentifier("1234");
 		pidOld.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
 		patient.addIdentifier(pidOld);
@@ -70,7 +71,7 @@ public class IdentifierManagerTest extends BaseModuleContextSensitiveTest {
 		// Give patient an additional "Openmrs identification number"
 		PatientIdentifier pidOpenmrs = new PatientIdentifier();
 		pidOpenmrs.setPatient(patient);
-		pidOpenmrs.setIdentifierType(MetadataUtils.getPatientIdentifierType("1a339fe9-38bc-4ab3-b180-320988c0b968"));
+		pidOpenmrs.setIdentifierType(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OPENMRS));
 		pidOpenmrs.setIdentifier("6TS-4");
 		pidOpenmrs.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
 		patient.addIdentifier(pidOpenmrs);
