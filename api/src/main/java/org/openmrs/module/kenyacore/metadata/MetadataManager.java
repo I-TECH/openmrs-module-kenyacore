@@ -17,17 +17,11 @@ package org.openmrs.module.kenyacore.metadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.metadatadeploy.bundle.MetadataBundle;
 import org.openmrs.module.metadatadeploy.api.MetadataDeployService;
-import org.openmrs.module.metadatasharing.ImportedPackage;
-import org.openmrs.module.metadatasharing.api.MetadataSharingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Metadata package manager
@@ -36,6 +30,8 @@ import java.util.Map;
 public class MetadataManager implements ContentManager {
 
 	protected static final Log log = LogFactory.getLog(MetadataManager.class);
+
+	protected static final String SYSTEM_PROPERTY_SKIP_REFRESH = "skipMetadataRefresh";
 
 	@Autowired
 	private MetadataDeployService deployService;
@@ -53,48 +49,13 @@ public class MetadataManager implements ContentManager {
 	 */
 	@Override
 	public synchronized void refresh() {
-		// Process configuration beans
-		for (MetadataConfiguration configuration : Context.getRegisteredComponents(MetadataConfiguration.class)) {
-			String moduleId = configuration.getModuleId();
-			ClassLoader loader =  ModuleFactory.getModuleClassLoader(moduleId);
-
-			try {
-				loadPackages(configuration.getPackages(), loader);
-			}
-			catch (Exception ex) {
-				throw new RuntimeException("Error occured while loading metadata packages from " + moduleId, ex);
-			}
+		// Allow skipping of metadata refresh - useful for developers
+		if (Boolean.parseBoolean(System.getProperty(SYSTEM_PROPERTY_SKIP_REFRESH))) {
+			log.warn("Skipping metadata refresh");
+			return;
 		}
 
 		// Install bundle components
 		deployService.installBundles(Context.getRegisteredComponents(MetadataBundle.class));
-	}
-
-	/**
-	 * Gets all imported packages in the system
-	 * @return the packages
-	 */
-	public List<ImportedPackage> getImportedPackages() {
-		return Context.getService(MetadataSharingService.class).getAllImportedPackages();
-	}
-
-	/**
-	 * Loads packages specified in an XML packages list
-	 * @param packages the map of groupUuids to package filenames
-	 * @param loader the class loader to use for loading the packages (null to use the default)
-	 * @return whether any changes were made to the db
-	 * @throws Exception
-	 */
-	protected boolean loadPackages(Map<String, String> packages, ClassLoader loader) throws Exception {
-		boolean anyChanges = false;
-
-		for (Map.Entry<String, String> entry : packages.entrySet()) {
-			String groupUuid = entry.getKey();
-			String filename = entry.getValue();
-
-			anyChanges |= deployService.installPackage(filename, loader, groupUuid);
-		}
-
-		return anyChanges;
 	}
 }
