@@ -12,18 +12,22 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.update;
+package org.openmrs.module.kenyacore.chore;
 
-import java.io.PrintWriter;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Interface for update jobs which
+ * Annotation for maintenance updates to specify a requires dependency relationship
  */
-public interface MaintenanceUpdate {
+@Target(value = {ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Requires {
 
 	/**
-	 * Performs the update
-	 * @param output the writer for console output
+	 * The required chores
 	 */
-	void run(PrintWriter output) throws Exception;
+	Class<? extends Chore>[] value();
 }

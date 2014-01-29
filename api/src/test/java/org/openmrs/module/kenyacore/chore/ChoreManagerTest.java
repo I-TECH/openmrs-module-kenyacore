@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.update;
+package org.openmrs.module.kenyacore.chore;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,39 +24,62 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 
 /**
- * Tests for {@link UpdateManager}
+ * Tests for {@link ChoreManager}
  */
-public class UpdateManagerTest extends BaseModuleContextSensitiveTest {
+public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
-	private UpdateManager updateManager;
+	private TestChore2 testChore2;
+
+	@Autowired
+	private ChoreManager updateManager;
 
 	@Autowired
 	private AdministrationService adminService;
 
+	/**
+	 * @see ChoreManager#performChores(java.util.Collection)
+	 */
 	@Test
-	public void integration() {
-		Assert.assertThat(adminService.getGlobalProperty("update." + TestUpdate.class.getName() + ".ran"), nullValue());
+	public void runUpdates_shouldRunUpdateAndItsDependencies() {
+		Assert.assertThat(adminService.getGlobalProperty("test.chore1.done"), nullValue());
+		Assert.assertThat(adminService.getGlobalProperty("test.chore2.done"), nullValue());
 
-		updateManager.refresh();
+		updateManager.performChores(Collections.<Chore>singleton(testChore2));
 
-		Assert.assertThat(adminService.getGlobalProperty("update." + TestUpdate.class.getName() + ".ran"), is("true"));
+		Assert.assertThat(adminService.getGlobalProperty("test.chore1.done"), is("true"));
+		Assert.assertThat(adminService.getGlobalProperty("test.chore2.done"), is("true"));
+
 		Assert.assertThat(Context.getPatientService().getPatient(6).isVoided(), is(true));
 	}
 
 	/**
-	 * Update component for testing which voids patient 6
+	 * Chore component for testing which voids patient 6
 	 */
-	@Component
-	public static class TestUpdate implements MaintenanceUpdate {
+	@Component("test.chore1")
+	public static class TestChore1 extends AbstractChore {
 
 		@Override
-		public void run(PrintWriter output) throws Exception {
+		public void perform(PrintWriter output) throws Exception {
 			Context.getPatientService().voidPatient(TestUtils.getPatient(6), "Testing");
+
+		}
+	}
+
+	/**
+	 * Chore component for testing
+	 */
+	@Component("test.chore2")
+	@Requires(TestChore1.class)
+	public static class TestChore2 extends AbstractChore {
+
+		@Override
+		public void perform(PrintWriter output) throws Exception {
 		}
 	}
 }
