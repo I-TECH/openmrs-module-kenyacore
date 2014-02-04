@@ -42,7 +42,7 @@ public class ChoreManager implements ContentManager {
 	@Autowired
 	private AdministrationService adminService;
 
-	@Autowired
+	@Autowired(required = false)
 	private Collection<Chore> allChores;
 
 	/**
