@@ -111,16 +111,11 @@ public class ChoreManager implements ContentManager {
 			GlobalProperty ranGp = adminService.getGlobalPropertyObject(doneGpName);
 
 			if (ranGp == null || ranGp.getPropertyValue().equals("false")) {
-				try {
-					log.info("Performing chore: " + chore.getId());
+				log.info("Performing chore: " + chore.getId());
 
-					PrintWriter writer = new PrintWriter(System.out);
-					chore.perform(writer);
-					writer.flush();
-				}
-				catch (Exception ex) {
-					throw new RuntimeException(ex);
-				}
+				PrintWriter writer = new PrintWriter(System.out);
+				chore.perform(writer);
+				writer.flush();
 
 				ranGp = new GlobalProperty();
 				ranGp.setProperty(doneGpName);

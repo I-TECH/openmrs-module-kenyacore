@@ -16,6 +16,7 @@ package org.openmrs.module.kenyacore.chore;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.test.TestUtils;
@@ -46,7 +47,7 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 	 * @see ChoreManager#performChores(java.util.Collection)
 	 */
 	@Test
-	public void runUpdates_shouldRunUpdateAndItsDependencies() {
+	public void performChores_shouldPerformChoresAndItsDependencies() {
 		Assert.assertThat(adminService.getGlobalProperty("test.chore1.done"), nullValue());
 		Assert.assertThat(adminService.getGlobalProperty("test.chore2.done"), nullValue());
 
@@ -56,6 +57,27 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(adminService.getGlobalProperty("test.chore2.done"), is("true"));
 
 		Assert.assertThat(Context.getPatientService().getPatient(6).isVoided(), is(true));
+	}
+
+	/**
+	 * @see ChoreManager#performChores(java.util.Collection)
+	 */
+	@Test(expected = APIException.class)
+	public void performChores_shouldThrowAPIExceptionIfChoreThrowsException() {
+		updateManager.performChores(Collections.<Chore>singleton(new TestChore3()));
+	}
+
+	/**
+	 * @see ChoreManager#performChores(java.util.Collection)
+	 */
+	@Test
+	public void performChores_shouldNotMarkChoreAsRunIfItThrowsException() {
+		try {
+			updateManager.performChores(Collections.<Chore>singleton(new TestChore3()));
+		}
+		catch (Exception ex) {}
+
+		Assert.assertThat(adminService.getGlobalProperty("test.chore3.done"), nullValue());
 	}
 
 	/**
@@ -80,6 +102,21 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 
 		@Override
 		public void perform(PrintWriter output) throws Exception {
+		}
+	}
+
+	/**
+	 * Chore for testing which throws exception. Not a component so that it doesn't break ChoreManager.refresh
+	 */
+	public static class TestChore3 extends AbstractChore {
+
+		public TestChore3() {
+			setId("test.chore3");
+		}
+
+		@Override
+		public void perform(PrintWriter output) throws Exception {
+			throw new NullPointerException();
 		}
 	}
 }
