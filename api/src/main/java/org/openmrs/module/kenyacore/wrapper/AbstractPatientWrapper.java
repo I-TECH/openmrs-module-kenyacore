@@ -16,6 +16,7 @@ package org.openmrs.module.kenyacore.wrapper;
 
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
+import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 
@@ -42,6 +43,15 @@ public abstract class AbstractPatientWrapper extends AbstractPersonWrapper<Patie
 	 */
 	public List<Encounter> allEncounters(EncounterType type) {
 		return Context.getEncounterService().getEncounters(target, null, null, null, null, Collections.singleton(type), null, null, null, false);
+	}
+
+	/**
+	 * Fetches all encounters from the given form in chronological order
+	 * @param form the encounter form
+	 * @return the encounters
+	 */
+	public List<Encounter> allEncounters(Form form) {
+		return Context.getEncounterService().getEncounters(target, null, null, null, Collections.singleton(form), null, null, null, null, false);
 	}
 
 	/**

@@ -29,6 +29,10 @@ public class StandardTestData {
 		public static final String SCHEDULED = "61ae96f4-6afe-4351-b6f8-cd4fc383cce1";
 	}
 
+	public static final class _Form {
+		public static final String BASIC = "d9218f76-6c39-45f4-8efa-4c5c6c199f50";
+	}
+
 	public static final class _Location {
 		public static final String UNKNOWN = "8d6c993e-c2cc-11de-8d13-0010c6dffd0f";
 		public static final String XANADU = "9356400c-a5a2-4532-8f2b-2361b3446eb8";
