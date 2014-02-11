@@ -19,7 +19,11 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.kenyacore.test.TestUtils;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
@@ -104,6 +108,67 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 		Encounter enc3 = TestUtils.saveEncounter(wrapper.getTarget(), scheduled, TestUtils.date(2012, 1, 1));
 
 		Assert.assertThat(wrapper.lastEncounter(scheduled), is(enc2));
+	}
+
+	/**
+	 * @see AbstractPatientWrapper#getAsIdentifier(String)
+	 */
+	@Test
+	public void getAsIdentifier_shouldGetIdentifierIfExists() {
+		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
+		Assert.assertThat(wrapper.getAsIdentifier(StandardTestData._PatientIdentifierType.OPENMRS), nullValue());
+		Assert.assertThat(wrapper.getAsIdentifier(StandardTestData._PatientIdentifierType.OLD), is("12345K"));
+	}
+
+	/**
+	 * @see AbstractPatientWrapper#setAsIdentifier(String, String, org.openmrs.Location)
+	 */
+	@Test
+	public void setAsIdentifier_settingBlankValueShouldVoidIdentifier() {
+		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
+
+		PatientIdentifier oldId = wrapper.getTarget().getPatientIdentifier(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD));
+
+		PatientIdentifier pt1 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OPENMRS, null, null); // Should do nothing
+		PatientIdentifier pt2 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OLD, null, null); // Should void existing
+
+		Assert.assertThat(pt1, nullValue());
+		Assert.assertThat(pt2, notNullValue());
+
+		Context.getPatientService().savePatientIdentifier(pt2);
+
+		Assert.assertThat(oldId.isVoided(), is(true));
+		Assert.assertThat(oldId.getDateVoided(), notNullValue());
+		Assert.assertThat(oldId.getVoidedBy(), notNullValue());
+		Assert.assertThat(oldId.getVoidReason(), notNullValue());
+	}
+
+	/**
+	 * @see AbstractPatientWrapper#setAsIdentifier(String, String, org.openmrs.Location)
+	 */
+	@Test
+	public void setIdentifier_shouldUpdateOrCreateIdentifier() {
+		Location xanadu = MetadataUtils.getLocation(StandardTestData._Location.XANADU);
+		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
+		PatientIdentifierType openmrsIdType = MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OPENMRS);
+		PatientIdentifierType oldIdType = MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD);
+
+		PatientIdentifier oldId = wrapper.getTarget().getPatientIdentifier(oldIdType);
+
+		PatientIdentifier pt1 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OPENMRS, "123456-G", xanadu);
+		PatientIdentifier pt2 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OLD, "54321M", xanadu);
+
+		Assert.assertThat(pt1, notNullValue());
+		Assert.assertThat(pt2, notNullValue());
+
+		Context.getPatientService().savePatientIdentifier(pt1);
+		Context.getPatientService().savePatientIdentifier(pt2);
+
+		Assert.assertThat(wrapper.getTarget().getPatientIdentifier(oldIdType), is(oldId)); // Check same identifier object
+		Assert.assertThat(wrapper.getTarget().getPatientIdentifier(oldIdType).getIdentifier(), is("54321M"));
+		Assert.assertThat(wrapper.getTarget().getPatientIdentifier(openmrsIdType).getIdentifier(), is("123456-G"));
+
+		Assert.assertThat(wrapper.getTarget().getIdentifiers(), hasSize(2));
 	}
 
 	/**

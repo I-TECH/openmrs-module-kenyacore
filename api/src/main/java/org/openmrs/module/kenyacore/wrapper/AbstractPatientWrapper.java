@@ -14,13 +14,19 @@
 
 package org.openmrs.module.kenyacore.wrapper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -72,5 +78,47 @@ public abstract class AbstractPatientWrapper extends AbstractPersonWrapper<Patie
 	public Encounter lastEncounter(EncounterType type) {
 		List<Encounter> encounters = allEncounters(type);
 		return encounters.size() > 0 ? encounters.get(encounters.size() - 1) : null;
+	}
+
+	/**
+	 * Gets the value of any identifier of the given type
+	 * @param idTypeUuid the identifier type UUID
+	 * @return the identifier value (or null)
+	 */
+	public String getAsIdentifier(String idTypeUuid) {
+		PatientIdentifierType type = MetadataUtils.getPatientIdentifierType(idTypeUuid);
+		PatientIdentifier identifier = target.getPatientIdentifier(type);
+		return identifier != null ? identifier.getIdentifier() : null;
+	}
+
+	/**
+	 * Sets the value of any identifier of the given type
+	 * @param idTypeUuid the identifier type UUID
+	 * @param value the identifier value
+	 * @param location the identifier location
+	 * @return the identifier object which should be saved
+	 */
+	public PatientIdentifier setAsIdentifier(String idTypeUuid, String value, Location location) {
+		PatientIdentifierType type = MetadataUtils.getPatientIdentifierType(idTypeUuid);
+		PatientIdentifier identifier = target.getPatientIdentifier(type);
+
+		if (StringUtils.isNotBlank(value)) {
+			if (identifier == null) {
+				identifier = new PatientIdentifier();
+				identifier.setIdentifierType(type);
+				target.addIdentifier(identifier);
+			}
+
+			identifier.setIdentifier(value);
+			identifier.setLocation(location);
+		}
+		else if (identifier != null) {
+			identifier.setVoided(true);
+			identifier.setDateVoided(new Date());
+			identifier.setVoidedBy(Context.getAuthenticatedUser());
+			identifier.setVoidReason("Removed");
+		}
+
+		return identifier;
 	}
 }
