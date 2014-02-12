@@ -95,6 +95,10 @@ public class CoreContext {
 			log.debug("Refreshing " + manager);
 
 			manager.refresh();
+
+			// A content manager might load a lot of stuff into Hibernate's cache
+			Context.flushSession();
+			Context.clearSession();
 		}
 
 		refreshed = true;
