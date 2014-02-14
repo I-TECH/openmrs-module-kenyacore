@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.test.StandardTestData;
+import org.openmrs.module.metadatadeploy.MissingMetadataException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import static org.hamcrest.Matchers.*;
@@ -34,7 +35,7 @@ public class ConceptReferenceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(reference.getTarget(), is(Context.getConceptService().getConcept(5089)));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = MissingMetadataException.class)
 	public void getTarget_shouldThrowExceptionIfReferenceIsInvalid() throws Exception {
 		ConceptReference reference = new ConceptReference("xxxxx");
 		reference.getTarget();
