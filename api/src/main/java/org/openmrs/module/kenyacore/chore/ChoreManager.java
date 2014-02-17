@@ -111,11 +111,7 @@ public class ChoreManager implements ContentManager {
 			GlobalProperty ranGp = adminService.getGlobalPropertyObject(doneGpName);
 
 			if (ranGp == null || ranGp.getPropertyValue().equals("false")) {
-				log.info("Performing chore: " + chore.getId());
-
-				PrintWriter writer = new PrintWriter(System.out);
-				chore.perform(writer);
-				writer.flush();
+				performChoreInternal(chore);
 
 				ranGp = new GlobalProperty();
 				ranGp.setProperty(doneGpName);
@@ -123,7 +119,7 @@ public class ChoreManager implements ContentManager {
 				adminService.saveGlobalProperty(ranGp);
 			}
 			else {
-				log.info("Skipping previously performed chore: " + chore.getId());
+				log.info("Skipping previously performed chore '" + chore.getId() + "'");
 			}
 
 			performed.add(chore);
@@ -133,5 +129,25 @@ public class ChoreManager implements ContentManager {
 		catch (Exception ex) {
 			throw new APIException("Unable to perform chore: " + chore.getClass().getSimpleName(), ex);
 		}
+	}
+
+	/**
+	 * Performs the given chore
+	 * @param chore the chore
+	 * @throws Exception if chore throws exception
+	 */
+	protected void performChoreInternal(Chore chore) throws Exception {
+		PrintWriter writer = new PrintWriter(System.out);
+
+		long start = System.currentTimeMillis();
+		chore.perform(writer);
+		long time = System.currentTimeMillis() - start;
+
+		writer.flush();
+
+		Context.flushSession();
+		Context.clearSession();
+
+		log.info("Performed chore '" + chore.getId() + "' in " + time + "ms");
 	}
 }
