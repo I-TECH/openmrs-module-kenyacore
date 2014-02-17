@@ -21,6 +21,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.ContentManager;
+import org.openmrs.module.kenyacore.api.CoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,9 @@ public class ChoreManager implements ContentManager {
 
 	@Autowired
 	private AdministrationService adminService;
+
+	@Autowired
+	private CoreService coreService;
 
 	@Autowired(required = false)
 	private Collection<Chore> allChores;
@@ -111,7 +115,7 @@ public class ChoreManager implements ContentManager {
 			GlobalProperty ranGp = adminService.getGlobalPropertyObject(doneGpName);
 
 			if (ranGp == null || ranGp.getPropertyValue().equals("false")) {
-				performChoreInternal(chore);
+				coreService.performChore(chore);
 
 				ranGp = new GlobalProperty();
 				ranGp.setProperty(doneGpName);
@@ -129,25 +133,5 @@ public class ChoreManager implements ContentManager {
 		catch (Exception ex) {
 			throw new APIException("Unable to perform chore: " + chore.getClass().getSimpleName(), ex);
 		}
-	}
-
-	/**
-	 * Performs the given chore
-	 * @param chore the chore
-	 * @throws Exception if chore throws exception
-	 */
-	protected void performChoreInternal(Chore chore) throws Exception {
-		PrintWriter writer = new PrintWriter(System.out);
-
-		long start = System.currentTimeMillis();
-		chore.perform(writer);
-		long time = System.currentTimeMillis() - start;
-
-		writer.flush();
-
-		Context.flushSession();
-		Context.clearSession();
-
-		log.info("Performed chore '" + chore.getId() + "' in " + time + "ms");
 	}
 }

@@ -12,27 +12,20 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.chore;
+package org.openmrs.module.kenyacore.api;
 
-import org.openmrs.api.APIException;
-
-import java.io.PrintWriter;
+import org.openmrs.module.kenyacore.chore.Chore;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Interface for chores
+ * Module service implementation
  */
-public interface Chore {
+@Transactional
+public interface CoreService {
 
 	/**
-	 * Gets the id of the chore. Should not contains spaces or punctuation besides period as it will be used to form a
-	 * global property
-	 * @return the chore id
+	 * Performs the given chore
+	 * @param chore the chore
 	 */
-	String getId();
-
-	/**
-	 * Performs the chore
-	 * @param output the writer for console output
-	 */
-	void perform(PrintWriter output) throws APIException;
+	void performChore(Chore chore);
 }

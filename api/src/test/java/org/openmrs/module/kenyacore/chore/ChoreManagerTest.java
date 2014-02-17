@@ -87,7 +87,7 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestChore1 extends AbstractChore {
 
 		@Override
-		public void perform(PrintWriter output) throws Exception {
+		public void perform(PrintWriter output) {
 			Context.getPatientService().voidPatient(TestUtils.getPatient(6), "Testing");
 
 		}
@@ -101,7 +101,7 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 	public static class TestChore2 extends AbstractChore {
 
 		@Override
-		public void perform(PrintWriter output) throws Exception {
+		public void perform(PrintWriter output) {
 		}
 	}
 
@@ -115,7 +115,7 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 		}
 
 		@Override
-		public void perform(PrintWriter output) throws Exception {
+		public void perform(PrintWriter output) {
 			throw new NullPointerException();
 		}
 	}
