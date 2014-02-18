@@ -29,7 +29,7 @@ import java.io.PrintWriter;
  */
 public class CoreServiceImpl extends BaseOpenmrsService implements CoreService {
 
-	protected static final Log log = LogFactory.getLog(CoreServiceImpl.class);
+	protected static final Log log = LogFactory.getLog(CoreService.class);
 
 	/**
 	 * @see CoreService#performChore(org.openmrs.module.kenyacore.chore.Chore)
