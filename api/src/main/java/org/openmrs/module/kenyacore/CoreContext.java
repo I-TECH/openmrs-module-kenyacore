@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Master content manager, used as a registered singleton
@@ -39,6 +40,9 @@ public class CoreContext {
 	private Map<Class<? extends ContentManager>, ContentManager> managers = new HashMap<Class<? extends ContentManager>, ContentManager>();
 
 	boolean refreshed = false;
+
+	@Autowired(required = false)
+	private Set<CoreRequirement> requirements;
 
 	/**
 	 * Sets the content managers
@@ -81,6 +85,21 @@ public class CoreContext {
 	public synchronized void refresh() {
 		refreshed = false;
 
+		// Check requirements first...
+		log.info("Checking all requirements...");
+
+		if (requirements != null) {
+			for (CoreRequirement requirement : requirements) {
+				boolean satisfied = requirement.isSatisfied();
+
+				if (satisfied) {
+					log.info("Requirement '" + requirement.getName() + "' is satisfied");
+				} else {
+					throw new UnsatisfiedRequirementException(requirement);
+				}
+			}
+		}
+
 		// Sort content managers by priority
 		List<ContentManager> sorted = new ArrayList<ContentManager>(managers.values());
 		Collections.sort(sorted, new Comparator<ContentManager>() {
@@ -90,9 +109,13 @@ public class CoreContext {
 			}
 		});
 
+		log.info("Refreshing all content managers...");
+
+		long start = System.currentTimeMillis();
+
 		// Refresh each content manager
 		for (ContentManager manager : sorted) {
-			log.debug("Refreshing " + manager);
+			log.info("Refreshing " + manager.getClass().getName() + "...");
 
 			manager.refresh();
 
@@ -100,6 +123,10 @@ public class CoreContext {
 			Context.flushSession();
 			Context.clearSession();
 		}
+
+		long time = System.currentTimeMillis() - start;
+
+		log.info("Refreshed all content managers in " + time + "ms");
 
 		refreshed = true;
 	}
@@ -110,6 +137,14 @@ public class CoreContext {
 	 */
 	public boolean isRefreshed() {
 		return refreshed;
+	}
+
+	/**
+	 * Gets all requirements
+	 * @return the requirements
+	 */
+	public Set<CoreRequirement> getRequirements() {
+		return requirements;
 	}
 
 	/**
