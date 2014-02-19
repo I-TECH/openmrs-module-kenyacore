@@ -14,7 +14,9 @@
 
 package org.openmrs.module.kenyacore;
 
+import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.app.AppRestrictedDescriptor;
 import org.openmrs.util.OpenmrsUtil;
@@ -100,5 +102,20 @@ public class CoreUtils {
 		if (entity.getApps() != null && !entity.getApps().contains(app)) {
 			throw new APIAuthenticationException("Entity " + entity.getId() + " cannot be accessed from " + app.getLabel());
 		}
+	}
+
+	/**
+	 * Sets an untyped global property
+	 * @param property the property name
+	 * @param value the property value
+	 */
+	public static void setGlobalProperty(String property, String value) {
+		GlobalProperty gp = Context.getAdministrationService().getGlobalPropertyObject(property);
+		if (gp == null) {
+			gp = new GlobalProperty();
+			gp.setProperty(property);
+		}
+		gp.setPropertyValue(value);
+		Context.getAdministrationService().saveGlobalProperty(gp);
 	}
 }

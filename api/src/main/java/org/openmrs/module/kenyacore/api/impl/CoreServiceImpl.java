@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.kenyacore.CoreUtils;
 import org.openmrs.module.kenyacore.api.CoreService;
 import org.openmrs.module.kenyacore.chore.Chore;
 
@@ -48,5 +49,7 @@ public class CoreServiceImpl extends BaseOpenmrsService implements CoreService {
 		Context.clearSession();
 
 		log.info("Performed chore '" + chore.getId() + "' in " + time + "ms");
+
+		CoreUtils.setGlobalProperty(chore.getId() + ".done", "true");
 	}
 }

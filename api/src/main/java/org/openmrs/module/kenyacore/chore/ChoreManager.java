@@ -111,16 +111,8 @@ public class ChoreManager implements ContentManager {
 				}
 			}
 
-			String doneGpName = chore.getId() + ".done";
-			GlobalProperty ranGp = adminService.getGlobalPropertyObject(doneGpName);
-
-			if (ranGp == null || ranGp.getPropertyValue().equals("false")) {
+			if (!isChorePerformed(chore)) {
 				coreService.performChore(chore);
-
-				ranGp = new GlobalProperty();
-				ranGp.setProperty(doneGpName);
-				ranGp.setPropertyValue("true");
-				adminService.saveGlobalProperty(ranGp);
 			}
 			else {
 				log.info("Skipping previously performed chore '" + chore.getId() + "'");
@@ -133,5 +125,15 @@ public class ChoreManager implements ContentManager {
 		catch (Exception ex) {
 			throw new APIException("Unable to perform chore: " + chore.getClass().getSimpleName(), ex);
 		}
+	}
+
+	/**
+	 * Checks whether a chore has been performed
+	 * @param chore the chore
+	 * @return true if chore has been performed
+	 */
+	public boolean isChorePerformed(Chore chore) {
+		GlobalProperty gp = adminService.getGlobalPropertyObject(chore.getId() + ".done");
+		return !(gp == null || gp.getPropertyValue().equals("false"));
 	}
 }

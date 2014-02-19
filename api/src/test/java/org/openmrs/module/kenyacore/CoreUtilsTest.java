@@ -17,9 +17,11 @@ package org.openmrs.module.kenyacore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.form.FormDescriptor;
 import org.openmrs.module.kenyacore.test.TestUtils;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +33,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Tests for {@link CoreUtils}
  */
-public class CoreUtilsTest {
+public class CoreUtilsTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void integration() {
@@ -156,5 +158,19 @@ public class CoreUtilsTest {
 		form.setApps(Collections.singleton(app1));
 
 		CoreUtils.checkAccess(form, app2);
+	}
+
+	/**
+	 * @see CoreUtils#setGlobalProperty(String, String)
+	 */
+	@Test
+	public void setGlobalProperty() {
+		CoreUtils.setGlobalProperty("core.test", "123");
+
+		Assert.assertThat(Context.getAdministrationService().getGlobalProperty("core.test"), is("123"));
+
+		CoreUtils.setGlobalProperty("core.test", "123");
+
+		Assert.assertThat(Context.getAdministrationService().getGlobalProperty("core.test"), is("123"));
 	}
 }

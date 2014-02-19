@@ -35,6 +35,9 @@ import static org.hamcrest.Matchers.*;
 public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
+	private TestChore1 testChore1;
+
+	@Autowired
 	private TestChore2 testChore2;
 
 	@Autowired
@@ -48,9 +51,6 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void performChores_shouldPerformChoresAndItsDependencies() {
-		Assert.assertThat(adminService.getGlobalProperty("test.chore1.done"), nullValue());
-		Assert.assertThat(adminService.getGlobalProperty("test.chore2.done"), nullValue());
-
 		updateManager.performChores(Collections.<Chore>singleton(testChore2));
 
 		Assert.assertThat(adminService.getGlobalProperty("test.chore1.done"), is("true"));
@@ -81,6 +81,20 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
+	 * @see ChoreManager#isChorePerformed(Chore)
+	 */
+	@Test
+	public void isChorePerformed_shouldGetIfChoreHasBeenPerfomed() {
+		Assert.assertThat(updateManager.isChorePerformed(testChore1), is(false));
+		Assert.assertThat(updateManager.isChorePerformed(testChore2), is(false));
+
+		updateManager.performChores(Collections.<Chore>singleton(testChore2));
+
+		Assert.assertThat(updateManager.isChorePerformed(testChore1), is(true));
+		Assert.assertThat(updateManager.isChorePerformed(testChore2), is(true));
+	}
+
+	/**
 	 * Chore component for testing which voids patient 6
 	 */
 	@Component("test.chore1")
@@ -90,6 +104,11 @@ public class ChoreManagerTest extends BaseModuleContextSensitiveTest {
 		public void perform(PrintWriter output) {
 			Context.getPatientService().voidPatient(TestUtils.getPatient(6), "Testing");
 
+			// Fail if chore has already been performed - in which we shouldn't be in here
+			String gp = Context.getAdministrationService().getGlobalProperty("test.chore1.done");
+			if (gp != null && gp.equals("true")) {
+				Assert.fail();
+			}
 		}
 	}
 
