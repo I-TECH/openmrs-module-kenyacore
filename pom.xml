@@ -9,12 +9,6 @@
 	<name>KenyaCore</name>
 	<description>Core functionality for the KenyaEMR</description>
 
-	<developers>
-		<developer>
-			<name>I-TECH</name>
-		</developer>
-	</developers>
-
 	<organization>
 		<name>I-TECH</name>
 		<url>http://www.go2itech.org</url>
