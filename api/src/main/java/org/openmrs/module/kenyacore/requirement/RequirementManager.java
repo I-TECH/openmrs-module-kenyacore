@@ -12,50 +12,60 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.metadata;
+package org.openmrs.module.kenyacore.requirement;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.ContentManager;
-import org.openmrs.module.metadatadeploy.bundle.MetadataBundle;
-import org.openmrs.module.metadatadeploy.api.MetadataDeployService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 /**
- * Metadata package manager
+ * Requirements manager
  */
 @Component
-public class MetadataManager implements ContentManager {
+public class RequirementManager implements ContentManager {
 
-	protected static final Log log = LogFactory.getLog(MetadataManager.class);
+	protected static final Log log = LogFactory.getLog(RequirementManager.class);
 
-	protected static final String SYSTEM_PROPERTY_SKIP_REFRESH = "skipMetadataRefresh";
-
-	@Autowired
-	private MetadataDeployService deployService;
+	@Autowired(required = false)
+	private Set<Requirement> requirements;
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#getPriority()
 	 */
 	@Override
 	public int getPriority() {
-		return 10; // Second (only after the requirement manager) because others will use metadata loaded by it
+		return 0; // Refresh before anything else
 	}
 
 	/**
 	 * @see org.openmrs.module.kenyacore.ContentManager#refresh()
 	 */
 	@Override
-	public synchronized void refresh() {
-		// Allow skipping of metadata refresh - useful for developers
-		if (Boolean.parseBoolean(System.getProperty(SYSTEM_PROPERTY_SKIP_REFRESH))) {
-			log.warn("Skipping metadata refresh");
-			return;
-		}
+	public void refresh() {
+		log.info("Checking all requirements...");
 
-		// Install bundle components
-		deployService.installBundles(Context.getRegisteredComponents(MetadataBundle.class));
+		if (requirements != null) {
+			for (Requirement requirement : requirements) {
+				boolean satisfied = requirement.isSatisfied();
+
+				if (satisfied) {
+					log.info("Requirement '" + requirement.getName() + "' is satisfied");
+				} else {
+					throw new UnsatisfiedRequirementException(requirement);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets all requirements
+	 * @return the requirements
+	 */
+	public Set<Requirement> getAllRequirements() {
+		return requirements;
 	}
 }

@@ -12,12 +12,12 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore;
+package org.openmrs.module.kenyacore.requirement;
 
 /**
- * Interface for required components - things which are required for the core refresh, e.g. concept dictionary
+ * Interface for required components - things which are required for the EMR to start, e.g. concept dictionary
  */
-public interface CoreRequirement {
+public interface Requirement {
 
 	/**
 	 * Gets the display name of this requirement

@@ -12,20 +12,20 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore;
+package org.openmrs.module.kenyacore.requirement;
 
 /**
  * Exception class for unsatisfied requirements
  */
 public class UnsatisfiedRequirementException extends RuntimeException {
 
-	private CoreRequirement requirement;
+	private Requirement requirement;
 
 	/**
 	 * Createst a new exception
 	 * @param requirement the unsatisfied requirement
 	 */
-	public UnsatisfiedRequirementException(CoreRequirement requirement) {
+	public UnsatisfiedRequirementException(Requirement requirement) {
 		super("Requirement '" + requirement.getName() + "' is not satisfied. Required " + requirement.getRequiredVersion() + ", but found " + requirement.getFoundVersion());
 
 		this.requirement = requirement;
@@ -35,7 +35,7 @@ public class UnsatisfiedRequirementException extends RuntimeException {
 	 * Gets the unsatisfied requirement
 	 * @return the requirement
 	 */
-	public CoreRequirement getRequirement() {
+	public Requirement getRequirement() {
 		return requirement;
 	}
 }
