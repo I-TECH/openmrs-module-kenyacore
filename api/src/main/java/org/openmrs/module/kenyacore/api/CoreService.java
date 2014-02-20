@@ -14,6 +14,8 @@
 
 package org.openmrs.module.kenyacore.api;
 
+import org.openmrs.api.APIException;
+import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.chore.Chore;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CoreService {
 
 	/**
+	 * Refreshes a content manager
+	 * @param manager the manager
+	 */
+	void refreshManager(ContentManager manager) throws APIException;
+
+	/**
 	 * Performs the given chore
 	 * @param chore the chore
 	 */
-	void performChore(Chore chore);
+	void performChore(Chore chore) throws APIException;
 }

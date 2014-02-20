@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.api.CoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,9 @@ public class CoreContext {
 	protected static final Log log = LogFactory.getLog(CoreContext.class);
 
 	private Map<Class<? extends ContentManager>, ContentManager> managers = new HashMap<Class<? extends ContentManager>, ContentManager>();
+
+	@Autowired
+	private CoreService coreService;
 
 	boolean refreshed = false;
 
@@ -96,13 +100,7 @@ public class CoreContext {
 
 		// Refresh each content manager
 		for (ContentManager manager : sorted) {
-			log.info("Refreshing " + manager.getClass().getName() + "...");
-
-			manager.refresh();
-
-			// A content manager might load a lot of stuff into Hibernate's cache
-			Context.flushSession();
-			Context.clearSession();
+			coreService.refreshManager(manager);
 		}
 
 		long time = System.currentTimeMillis() - start;
