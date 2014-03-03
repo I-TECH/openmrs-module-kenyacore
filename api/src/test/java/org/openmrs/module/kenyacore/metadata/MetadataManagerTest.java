@@ -14,20 +14,47 @@
 
 package org.openmrs.module.kenyacore.metadata;
 
-import org.junit.Ignore;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.test.TestMetadata;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.hamcrest.Matchers.*;
 
 /**
  * Tests for {@link MetadataManager}
- *
- * TODO...
  */
-@Ignore
 public class MetadataManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
 	private MetadataManager metadataManager;
+
+	/**
+	 * @see MetadataManager#refresh()
+	 */
+	@Test
+	public void refresh_shouldInstallAnyBundleComponents() {
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(TestMetadata._EncounterType.CONSULTATION), nullValue());
+
+		metadataManager.refresh();
+
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(TestMetadata._EncounterType.CONSULTATION), notNullValue());
+	}
+
+	/**
+	 * @see MetadataManager#refresh()
+	 */
+	@Test
+	public void refresh_shouldNotInstallWhenSkipPropertyIsTrue() {
+		System.setProperty("skipMetadataRefresh", "true");
+
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(TestMetadata._EncounterType.CONSULTATION), nullValue());
+
+		metadataManager.refresh();
+
+		Assert.assertThat(Context.getEncounterService().getEncounterTypeByUuid(TestMetadata._EncounterType.CONSULTATION), nullValue());
+	}
 
 }

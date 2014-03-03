@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore;
+package org.openmrs.module.kenyacore.test;
 
 import org.junit.Ignore;
 import org.openmrs.module.metadatadeploy.bundle.AbstractMetadataBundle;
@@ -27,7 +27,7 @@ import static org.openmrs.module.metadatadeploy.bundle.CoreConstructors.*;
 @Component
 public class TestMetadata extends AbstractMetadataBundle {
 
-	public static final class _Encounter {
+	public static final class _EncounterType {
 		public static final String REGISTRATION = "E8DC105B-0A3F-4931-96D8-B049F2CC97E5";
 		public static final String CONSULTATION = "D24D3F87-6150-4A07-9336-B0E98E58FA49";
 		public static final String LAB_RESULTS = "89C20A33-133B-4351-9166-2B453CD8E872";
@@ -45,13 +45,13 @@ public class TestMetadata extends AbstractMetadataBundle {
 	 */
 	@Override
 	public void install() {
-		install(encounterType("Registration", "Description", _Encounter.REGISTRATION));
-		install(encounterType("Consultation", "Description", _Encounter.CONSULTATION));
-		install(encounterType("Lab Results", "Description", _Encounter.LAB_RESULTS));
+		install(encounterType("Registration", "Description", _EncounterType.REGISTRATION));
+		install(encounterType("Consultation", "Description", _EncounterType.CONSULTATION));
+		install(encounterType("Lab Results", "Description", _EncounterType.LAB_RESULTS));
 
-		install(form("Registration", "", _Encounter.REGISTRATION, "1.0", _Form.REGISTRATION));
-		install(form("Consultation", "", _Encounter.CONSULTATION, "1.0", _Form.CONSULTATION));
-		install(form("Progress note", "", _Encounter.CONSULTATION, "1.0", _Form.PROGRESS_NOTE));
-		install(form("Lab Results", "", _Encounter.LAB_RESULTS, "1.0", _Form.LAB_RESULTS));
+		install(form("Registration", "", _EncounterType.REGISTRATION, "1.0", _Form.REGISTRATION));
+		install(form("Consultation", "", _EncounterType.CONSULTATION, "1.0", _Form.CONSULTATION));
+		install(form("Progress note", "", _EncounterType.CONSULTATION, "1.0", _Form.PROGRESS_NOTE));
+		install(form("Lab Results", "", _EncounterType.LAB_RESULTS, "1.0", _Form.LAB_RESULTS));
 	}
 }

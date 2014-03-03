@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.ConceptReference;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +37,7 @@ public class StringToConceptReferenceConverterTest extends BaseModuleContextSens
 	public void convert() {
 		Concept cd4 = Context.getConceptService().getConcept(5497);
 
-		ConceptReference conceptRef1 = converter.convert("a09ab2c5-878e-4905-b25d-5784167d0216");
+		ConceptReference conceptRef1 = converter.convert(StandardTestData._Concept.CD4_COUNT);
 		Assert.assertThat(conceptRef1.getTarget(), is(cd4));
 
 		// Empty strings should convert to nulls

@@ -12,32 +12,22 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.metadata;
+package org.openmrs.module.kenyacore.chore;
 
-import org.openmrs.module.kenyacore.AbstractContentConfiguration;
-
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Configuration bean class for metadata
+ * Annotation for maintenance updates to specify a requires dependency relationship
  */
-public class MetadataConfiguration extends AbstractContentConfiguration {
-
-	private Map<String, String> packages;
-
-	/**
-	 * Gets the packages
-	 * @return the packages
-	 */
-	public Map<String, String> getPackages() {
-		return packages;
-	}
+@Target(value = {ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Requires {
 
 	/**
-	 * Sets the packages
-	 * @param packages the packages
+	 * The required chores
 	 */
-	public void setPackages(Map<String, String> packages) {
-		this.packages = packages;
-	}
+	Class<? extends Chore>[] value();
 }

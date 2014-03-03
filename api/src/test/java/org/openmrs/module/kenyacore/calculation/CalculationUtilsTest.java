@@ -25,6 +25,7 @@ import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.ListResult;
 import org.openmrs.calculation.result.SimpleResult;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,42 @@ public class CalculationUtilsTest {
 	@Test(expected = RuntimeException.class)
 	public void instantiateCalculation_shouldThrowExceptionIfClassCantBeInstantiated() {
 		CalculationUtils.instantiateCalculation(FaultyCalculation.class, null);
+	}
+
+	/**
+	 * @see CalculationUtils#ensureNullResults(org.openmrs.calculation.result.CalculationResultMap, java.util.Collection
+	 */
+	@Test
+	public void ensureNullResults_shouldAddNullsForMissingPatients() {
+		CalculationResultMap map = new CalculationResultMap();
+		map.put(7, new BooleanResult(true, null));
+		map.put(999, new BooleanResult(false, null));
+
+		List<Integer> cohort = Arrays.asList(6, 7);
+		CalculationUtils.ensureNullResults(map, cohort);
+
+		// Map should now contain 3 patient ids with null for #6
+		Assert.assertThat(map, hasEntry(6, null));
+		Assert.assertThat(map, hasKey(7));
+		Assert.assertThat(map, hasKey(999));
+	}
+
+	/**
+	 * @see CalculationUtils#ensureEmptyListResults(org.openmrs.calculation.result.CalculationResultMap, java.util.Collection
+	 */
+	@Test
+	public void ensureEmptyListResults_shouldAddEmptyListsForMissingPatients() {
+		CalculationResultMap map = new CalculationResultMap();
+		map.put(7, new ListResult());
+		map.put(999, new ListResult());
+
+		List<Integer> cohort = Arrays.asList(6, 7);
+		CalculationUtils.ensureEmptyListResults(map, cohort);
+
+		// Map should now contain 3 patient ids with empty list for #6
+		Assert.assertThat(map.get(6), instanceOf(ListResult.class));
+		Assert.assertThat(map.get(7), instanceOf(ListResult.class));
+		Assert.assertThat(map.get(999), instanceOf(ListResult.class));
 	}
 
 	/**

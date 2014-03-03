@@ -12,26 +12,27 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore;
+package org.openmrs.module.kenyacore.chore;
 
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.api.APIException;
 
-import java.util.Set;
+import java.io.PrintWriter;
 
 /**
- * Describes entities which access to is restricted by app
+ * Interface for chores
  */
-public interface AppRestrictedDescriptor extends Descriptor {
+public interface Chore {
 
 	/**
-	 * Gets the apps allowed to access this
-	 * @return the apps descriptors
+	 * Gets the id of the chore. Should not contains spaces or punctuation besides period as it will be used to form a
+	 * global property
+	 * @return the chore id
 	 */
-	Set<AppDescriptor> getApps();
+	String getId();
 
 	/**
-	 * Sets the apps allowed to access this
-	 * @param apps the app descriptors
+	 * Performs the chore
+	 * @param output the writer for console output
 	 */
-	void setApps(Set<AppDescriptor> apps);
+	void perform(PrintWriter output) throws APIException;
 }

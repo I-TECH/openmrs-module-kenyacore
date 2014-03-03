@@ -153,7 +153,8 @@ public class CalculationUtils {
 		try {
 			EvaluationContext reportingContext = ensureReportingContext(calculationContext, cohort, parameterValues);
 			return Context.getService(CohortDefinitionService.class).evaluate(cohortDefinition, reportingContext);
-		} catch (EvaluationException ex) {
+		}
+		catch (EvaluationException ex) {
 			throw new APIException(ex);
 		}
 	}

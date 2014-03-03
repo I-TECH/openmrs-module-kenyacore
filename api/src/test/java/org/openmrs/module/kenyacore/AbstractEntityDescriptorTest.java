@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.TreeSet;
@@ -39,12 +40,12 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 	public void setup() {
 		descriptor1 = new TestLocationDescriptor();
 		descriptor1.setId("test.location.1");
-		descriptor1.setTargetUuid("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"); // Unknown location
+		descriptor1.setTargetUuid(StandardTestData._Location.UNKNOWN);
 		descriptor1.setOrder(100);
 
 		descriptor2 = new TestLocationDescriptor();
 		descriptor2.setId("test.location.2");
-		descriptor2.setTargetUuid("9356400c-a5a2-4532-8f2b-2361b3446eb8"); // Xanadu
+		descriptor2.setTargetUuid(StandardTestData._Location.XANADU);
 		descriptor2.setOrder(200);
 
 		descriptor3 = new TestLocationDescriptor();
@@ -65,8 +66,8 @@ public class AbstractEntityDescriptorTest extends BaseModuleContextSensitiveTest
 
 	@Test
 	public void getTargetUuid() throws Exception {
-		Assert.assertThat(descriptor1.getTargetUuid(), is("8d6c993e-c2cc-11de-8d13-0010c6dffd0f"));
-		Assert.assertThat(descriptor2.getTargetUuid(), is("9356400c-a5a2-4532-8f2b-2361b3446eb8"));
+		Assert.assertThat(descriptor1.getTargetUuid(), is(StandardTestData._Location.UNKNOWN));
+		Assert.assertThat(descriptor2.getTargetUuid(), is(StandardTestData._Location.XANADU));
 	}
 
 	@Test

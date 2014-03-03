@@ -17,6 +17,7 @@ package org.openmrs.module.kenyacore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.kenyacore.api.CoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Master content manager, used as a registered singleton
+ * Core context, used as a registered singleton. Responsible for refreshing all content managers in correct order.
  */
 @Component
 public class CoreContext {
@@ -37,6 +38,9 @@ public class CoreContext {
 	protected static final Log log = LogFactory.getLog(CoreContext.class);
 
 	private Map<Class<? extends ContentManager>, ContentManager> managers = new HashMap<Class<? extends ContentManager>, ContentManager>();
+
+	@Autowired
+	private CoreService coreService;
 
 	boolean refreshed = false;
 
@@ -90,12 +94,18 @@ public class CoreContext {
 			}
 		});
 
+		log.info("Refreshing all content managers...");
+
+		long start = System.currentTimeMillis();
+
 		// Refresh each content manager
 		for (ContentManager manager : sorted) {
-			log.debug("Refreshing " + manager);
-
-			manager.refresh();
+			coreService.refreshManager(manager);
 		}
+
+		long time = System.currentTimeMillis() - start;
+
+		log.info("Refreshed all content managers in " + time + "ms");
 
 		refreshed = true;
 	}

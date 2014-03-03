@@ -18,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.kenyacore.ContentManager;
 import org.openmrs.module.kenyacore.program.ProgramDescriptor;
 import org.openmrs.module.kenyacore.program.ProgramManager;
