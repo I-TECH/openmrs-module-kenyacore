@@ -52,6 +52,32 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	}
 
 	/**
+	 * @see AbstractObjectWrapper#equals(Object)
+	 */
+	@Test
+	public void equals_shouldDelegateToTargetEquals() {
+		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		Location xanadu = MetadataUtils.getLocation(StandardTestData._Location.XANADU);
+		LocationWrapper unknownWrapped = new LocationWrapper(unknown);
+		LocationWrapper xanaduWrapped = new LocationWrapper(xanadu);
+
+		Assert.assertThat(unknownWrapped.equals(unknownWrapped), is(true));
+		Assert.assertThat(unknownWrapped.equals(xanaduWrapped), is(false));
+		Assert.assertThat(unknownWrapped.equals(null), is(false));
+	}
+
+	/**
+	 * @see AbstractObjectWrapper#hashCode()
+	 */
+	@Test
+	public void hashCode_shouldDelegateToTargetHashCode() {
+		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		LocationWrapper wrapped = new LocationWrapper(unknown);
+
+		Assert.assertThat(wrapped.hashCode(), is(unknown.hashCode()));
+	}
+
+	/**
 	 * Location rapper class for testing
 	 */
 	private static class LocationWrapper extends AbstractCustomizableWrapper<Location, LocationAttribute> {
