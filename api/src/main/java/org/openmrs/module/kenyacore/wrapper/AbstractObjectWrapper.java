@@ -54,4 +54,27 @@ public abstract class AbstractObjectWrapper<T extends OpenmrsObject> implements 
 	public String getUuid() {
 		return target.getUuid();
 	}
+
+	/**
+	 * @see Object#equals(Object)
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		AbstractObjectWrapper that = (AbstractObjectWrapper) o;
+
+		if (!target.equals(that.target)) return false;
+
+		return true;
+	}
+
+	/**
+	 * @see Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return target.hashCode();
+	}
 }
