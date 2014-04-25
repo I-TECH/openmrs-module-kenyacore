@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.report.builder;
+package org.openmrs.module.kenyacore.report.cohort.definition;
 
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
