@@ -103,7 +103,7 @@
 
 	<bean id="test.report.test1" class="org.openmrs.module.kenyacore.report.CalculationReportDescriptor">
 		<property name="targetUuid" value="4FAE55A5-E144-471F-9142-7E776A4E19E0" />
-		<property name="name" value="Test Report" />
+		<property name="name" value="Test Report #1" />
 		<property name="calculation" value="org.openmrs.module.kenyacore.test.TestCalculation" />
 		<property name="apps">
 			<set>
@@ -111,6 +111,17 @@
 			</set>
 		</property>
 		<property name="displayIdentifier" ref="test.identifier.openmrs" />
+	</bean>
+
+	<bean id="test.report.test2" class="org.openmrs.module.kenyacore.report.CalculationReportDescriptor">
+		<property name="targetUuid" value="9003EBA1-D3E4-46D3-B01E-9412604295C8" />
+		<property name="name" value="Test Report #2" />
+		<property name="calculation" value="org.openmrs.module.kenyacore.test.TestCalculationWithParams" />
+		<property name="apps">
+			<set>
+				<ref bean="test.app.app1" />
+			</set>
+		</property>
 	</bean>
 
 	<!-- ==================== Lab ======================== -->

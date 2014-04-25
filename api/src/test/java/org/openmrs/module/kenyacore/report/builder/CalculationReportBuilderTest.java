@@ -14,6 +14,7 @@
 
 package org.openmrs.module.kenyacore.report.builder;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.kenyacore.report.ReportDescriptor;
@@ -25,6 +26,8 @@ import org.openmrs.module.reporting.report.renderer.CsvReportRenderer;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import static org.hamcrest.Matchers.*;
 
 /**
  * Tests for {@link CalculationReportBuilder}
@@ -38,12 +41,33 @@ public class CalculationReportBuilderTest extends BaseModuleContextSensitiveTest
 	@Qualifier("test.report.test1")
 	private ReportDescriptor test1;
 
+	@Autowired
+	@Qualifier("test.report.test2")
+	private ReportDescriptor test2;
+
 	/**
 	 * @see CalculationReportBuilder#build(org.openmrs.module.kenyacore.report.ReportDescriptor)
 	 */
 	@Test
-	public void build() throws Exception {
+	public void build_calculationHasNoParams() throws Exception {
 		ReportDefinition definition = builder.build(test1);
+
+		Assert.assertThat(definition.getParameters(), hasSize(0));
+
+		ReportData data = Context.getService(ReportDefinitionService.class).evaluate(definition, new EvaluationContext());
+
+		CsvReportRenderer renderer = new CsvReportRenderer();
+		renderer.render(data, "", System.out);
+	}
+
+	/**
+	 * @see CalculationReportBuilder#build(org.openmrs.module.kenyacore.report.ReportDescriptor)
+	 */
+	@Test
+	public void build_calculationHasParams() throws Exception {
+		ReportDefinition definition = builder.build(test2);
+
+		Assert.assertThat(definition.getParameters(), hasSize(2));
 
 		ReportData data = Context.getService(ReportDefinitionService.class).evaluate(definition, new EvaluationContext());
 

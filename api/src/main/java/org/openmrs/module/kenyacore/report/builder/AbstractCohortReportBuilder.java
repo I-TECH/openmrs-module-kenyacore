@@ -17,7 +17,6 @@ package org.openmrs.module.kenyacore.report.builder;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.kenyacore.report.CohortReportDescriptor;
 import org.openmrs.module.kenyacore.report.ReportDescriptor;
-import org.openmrs.module.kenyacore.report.ReportUtils;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.DataConverter;
@@ -33,6 +32,7 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,26 +51,30 @@ public abstract class AbstractCohortReportBuilder extends AbstractReportBuilder 
 	}
 
 	/**
-	 * @see AbstractReportBuilder#buildDataSets(org.openmrs.module.kenyacore.report.ReportDescriptor)
+	 * @see AbstractReportBuilder#buildDataSets(org.openmrs.module.kenyacore.report.ReportDescriptor, org.openmrs.module.reporting.report.definition.ReportDefinition)
 	 */
 	@Override
-	protected List<Mapped<DataSetDefinition>> buildDataSets(ReportDescriptor descriptor) {
-		Mapped<CohortDefinition> cohort = buildCohort((CohortReportDescriptor) descriptor);
-
+	protected List<Mapped<DataSetDefinition>> buildDataSets(ReportDescriptor descriptor, ReportDefinition rd) {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition(descriptor.getName() + " DSD");
+		dsd.addParameters(rd.getParameters()); // Same parameters as report
+
+		Mapped<CohortDefinition> cohort = buildCohort((CohortReportDescriptor) descriptor, dsd);
+
 		dsd.addRowFilter(cohort);
 
 		addColumns((CohortReportDescriptor) descriptor, dsd);
 
-		return Arrays.asList(ReportUtils.map((DataSetDefinition) dsd));
+		// Map all parameters straight through
+		return Arrays.asList(new Mapped<DataSetDefinition>(dsd, Mapped.straightThroughMappings(dsd)));
 	}
 
 	/**
 	 * Builds and maps the cohort to base this cohort report on
 	 * @param descriptor the report descriptor
+	 * @param dsd the data set definition
 	 * @return the mapped cohort definition
 	 */
-	protected abstract Mapped<CohortDefinition> buildCohort(CohortReportDescriptor descriptor);
+	protected abstract Mapped<CohortDefinition> buildCohort(CohortReportDescriptor descriptor, PatientDataSetDefinition dsd);
 
 	/**
 	 * Override this if you don't want the default (HIV ID, name, sex, age)
