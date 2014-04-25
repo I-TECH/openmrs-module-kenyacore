@@ -36,14 +36,10 @@ public abstract class AbstractReportBuilder implements ReportBuilder {
 		ReportDefinition definition = new ReportDefinition();
 		definition.setName(descriptor.getName());
 		definition.setDescription(descriptor.getDescription());
+		definition.addParameters(getParameters(descriptor));
 
-		// Add parameters
-		for (Parameter parameter : getParameters(descriptor)) {
-			definition.addParameter(parameter);
-		}
-
-		// Add datasets
-		for (Mapped<DataSetDefinition> dataset : buildDataSets(descriptor)) {
+		// Add all datasets
+		for (Mapped<DataSetDefinition> dataset : buildDataSets(descriptor, definition)) {
 			definition.addDataSetDefinition(dataset.getParameterizable().getName(), dataset);
 		}
 
@@ -60,7 +56,8 @@ public abstract class AbstractReportBuilder implements ReportBuilder {
 	/**
 	 * Builds and maps the data sets
 	 * @param descriptor the report descriptor
+	 * @param report the report definition
 	 * @return the mapped datasets
 	 */
-	protected abstract List<Mapped<DataSetDefinition>> buildDataSets(ReportDescriptor descriptor);
+	protected abstract List<Mapped<DataSetDefinition>> buildDataSets(ReportDescriptor descriptor, ReportDefinition report);
 }

@@ -52,11 +52,7 @@ public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAllReportBuilders() {
 		List<ReportDescriptor> descriptors = reportManager.getAllReportDescriptors();
-		Assert.assertThat(descriptors.size(), is(1));
-		Assert.assertThat(descriptors.get(0), is(instanceOf(CalculationReportDescriptor.class)));
-
-		CalculationReportDescriptor calcReport = (CalculationReportDescriptor) descriptors.get(0);
-		Assert.assertThat(calcReport.getId(), is("test.report.test1"));
+		Assert.assertThat(descriptors.size(), is(2));
 	}
 
 	/**
