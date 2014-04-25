@@ -73,7 +73,6 @@ public class CalculationCohortDefinition extends BaseCohortDefinition {
 	 */
 	public Date getOnDate() {
 		return onDate;
-
 	}
 
 	/**

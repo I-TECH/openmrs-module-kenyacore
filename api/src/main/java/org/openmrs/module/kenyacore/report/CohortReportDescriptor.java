@@ -14,29 +14,28 @@
 
 package org.openmrs.module.kenyacore.report;
 
-import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.identifier.IdentifierDescriptor;
 
 /**
- * Describes a calculation based cohort report
+ * Describes a cohort based report
  */
-public class CalculationReportDescriptor extends CohortReportDescriptor {
+public class CohortReportDescriptor extends ReportDescriptor {
 
-	protected Class<? extends PatientCalculation> calculation;
+	protected IdentifierDescriptor displayIdentifier;
 
 	/**
-	 * Gets the calculation class
-	 * @return the class
+	 * Gets the identifier type to display for each patient
+	 * @return the identifier
 	 */
-	public Class<? extends PatientCalculation> getCalculation() {
-		return calculation;
+	public IdentifierDescriptor getDisplayIdentifier() {
+		return displayIdentifier;
 	}
 
 	/**
-	 * Sets the calculation class
-	 * @param calculation the class
+	 * Sets the identifier type to display for each patient
+	 * @param displayIdentifier
 	 */
-	public void setCalculation(Class<? extends PatientCalculation> calculation) {
-		this.calculation = calculation;
+	public void setDisplayIdentifier(IdentifierDescriptor displayIdentifier) {
+		this.displayIdentifier = displayIdentifier;
 	}
 }

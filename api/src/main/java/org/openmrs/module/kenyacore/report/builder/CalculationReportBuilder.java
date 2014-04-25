@@ -14,87 +14,32 @@
 
 package org.openmrs.module.kenyacore.report.builder;
 
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.kenyacore.calculation.CalculationUtils;
 import org.openmrs.module.kenyacore.report.CalculationReportDescriptor;
-import org.openmrs.module.kenyacore.report.ReportDescriptor;
+import org.openmrs.module.kenyacore.report.CohortReportDescriptor;
 import org.openmrs.module.kenyacore.report.ReportUtils;
-import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.ConvertedPersonDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
-import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.springframework.stereotype.Component;
 
 /**
  * Generic calculation based patient-list report builder
  */
 @Component("kenyacore.genericCalcReportBuilder")
-public class CalculationReportBuilder implements ReportBuilder {
+public class CalculationReportBuilder extends AbstractCohortReportBuilder {
 
 	/**
-	 * @see ReportBuilder#build(org.openmrs.module.kenyacore.report.ReportDescriptor)
+	 * @see AbstractCohortReportBuilder#buildCohort(org.openmrs.module.kenyacore.report.CohortReportDescriptor)
 	 */
 	@Override
-	public ReportDefinition build(ReportDescriptor report) {
-		ReportDefinition rd = new ReportDefinition();
-		rd.setName(report.getName());
-		rd.setDescription(report.getDescription());
-		rd.addDataSetDefinition(buildDataSet((CalculationReportDescriptor) report), null);
-		return rd;
-	}
+	protected Mapped<CohortDefinition> buildCohort(CohortReportDescriptor descriptor) {
+		CalculationReportDescriptor desc = (CalculationReportDescriptor) descriptor;
 
-	/**
-	 * Builds the data set
-	 * @return the data set
-	 */
-	protected PatientDataSetDefinition buildDataSet(CalculationReportDescriptor report) {
-		PatientCalculation calc = CalculationUtils.instantiateCalculation(report.getCalculation(), null);
-		CalculationCohortDefinition cd = new CalculationCohortDefinition(calc);
-		cd.setName(report.getName());
+		PatientCalculation calc = CalculationUtils.instantiateCalculation(desc.getCalculation(), null);
+		CohortDefinition cd = new CalculationCohortDefinition(calc);
+		cd.setName(descriptor.getName());
 
-		PatientDataSetDefinition dsd = new PatientDataSetDefinition(report.getName() + " DSD");
-		dsd.addRowFilter(ReportUtils.map(cd));
-		addColumns(report, dsd);
-		return dsd;
-	}
-
-	/**
-	 * Override this if you don't want the default (HIV ID, name, sex, age)
-	 * @param dsd this will be modified by having columns added
-	 */
-	protected void addColumns(CalculationReportDescriptor report, PatientDataSetDefinition dsd) {
-		addStandardColumns(report, dsd);
-	}
-
-	/**
-	 * Adds the standard patient list columns
-	 * @param dsd the data set definition
-	 */
-	protected void addStandardColumns(CalculationReportDescriptor report, PatientDataSetDefinition dsd) {
-		DataConverter nameFormatter = new ObjectFormatter("{familyName}, {givenName}");
-		DataDefinition nameDef = new ConvertedPersonDataDefinition("name", new PreferredNameDataDefinition(), nameFormatter);
-
-		dsd.addColumn("id", new PatientIdDataDefinition(), "");
-		dsd.addColumn("Name", nameDef, "");
-		dsd.addColumn("Age", new AgeDataDefinition(), "");
-		dsd.addColumn("Sex", new GenderDataDefinition(), "");
-
-		if (report.getDisplayIdentifier() != null) {
-			PatientIdentifierType idType = report.getDisplayIdentifier().getTarget();
-
-			DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-			DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(idType.getName(), idType), identifierFormatter);
-
-			dsd.addColumn(idType.getName(), identifierDef, "");
-		}
+		return ReportUtils.map(cd);
 	}
 }
