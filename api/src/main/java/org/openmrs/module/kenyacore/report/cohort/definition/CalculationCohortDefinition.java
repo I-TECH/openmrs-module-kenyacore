@@ -52,6 +52,16 @@ public class CalculationCohortDefinition extends BaseCohortDefinition {
 	public CalculationCohortDefinition(PatientCalculation calculation) {
 		setCalculation(calculation);
 	}
+
+	/**
+	 * Constructor to populate name and calculation
+	 * @param name the name
+	 * @param calculation the calculation
+	 */
+	public CalculationCohortDefinition(String name, PatientCalculation calculation) {
+		setName(name);
+		setCalculation(calculation);
+	}
 	
 	/**
 	 * @return the calculation
