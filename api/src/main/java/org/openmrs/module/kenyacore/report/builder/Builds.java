@@ -31,5 +31,5 @@ public @interface Builds {
 	/**
 	 * The report id
 	 */
-	String value();
+	String[] value();
 }

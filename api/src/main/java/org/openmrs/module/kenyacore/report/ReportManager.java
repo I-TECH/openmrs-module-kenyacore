@@ -103,7 +103,9 @@ public class ReportManager implements ContentManager {
 		for (ReportBuilder builder : Context.getRegisteredComponents(ReportBuilder.class)) {
 			Builds builds = builder.getClass().getAnnotation(Builds.class);
 			if (builds != null) {
-				builders.put(builds.value(), builder);
+				for (String reportId : builds.value()) {
+					builders.put(reportId, builder);
+				}
 			}
 		}
 
