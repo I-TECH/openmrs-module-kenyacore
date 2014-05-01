@@ -36,7 +36,7 @@
 		<htmlformentryVersion>2.2.1</htmlformentryVersion>
 		<htmlwidgetsVersion>1.6.5</htmlwidgetsVersion>
 		<idgenVersion>2.6</idgenVersion>
-		<metadatadeployVersion>1.1</metadatadeployVersion>
+		<metadatadeployVersion>1.2</metadatadeployVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
 		<reportingVersion>0.8.1</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
@@ -167,6 +167,12 @@
 			<!-- End OpenMRS core -->
 
 			<!-- Begin external libraries -->
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.hamcrest</groupId>

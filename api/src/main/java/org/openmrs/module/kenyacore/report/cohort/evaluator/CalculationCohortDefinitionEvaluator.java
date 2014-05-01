@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.kenyacore.report.cohort.definition.evaluator;
+package org.openmrs.module.kenyacore.report.cohort.evaluator;
 
 import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
