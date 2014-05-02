@@ -28,6 +28,6 @@ public class IdentifierDescriptor extends AbstractEntityDescriptor<PatientIdenti
 	 */
 	@Override
 	public PatientIdentifierType getTarget() {
-		return MetadataUtils.getPatientIdentifierType(targetUuid);
+		return MetadataUtils.existing(PatientIdentifierType.class, targetUuid);
 	}
 }

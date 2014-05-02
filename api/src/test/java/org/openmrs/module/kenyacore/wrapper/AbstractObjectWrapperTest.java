@@ -34,7 +34,7 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getId_shouldReturnTargetObjectId() {
-		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		Location unknown = MetadataUtils.existing(Location.class, StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapper.getId(), is(unknown.getId()));
@@ -45,7 +45,7 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getUuid_shouldReturnTargetObjectId() {
-		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		Location unknown = MetadataUtils.existing(Location.class, StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapper.getUuid(), is(StandardTestData._Location.UNKNOWN));
@@ -56,8 +56,8 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void equals_shouldDelegateToTargetEquals() {
-		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
-		Location xanadu = MetadataUtils.getLocation(StandardTestData._Location.XANADU);
+		Location unknown = MetadataUtils.existing(Location.class, StandardTestData._Location.UNKNOWN);
+		Location xanadu = MetadataUtils.existing(Location.class, StandardTestData._Location.XANADU);
 		LocationWrapper unknownWrapped = new LocationWrapper(unknown);
 		LocationWrapper xanaduWrapped = new LocationWrapper(xanadu);
 
@@ -71,7 +71,7 @@ public class AbstractObjectWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void hashCode_shouldDelegateToTargetHashCode() {
-		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		Location unknown = MetadataUtils.existing(Location.class, StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapped = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapped.hashCode(), is(unknown.hashCode()));

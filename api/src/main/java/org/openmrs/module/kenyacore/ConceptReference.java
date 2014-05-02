@@ -37,6 +37,6 @@ public class ConceptReference {
 	 * @return the target concept
 	 */
 	public Concept getTarget() {
-		return MetadataUtils.getConcept(targetIdentifier);
+		return MetadataUtils.existing(Concept.class, targetIdentifier);
 	}
 }

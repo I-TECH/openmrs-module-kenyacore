@@ -44,8 +44,8 @@ public class AbstractPersonWrapperTest extends BaseModuleContextSensitiveTest {
 	public void lastObs_shouldFindLastObsWithConcept() {
 		PersonWrapper wrapper = new PersonWrapper(personService.getPerson(7));
 
-		Concept cd4 = MetadataUtils.getConcept(StandardTestData._Concept.CD4_COUNT);
-		Concept weight = MetadataUtils.getConcept(StandardTestData._Concept.WEIGHT_KG);
+		Concept cd4 = MetadataUtils.existing(Concept.class, StandardTestData._Concept.CD4_COUNT);
+		Concept weight = MetadataUtils.existing(Concept.class, StandardTestData._Concept.WEIGHT_KG);
 
 		Patient patient = TestUtils.getPatient(7);
 

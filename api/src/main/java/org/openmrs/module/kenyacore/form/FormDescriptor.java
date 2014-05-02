@@ -51,7 +51,7 @@ public class FormDescriptor extends AbstractEntityDescriptor<Form> implements Ap
 	 */
 	@Override
 	public Form getTarget() {
-		return MetadataUtils.getForm(targetUuid);
+		return MetadataUtils.existing(Form.class, targetUuid);
 	}
 
 	/**

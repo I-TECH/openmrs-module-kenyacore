@@ -86,7 +86,7 @@ public abstract class AbstractPatientWrapper extends AbstractPersonWrapper<Patie
 	 * @return the identifier value (or null)
 	 */
 	public String getAsIdentifier(String idTypeUuid) {
-		PatientIdentifierType type = MetadataUtils.getPatientIdentifierType(idTypeUuid);
+		PatientIdentifierType type = MetadataUtils.existing(PatientIdentifierType.class, idTypeUuid);
 		PatientIdentifier identifier = target.getPatientIdentifier(type);
 		return identifier != null ? identifier.getIdentifier() : null;
 	}
@@ -99,7 +99,7 @@ public abstract class AbstractPatientWrapper extends AbstractPersonWrapper<Patie
 	 * @return the identifier object which should be saved
 	 */
 	public PatientIdentifier setAsIdentifier(String idTypeUuid, String value, Location location) {
-		PatientIdentifierType type = MetadataUtils.getPatientIdentifierType(idTypeUuid);
+		PatientIdentifierType type = MetadataUtils.existing(PatientIdentifierType.class, idTypeUuid);
 		PatientIdentifier identifier = target.getPatientIdentifier(type);
 
 		if (StringUtils.isNotBlank(value)) {

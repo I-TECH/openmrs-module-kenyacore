@@ -22,6 +22,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 
@@ -74,7 +75,7 @@ public abstract class AbstractPersonWrapper<T extends Person> extends AbstractOb
 		if (StringUtils.isNotBlank(value)) {
 			if (attr == null) {
 				attr = new PersonAttribute();
-				attr.setAttributeType(MetadataUtils.getPersonAttributeType(attrTypeUuid));
+				attr.setAttributeType(MetadataUtils.existing(PersonAttributeType.class, attrTypeUuid));
 				attr.setValue(value);
 				target.addAttribute(attr);
 			}

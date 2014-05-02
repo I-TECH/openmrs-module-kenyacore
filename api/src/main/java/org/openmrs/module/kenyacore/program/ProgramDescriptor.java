@@ -51,7 +51,7 @@ public class ProgramDescriptor extends AbstractEntityDescriptor<Program> {
 	 */
 	@Override
 	public Program getTarget() {
-		return MetadataUtils.getProgram(targetUuid);
+		return MetadataUtils.existing(Program.class, targetUuid);
 	}
 
 	/**

@@ -89,7 +89,7 @@ public class FormManagerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertNotNull(testApp1);
 
 		Patient patient = TestUtils.getPatient(7);
-		VisitType initialHiv = MetadataUtils.getVisitType(StandardTestData._VisitType.INITIAL_HIV);
+		VisitType initialHiv = MetadataUtils.existing(VisitType.class, StandardTestData._VisitType.INITIAL_HIV);
 		Visit visit = TestUtils.saveVisit(patient, initialHiv, TestUtils.date(2012, 1, 1, 9, 0, 0), TestUtils.date(2012, 1, 1, 11, 0, 0));
 
 		Assert.assertThat(formManager.getAllUncompletedFormsForVisit(testApp1, visit), contains(progressNoteForm));

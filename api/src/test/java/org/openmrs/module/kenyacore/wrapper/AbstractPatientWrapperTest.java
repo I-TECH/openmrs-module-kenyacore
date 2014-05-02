@@ -42,8 +42,8 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void allEncounters_shouldFindAllEncountersWithType() {
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
-		EncounterType emergency = MetadataUtils.getEncounterType(StandardTestData._EncounterType.EMERGENCY);
-		EncounterType scheduled = MetadataUtils.getEncounterType(StandardTestData._EncounterType.SCHEDULED);
+		EncounterType emergency = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.EMERGENCY);
+		EncounterType scheduled = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.SCHEDULED);
 
 		// Test with no saved encounters
 		Assert.assertThat(wrapper.allEncounters(emergency), hasSize(0));
@@ -61,7 +61,7 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void allEncounters_shouldFindAllEncountersWithForm() {
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
-		Form basic = MetadataUtils.getForm(StandardTestData._Form.BASIC);
+		Form basic = MetadataUtils.existing(Form.class, StandardTestData._Form.BASIC);
 
 		// Test with no saved encounters
 		Assert.assertThat(wrapper.allEncounters(basic), hasSize(0));
@@ -78,8 +78,8 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void firstEncounter_shouldFindFirstEncounterWithType() {
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
-		EncounterType emergency = MetadataUtils.getEncounterType(StandardTestData._EncounterType.EMERGENCY);
-		EncounterType scheduled = MetadataUtils.getEncounterType(StandardTestData._EncounterType.SCHEDULED);
+		EncounterType emergency = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.EMERGENCY);
+		EncounterType scheduled = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.SCHEDULED);
 
 		// Test with no saved encounters
 		Assert.assertThat(wrapper.firstEncounter(emergency), nullValue());
@@ -97,8 +97,8 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void lastEncounter_shouldFindLastEncounterWithType() {
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
-		EncounterType emergency = MetadataUtils.getEncounterType(StandardTestData._EncounterType.EMERGENCY);
-		EncounterType scheduled = MetadataUtils.getEncounterType(StandardTestData._EncounterType.SCHEDULED);
+		EncounterType emergency = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.EMERGENCY);
+		EncounterType scheduled = MetadataUtils.existing(EncounterType.class, StandardTestData._EncounterType.SCHEDULED);
 
 		// Test with no saved encounters
 		Assert.assertThat(wrapper.lastEncounter(emergency), nullValue());
@@ -127,7 +127,7 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	public void setAsIdentifier_settingBlankValueShouldVoidIdentifier() {
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
 
-		PatientIdentifier oldId = wrapper.getTarget().getPatientIdentifier(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD));
+		PatientIdentifier oldId = wrapper.getTarget().getPatientIdentifier(MetadataUtils.existing(PatientIdentifierType.class, StandardTestData._PatientIdentifierType.OLD));
 
 		PatientIdentifier pt1 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OPENMRS, null, null); // Should do nothing
 		PatientIdentifier pt2 = wrapper.setAsIdentifier(StandardTestData._PatientIdentifierType.OLD, null, null); // Should void existing
@@ -148,10 +148,10 @@ public class AbstractPatientWrapperTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void setIdentifier_shouldUpdateOrCreateIdentifier() {
-		Location xanadu = MetadataUtils.getLocation(StandardTestData._Location.XANADU);
+		Location xanadu = MetadataUtils.existing(Location.class, StandardTestData._Location.XANADU);
 		PatientWrapper wrapper = new PatientWrapper(TestUtils.getPatient(6));
-		PatientIdentifierType openmrsIdType = MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OPENMRS);
-		PatientIdentifierType oldIdType = MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD);
+		PatientIdentifierType openmrsIdType = MetadataUtils.existing(PatientIdentifierType.class, StandardTestData._PatientIdentifierType.OPENMRS);
+		PatientIdentifierType oldIdType = MetadataUtils.existing(PatientIdentifierType.class, StandardTestData._PatientIdentifierType.OLD);
 
 		PatientIdentifier oldId = wrapper.getTarget().getPatientIdentifier(oldIdType);
 

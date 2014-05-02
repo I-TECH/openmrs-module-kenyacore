@@ -45,7 +45,7 @@ public class AbstractCustomizableWrapperTest extends BaseModuleContextSensitiveT
 
 	@Test
 	public void getAsAttribute_shouldReturnNullIfNoSuchAttribute() {
-		Location unknown = MetadataUtils.getLocation(StandardTestData._Location.UNKNOWN);
+		Location unknown = MetadataUtils.existing(Location.class, StandardTestData._Location.UNKNOWN);
 		LocationWrapper wrapper = new LocationWrapper(unknown);
 
 		Assert.assertThat(wrapper.getTelephone(), nullValue());

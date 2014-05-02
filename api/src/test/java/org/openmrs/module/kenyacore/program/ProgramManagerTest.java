@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
+import org.openmrs.Program;
 import org.openmrs.module.kenyacore.test.StandardTestData;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.kenyacore.test.TestUtils;
@@ -46,7 +47,7 @@ public class ProgramManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void getPatientPrograms() {
-		ProgramDescriptor hivProgram = programManager.getProgramDescriptor(MetadataUtils.getProgram(StandardTestData._Program.HIV));
+		ProgramDescriptor hivProgram = programManager.getProgramDescriptor(MetadataUtils.existing(Program.class, StandardTestData._Program.HIV));
 		Patient patient = TestUtils.getPatient(6);
 
 		// Check with no enrollments

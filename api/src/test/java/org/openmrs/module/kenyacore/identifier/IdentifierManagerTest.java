@@ -58,7 +58,7 @@ public class IdentifierManagerTest extends BaseModuleContextSensitiveTest {
 		// Give patient a single "old identification number"
 		PatientIdentifier pidOld = new PatientIdentifier();
 		pidOld.setPatient(patient);
-		pidOld.setIdentifierType(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OLD));
+		pidOld.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, StandardTestData._PatientIdentifierType.OLD));
 		pidOld.setIdentifier("1234");
 		pidOld.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
 		patient.addIdentifier(pidOld);
@@ -71,7 +71,7 @@ public class IdentifierManagerTest extends BaseModuleContextSensitiveTest {
 		// Give patient an additional "Openmrs identification number"
 		PatientIdentifier pidOpenmrs = new PatientIdentifier();
 		pidOpenmrs.setPatient(patient);
-		pidOpenmrs.setIdentifierType(MetadataUtils.getPatientIdentifierType(StandardTestData._PatientIdentifierType.OPENMRS));
+		pidOpenmrs.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, StandardTestData._PatientIdentifierType.OPENMRS));
 		pidOpenmrs.setIdentifier("6TS-4");
 		pidOpenmrs.setLocation(Context.getLocationService().getLocation(1)); // Unknown Location
 		patient.addIdentifier(pidOpenmrs);

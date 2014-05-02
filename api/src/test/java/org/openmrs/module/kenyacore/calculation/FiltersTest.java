@@ -78,7 +78,7 @@ public class FiltersTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void inProgram() {
-		Program hiv = MetadataUtils.getProgram(StandardTestData._Program.HIV);
+		Program hiv = MetadataUtils.existing(Program.class, StandardTestData._Program.HIV);
 
 		// Patient #2 is enrolled in standardTesDataset.xml, we enroll #6 and #7 here...
 		TestUtils.enrollInProgram(TestUtils.getPatient(6), hiv, TestUtils.date(2012, 1, 1), TestUtils.date(2012, 5, 1));
