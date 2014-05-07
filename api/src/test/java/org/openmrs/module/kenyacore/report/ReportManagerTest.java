@@ -17,6 +17,8 @@ package org.openmrs.module.kenyacore.report;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.kenyacore.program.ProgramDescriptor;
+import org.openmrs.module.kenyacore.program.ProgramManager;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,27 +34,45 @@ import static org.hamcrest.Matchers.*;
 public class ReportManagerTest extends BaseModuleContextSensitiveTest {
 
 	@Autowired
+	private ProgramManager programManager;
+
+	@Autowired
 	private ReportManager reportManager;
+
+	@Autowired
+	@Qualifier("test.program.hiv")
+	private ProgramDescriptor hivProgram;
 
 	@Autowired
 	@Qualifier("test.report.test1")
 	private ReportDescriptor report1;
+
+	@Autowired
+	@Qualifier("test.report.test2")
+	private ReportDescriptor report2;
 
 	/**
 	 * Setup each test
 	 */
 	@Before
 	public void setup() {
+		programManager.refresh();
 		reportManager.refresh();
+	}
+
+	@Test
+	public void integration() {
+		// Check that report #2 is added to the program via the report configuration
+		Assert.assertThat(hivProgram.getReports(), contains(report2));
 	}
 
 	/**
 	 * @see ReportManager#getAllReportDescriptors()
 	 */
 	@Test
-	public void getAllReportBuilders() {
+	public void getAllReportDescriptors_shouldReturnAllDescriptors() {
 		List<ReportDescriptor> descriptors = reportManager.getAllReportDescriptors();
-		Assert.assertThat(descriptors.size(), is(2));
+		Assert.assertThat(descriptors, containsInAnyOrder(report1, report2));
 	}
 
 	/**
