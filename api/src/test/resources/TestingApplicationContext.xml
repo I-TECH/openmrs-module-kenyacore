@@ -170,6 +170,9 @@
 		<property name="order" value="2" />
 	</bean>
 
+	<!-- Conversion Service, will autowire converters -->
+	<bean id="conversionService" class="org.openmrs.module.uiframework.UiFrameworkConversionServiceFactoryBean"/>
+
 	<!--
 	From applicationContext-service.xml in openmrs-api
 	Needed to override and add hibernate mappings to the classpath since omod is not packaged yet 
