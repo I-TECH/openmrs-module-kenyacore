@@ -41,7 +41,6 @@
 		<reportingVersion>0.8.1</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
 		<uiframeworkVersion>3.1</uiframeworkVersion>
-		<kenyauiVersion>2.0.3-SNAPSHOT</kenyauiVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -50,12 +49,6 @@
 		<dependencies>
 
 			<!-- Begin OpenMRS modules -->
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>kenyaui-api</artifactId>
-				<version>${kenyauiVersion}</version>
-				<scope>provided</scope>
-			</dependency>
 
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
