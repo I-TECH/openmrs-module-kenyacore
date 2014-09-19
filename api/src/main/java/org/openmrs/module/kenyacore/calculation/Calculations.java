@@ -230,6 +230,28 @@ public class Calculations {
 	}
 
 	/**
+	 * Evaluates all encounters of a given type of each patient appearing onOrAfter
+	 * @param encounterType the encounter type
+	 * @param cohort the patient ids
+	 * @param context the calculation context
+	 * @return the encounters in a calculation result map
+	 */
+	public static CalculationResultMap allEncountersOnOrAfter(EncounterType encounterType, Date onOrAfter,  Collection<Integer> cohort, PatientCalculationContext context) {
+		EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+		if (encounterType != null) {
+			def.setName("all encounters of type " + encounterType.getName());
+			def.addType(encounterType);
+		}
+		else {
+			def.setName("all encounters of any type");
+		}
+		def.setWhich(TimeQualifier.ANY);
+		def.setOnOrAfter(onOrAfter);
+		CalculationResultMap results = CalculationUtils.evaluateWithReporting(def, cohort, null, null, context);
+		return CalculationUtils.ensureEmptyListResults(results, cohort);
+	}
+
+	/**
 	 * Evaluates the active program enrollment of the specified program
 	 * @param program the program
 	 * @param cohort the patient ids
