@@ -31,6 +31,9 @@ public class ObsInLastVisitCohortDefinition extends BaseCohortDefinition {
 	@ConfigurationProperty(required = false)
 	private Date onOrBefore;
 
+	@ConfigurationProperty(required = false)
+	private Date onOrAfter;
+
 	/**
 	 * Gets the question concept
 	 * @return the question concept
@@ -56,10 +59,26 @@ public class ObsInLastVisitCohortDefinition extends BaseCohortDefinition {
 	}
 
 	/**
+	 * Gets the on-or-after date
+	 * @return the date
+	 */
+	public Date getOnOrAfter() {
+		return onOrAfter;
+	}
+
+	/**
 	 * Sets the on-or-before date
 	 * @param onOrBefore the  date
 	 */
 	public void setOnOrBefore(Date onOrBefore) {
 		this.onOrBefore = onOrBefore;
+	}
+
+	/**
+	 * Sets the on-or-after date
+	 * @param onOrAfter the  date
+	 */
+	public void setOnOrAfter(Date onOrAfter) {
+		this.onOrAfter = onOrAfter;
 	}
 }
