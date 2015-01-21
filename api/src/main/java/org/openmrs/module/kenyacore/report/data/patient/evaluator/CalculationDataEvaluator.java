@@ -16,6 +16,7 @@ package org.openmrs.module.kenyacore.report.data.patient.evaluator;
 
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
+import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.patient.PatientCalculationService;
 import org.openmrs.calculation.result.CalculationResult;
 import org.openmrs.calculation.result.CalculationResultMap;
@@ -26,6 +27,7 @@ import org.openmrs.module.reporting.data.patient.evaluator.PatientDataEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -47,9 +49,22 @@ public class CalculationDataEvaluator implements PatientDataEvaluator {
 			return c;
 		}
 
+		// Use date from cohort definition, or from ${date} or ${endDate} or now
+		Date onDate = def.getOnDate();
+		if (onDate == null) {
+			onDate = (Date) context.getParameterValue("date");
+			if (onDate == null) {
+				onDate = (Date) context.getParameterValue("endDate");
+				if (onDate == null) {
+					onDate = new Date();
+				}
+			}
+		}
 		// evaluate the calculation
 		PatientCalculationService service = Context.getService(PatientCalculationService.class);
-		CalculationResultMap resultMap = service.evaluate(context.getBaseCohort().getMemberIds(), def.getCalculation(), def.getCalculationParameters(), context);
+		PatientCalculationContext calcContext = service.createCalculationContext();
+		calcContext.setNow(onDate);
+		CalculationResultMap resultMap = service.evaluate(context.getBaseCohort().getMemberIds(), def.getCalculation(), def.getCalculationParameters(), calcContext);
 
 		// move data into return object
 		for (Map.Entry<Integer, CalculationResult> entry : resultMap.entrySet()) {

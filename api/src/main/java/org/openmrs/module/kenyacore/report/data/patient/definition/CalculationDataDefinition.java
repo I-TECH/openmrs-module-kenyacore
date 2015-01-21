@@ -22,6 +22,7 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import org.openmrs.module.reporting.definition.configuration.ConfigurationPropertyCachingStrategy;
 import org.openmrs.module.reporting.evaluation.caching.Caching;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,17 @@ public class CalculationDataDefinition extends BaseDataDefinition implements Pat
 
 	@ConfigurationProperty(group = "calculation")
 	private Map<String, Object> calculationParameters;
+
+	public Date getOnDate() {
+		return onDate;
+	}
+
+	public void setOnDate(Date onDate) {
+		this.onDate = onDate;
+	}
+
+	@ConfigurationProperty(group = "calculation")
+	private Date onDate;
 
 	/**
 	 * Default Constructor
