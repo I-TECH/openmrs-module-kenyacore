@@ -47,6 +47,8 @@ public class ReportManager implements ContentManager {
 
 	private Map<String, ReportBuilder> builders = new HashMap<String, ReportBuilder>();
 
+	private List<ReportDescriptor> cohortAnalysisReports = new ArrayList<ReportDescriptor>();
+
 	@Autowired
 	private ProgramManager programManager;
 
@@ -86,6 +88,12 @@ public class ReportManager implements ContentManager {
 			if (configuration.getCommonReports() != null) {
 				commonReports.addAll(configuration.getCommonReports());
 			}
+
+			//Register cohort analysis reports here
+			if (configuration.getCohortAnalysis() != null) {
+				cohortAnalysisReports.addAll(configuration.getCohortAnalysis());
+			}
+
 
 			// Register additional program specific reports
 			if (configuration.getProgramReports() != null) {
@@ -157,6 +165,14 @@ public class ReportManager implements ContentManager {
 	 */
 	public List<ReportDescriptor> getCommonReports(AppDescriptor app) {
 		return filterReports(commonReports, app);
+	}
+
+	/**
+	 * Gets all common (non program specific) reports
+	 * @@return the list of reports
+	 */
+	public List<ReportDescriptor> getCohortAnalysisReports(AppDescriptor app) {
+		return filterReports(cohortAnalysisReports, app);
 	}
 
 	/**

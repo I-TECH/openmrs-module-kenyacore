@@ -29,6 +29,24 @@ public class ReportConfiguration extends AbstractContentConfiguration {
 
 	private Map<ProgramDescriptor, Set<ReportDescriptor>> programReports;
 
+	private Set<ReportDescriptor> cohortAnalysis;
+
+	/**
+	 * Gets the cohort analysis reports
+	 * @return the report descriptors
+	 */
+	public Set<ReportDescriptor> getCohortAnalysis() {
+		return cohortAnalysis;
+	}
+
+	/**
+	 * Sets the common reports
+	 * @param cohortAnalysis the report descriptors
+	 */
+	public void setCohortAnalysis(Set<ReportDescriptor> cohortAnalysis) {
+		this.cohortAnalysis = cohortAnalysis;
+	}
+
 	/**
 	 * Gets the common reports
 	 * @return the report descriptors
