@@ -294,4 +294,22 @@ public class Calculations {
 		def.setActiveOnDate(onDate);
 		return CalculationUtils.evaluateWithReporting(def, cohort, new HashMap<String, Object>(), null, context);
 	}
+
+
+	/**
+	 * Evaluates the first program enrollment of the specified program
+	 * @param program the program
+	 * @param cohort the patient ids
+	 * @param context the calculation context
+	 * @return the enrollments in a calculation result map
+	 */
+	public static CalculationResultMap firstEnrollments(Program program, Collection<Integer> cohort, PatientCalculationContext context) {
+		ProgramEnrollmentsForPatientDataDefinition def = new ProgramEnrollmentsForPatientDataDefinition();
+		def.setName("first in " + program.getName());
+		def.setWhichEnrollment(TimeQualifier.FIRST);
+		def.setProgram(program);
+		def.setEnrolledOnOrBefore(context.getNow());
+		CalculationResultMap results = CalculationUtils.evaluateWithReporting(def, cohort, new HashMap<String, Object>(), null, context);
+		return CalculationUtils.ensureEmptyListResults(results, cohort);
+	}
 }
