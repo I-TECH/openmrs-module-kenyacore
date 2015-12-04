@@ -28,7 +28,7 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.9.8</openMRSVersion>
+		<openMRSVersion>1.9.9</openMRSVersion>
 
 		<!-- Module dependencies -->
 		<appframeworkVersion>2.2.1</appframeworkVersion>
@@ -38,9 +38,9 @@
 		<idgenVersion>2.6</idgenVersion>
 		<metadatadeployVersion>1.2</metadatadeployVersion>
 		<metadatasharingVersion>1.1.8</metadatasharingVersion>
-		<reportingVersion>0.9.2.1</reportingVersion>
+		<reportingVersion>0.9.8.1</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
-		<uiframeworkVersion>3.2.2</uiframeworkVersion>
+		<uiframeworkVersion>3.3.1</uiframeworkVersion>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
